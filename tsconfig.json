@@ -1,23 +1,32 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "module": "NodeNext",
+    "target": "es5",
+    "module": "ESNext",
     "sourceMap": true,
     "removeComments": false,
     "lib": [
       "ESNext",
       "DOM"
     ],
-    "allowJs": false,
+    "allowJs": true,
     "checkJs": false,
     "importHelpers": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
+    "moduleResolution": "Node",
     "strict": true,
     "resolveJsonModule": true,
     "noFallthroughCasesInSwitch": true,
-    // "allowImportingTsExtensions": true,
-    // "noEmit": true,
+    "outDir": "./dist/",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

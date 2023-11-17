@@ -5,29 +5,38 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
-    "build:dev": "node server.js"
+    "build:dev": "cross-env NODE_ENV=development webpack",
+    "start:dev": "cross-env NODE_ENV=development ts-node server.ts",
+    "typecheck": "tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/dat.gui": "^0.7.12",
+    "@types/node": "^20.9.1",
+    "@types/webpack": "^5.28.5",
+    "@types/webpack-bundle-analyzer": "^4.6.3",
+    "@types/webpack-dev-server": "^4.7.2",
     "babel-loader": "^9.1.3",
     "clean-webpack-plugin": "^4.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "^2.7.6",
     "sass-loader": "^13.3.2",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.4.4",
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
+    "webpack": "^5.89.0",
+    "webpack-bundle-analyzer": "^4.10.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
-    "@types/dat.gui": "^0.7.11",
     "dat.gui": "^0.7.9",
-    "tslib": "^2.6.2",
-    "webpack": "^5.88.2"
+    "tslib": "^2.6.2"
   }
 }

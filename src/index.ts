@@ -1,5 +1,7 @@
-import { SnakeGame } from './game/game';
+// import { SnakeGame } from './game/game';
 
-new SnakeGame()
-  .init()
-  .start();
+// new SnakeGame()
+//   .init()
+//   .start();
+
+console.log(false);
