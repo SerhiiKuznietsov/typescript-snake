@@ -1,3 +1,4 @@
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import webpack from "webpack";
@@ -5,7 +6,7 @@ import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { EnvVariables, PluginConfiguration } from "./types/types";
 
 export const buildPlugins = (env: EnvVariables): PluginConfiguration => {
-  const result: PluginConfiguration = [
+  const plugins: PluginConfiguration = [
     new HtmlWebpackPlugin({
       filename: "index.[contenthash].html",
       template: env.paths.template,
@@ -21,9 +22,10 @@ export const buildPlugins = (env: EnvVariables): PluginConfiguration => {
   ];
 
   if (env.isDev) {
-    result.push(new webpack.ProgressPlugin());
-    result.push(new BundleAnalyzerPlugin());
+    plugins.push(new webpack.ProgressPlugin());
+    plugins.push(new BundleAnalyzerPlugin());
+    plugins.push(new ForkTsCheckerWebpackPlugin());
   }
 
-  return result;
+  return plugins;
 };
