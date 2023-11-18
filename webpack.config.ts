@@ -1,18 +1,16 @@
-import { EnvVariables, Mode, WebpackConfiguration } from "./config/build/types/types";
+import { PORT as port } from "./config/server";
+import { EnvVariables, WebpackConfiguration } from "./config/build/types/types";
 import { buildWebpack } from "./config/build/webpack";
 import paths from "./config/paths";
-
-const DEV_MODE = "development";
-const PROD_MODE = "production";
-const buildMode: Mode = process.env.NODE_ENV === DEV_MODE ? DEV_MODE : PROD_MODE;
-const isDev: boolean = buildMode === DEV_MODE;
-const isProd: boolean = !isDev;
+import { isDev, isProd, NODE_ENV as buildMode } from "./config/app";
 
 export default (): WebpackConfiguration => {
   const env: EnvVariables = {
     buildMode,
     isDev,
     isProd,
+    isAnalyzer: false,
+    port,
     paths,
   };
 

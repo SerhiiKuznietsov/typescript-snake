@@ -13,6 +13,8 @@ export interface EnvVariables {
   buildMode: Mode;
   isDev: boolean;
   isProd: boolean;
+  isAnalyzer: boolean;
+  port: number;
   paths: IEnvPaths;
 }
 

@@ -7,8 +7,9 @@ import { EnvVariables, PluginConfiguration } from "./types/types";
 
 export const buildPlugins = (env: EnvVariables): PluginConfiguration => {
   const plugins: PluginConfiguration = [
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      filename: "index.[contenthash].html",
+      filename: "index.html", // TODO - index.[contenthash].html
       template: env.paths.template,
       minify: {
         collapseWhitespace: true,
@@ -16,14 +17,16 @@ export const buildPlugins = (env: EnvVariables): PluginConfiguration => {
         removeComments: true,
       },
       title: env.isDev ? "Development" : "Snake game",
-      // logo: path.basename(globalEnv.app.logo),
+      // TODO - logo: path.basename(globalEnv.app.logo),
     }),
-    new CleanWebpackPlugin(),
   ];
+
+  if (env.isAnalyzer) {
+    plugins.push(new BundleAnalyzerPlugin());
+  }
 
   if (env.isDev) {
     plugins.push(new webpack.ProgressPlugin());
-    plugins.push(new BundleAnalyzerPlugin());
     plugins.push(new ForkTsCheckerWebpackPlugin());
   }
 

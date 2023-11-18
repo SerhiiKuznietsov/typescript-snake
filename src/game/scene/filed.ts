@@ -3,8 +3,9 @@ export class Field {
   private _context: CanvasRenderingContext2D;
   private _parentElement: HTMLElement;
 
-  constructor(parentSelector: string = 'root') {
+  constructor(parentSelector: string = '#root') {
     this._parentElement = document.querySelector(parentSelector) as HTMLElement;
+
     this._canvas = document.createElement('canvas');
     this._context = this._canvas.getContext('2d') as CanvasRenderingContext2D;
 

@@ -7,12 +7,8 @@ export const buildDevServer = (env: EnvVariables): DevServerConfiguration => {
     devMiddleware: {
       writeToDisk: true,
     },
-    static: {
-      directory: env.paths.output,
-    },
-    // watchFiles: ["dist/**/*"],
-    open: true,
-    hot: true,
-    // https: false,
+    open: env.isDev,
+    port: env.port,
+    // hot: true,
   };
 };
