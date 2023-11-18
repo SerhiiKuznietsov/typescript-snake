@@ -12,17 +12,7 @@ export const buildDevServer = (env: EnvVariables): DevServerConfiguration => {
     },
     // watchFiles: ["dist/**/*"],
     open: true,
-    // compress: true,
-    // client: {
-    //   overlay: {
-    //     errors: true,
-    //     warnings: true,
-    //     runtimeErrors: true,
-    //   },
-    //   progress: true,
-    //   logging: "info",
-    // },
-    // hot: true,
+    hot: true,
     // https: false,
   };
 };

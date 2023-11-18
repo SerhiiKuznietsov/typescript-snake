@@ -36,7 +36,7 @@ export const buildLoaders = (env: EnvVariables): LoaderConfiguration => {
       loader: "ts-loader",
       options: {
         compilerOptions: {
-          // transpileOnly: true,
+          transpileOnly: true,
           configFile: "./tsconfig.json",
         },
       },
