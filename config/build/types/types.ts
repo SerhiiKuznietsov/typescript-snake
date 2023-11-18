@@ -1,6 +1,7 @@
 import { Configuration, ModuleOptions } from "webpack";
 import type { Configuration as DevServerConf } from "webpack-dev-server";
-type Mode = "development" | "production";
+
+export type Mode = "development" | "production";
 
 interface IEnvPaths {
   entry: string;
