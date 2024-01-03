@@ -1,13 +1,35 @@
 export class Loop {
+  private _update: Function;
+  private _display: Function;
   private animateId: any = undefined;
-  private count: number = 0;
+  private _count: number = 0;
 
-  constructor(
-    private handlers: Array<Function>,
-  ) {}
+  constructor(update: Function, display: Function) {
+    this._update = update;
+    this._display = display;
+  }
 
-  public start(): void {
+  private animate(): void {
     this.animateId = requestAnimationFrame(() => this.animate());
+
+    if (this._count < 5) {
+      this._count++;
+      return;
+    }
+
+    this._count = 0;
+
+    try {
+      this._update();
+      this._display();
+    } catch (e) {
+      this.stop();
+      console.error("Animate error:", e);
+    }
+  }
+
+  private isActive(): boolean {
+    return this.animateId !== undefined;
   }
 
   public stop(): void {
@@ -15,17 +37,15 @@ export class Loop {
     this.animateId = undefined;
   }
 
-  private animate(): void | number {
+  public start(): void {
     this.animateId = requestAnimationFrame(() => this.animate());
+  }
 
-    if (this.count < 4) return this.count++;
-    this.count = 0;
-
-    try {
-      this.handlers.forEach(fn => fn());
-    } catch (e) {
+  public toggle(): void {
+    if (this.isActive()) {
       this.stop();
-      console.error(e);
+    } else {
+      this.start();
     }
   }
 }

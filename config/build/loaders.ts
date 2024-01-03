@@ -10,7 +10,7 @@ export const buildLoaders = (env: EnvVariables): LoaderConfiguration => {
       {
         loader: "css-loader",
         options: {
-          localIdentName: env.isDev ? "[path][name]__[local]" : "[hash:base64:8]",
+          // localIdentName: env.isDev ? "[path][name]__[local]" : "[hash:base64:8]",
         },
       },
     ],
