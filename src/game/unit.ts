@@ -1,26 +1,26 @@
 import { Cell } from "./cell";
-import { Game } from "./game";
+import { MapCells } from "./map-cells";
 
 export class Unit {
-  public _game: Game;
+  public _map: MapCells;
   private _headColor: string;
   private _bodyColor: string;
   private _borderColor: string;
   private _body: Cell[] = [];
 
   constructor(
-    game: Game,
+    map: MapCells,
     headColor: string,
     bodyColor: string,
     borderColor: string = "black"
   ) {
-    this._game = game;
+    this._map = map;
     this._headColor = headColor;
     this._bodyColor = bodyColor;
     this._borderColor = borderColor;
   }
 
-  public getHead(): Cell {
+  protected getHead(): Cell {
     const cell = this._body.at(0);
 
     if (!cell) {
@@ -30,7 +30,7 @@ export class Unit {
     return cell;
   }
 
-  public setHead(cell: Cell) {
+  protected setHead(cell: Cell) {
     cell.setEntity(this);
     this._body.unshift(cell);
   }
@@ -59,20 +59,6 @@ export class Unit {
 
   protected death() {
     throw new Error("not predefined method");
-  }
-
-  protected getStyle(): {
-    headColor: string;
-    bodyColor: string;
-    borderColor: string;
-  } {
-    const { _headColor, _bodyColor, _borderColor } = this;
-
-    return {
-      headColor: _headColor,
-      bodyColor: _bodyColor,
-      borderColor: _borderColor,
-    };
   }
 
   public draw(ctx: CanvasRenderingContext2D) {

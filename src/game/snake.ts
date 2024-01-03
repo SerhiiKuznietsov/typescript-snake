@@ -1,9 +1,9 @@
 import { KeyControl } from "./key-control";
 import { Direction } from "./direction";
 import { Unit } from "./unit";
-import { Game } from "./game";
 import { gameStateObserver } from "./observable/gameState";
 import { GameAction } from "./stateControllers/type/type";
+import { MapCells } from "./map-cells";
 
 const getSnakeDirection = () => {
   const snakeDirection = new Direction();
@@ -24,13 +24,13 @@ const getSnakeDirection = () => {
 export class Snake extends Unit {
   private _moveDirection = getSnakeDirection();
 
-  constructor(game: Game) {
-    super(game, "lightgreen", "#60DA81", "black");
+  constructor(map: MapCells) {
+    super(map, "lightgreen", "#60DA81", "black");
   }
 
   move() {
     const [x, y] = this._moveDirection.calcDirection(this.getHead());
-    const cell = this._game._map.getCell(x, y);
+    const cell = this._map.getCell(x, y);
 
     if (cell.isEmpty()) {
       this.removeTail()?.clearEntity();

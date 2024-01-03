@@ -1,9 +1,8 @@
-import { UnitManager } from "./unit-manager";
 import { Cell } from "./cell";
 import { createId } from "./utils/id";
 import { range } from "./utils/random";
-import { Game } from "./game";
 import { GameConfig } from "./config/game";
+import { Vector2 } from "./geometry/vector2";
 
 export class MapCells {
   private _xGridsCount: number;
@@ -61,9 +60,10 @@ export class MapCells {
   private createCell(x: number, y: number) {
     const id = createId(x, y);
 
-    if (this._cells.has(id)) throw new Error(`id: "${id}" already exists`);
+    if (this._cells.has(id))
+      throw new Error(`cell with id: "${id}" already exists`);
 
-    this._cells.set(id, new Cell(x, y, this._gridSize));
+    this._cells.set(id, new Cell(new Vector2(x, y), this._gridSize));
   }
 
   public draw() {

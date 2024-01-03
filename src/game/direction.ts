@@ -1,17 +1,14 @@
+import { Cell } from "./cell";
+import { Vector2 } from "./geometry/vector2";
+
 export class Direction {
-  private _x: number;
-  private _y: number;
   private _step: number;
-  private _directionX: number;
-  private _directionY: number;
+  private _direction: Vector2;
   private _data: { [key: number]: any } = {};
 
-  constructor(x = 1, y = 0, step = 1) {
-    this._x = x;
-    this._y = y;
+  constructor(vector: Vector2 = new Vector2(1, 0), step = 1) {
+    this._direction = vector;
     this._step = step;
-    this._directionX = x;
-    this._directionY = y;
   }
 
   private setHandler(arr: number[], sign: string, axis: string): void {
@@ -48,20 +45,21 @@ export class Direction {
     }
   }
 
-  public calcDirection({ x, y }: { x: number, y: number }): [number, number] {
-    return [x + this._directionX, y + this._directionY];
+  public calcDirection(cell: Cell): [number, number] {
+    return [
+      cell.position.x + this._direction.x,
+      cell.position.y + this._direction.y,
+    ];
   }
 
   private setDirectionX(x: number): void {
-    if (Math.sign(x) + Math.sign(this._directionX) === 0) return;
+    if (Math.sign(x) + Math.sign(this._direction.x) === 0) return;
 
-    this._directionX = x;
-    this._directionY = 0;
+    this._direction.set(x, 0);
   }
   private setDirectionY(y: number): void {
-    if (Math.sign(y) + Math.sign(this._directionY) === 0) return;
+    if (Math.sign(y) + Math.sign(this._direction.y) === 0) return;
 
-    this._directionX = 0;
-    this._directionY = y;
+    this._direction.set(0, y);
   }
 }

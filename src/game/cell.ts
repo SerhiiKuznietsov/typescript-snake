@@ -1,17 +1,19 @@
+import { Vector2 } from "./geometry/vector2";
+
 export class Cell {
-  public x: number;
-  public y: number;
   public cellSize: number;
   private entity: any;
   private xDistances: number;
   private yDistances: number;
+  private _position: Vector2;
+  public readonly position: Vector2;
 
-  constructor(x: number, y: number, cellSize: number) {
-    this.x = x;
-    this.y = y;
+  constructor(vector: Vector2, cellSize: number) {
+    this._position = vector;
+    this.position = vector;
     this.cellSize = cellSize;
-    this.xDistances = this.x * this.cellSize;
-    this.yDistances = this.y * this.cellSize;
+    this.xDistances = vector.x * this.cellSize;
+    this.yDistances = vector.y * this.cellSize;
     this.entity = undefined;
   }
 
@@ -34,4 +36,5 @@ export class Cell {
   public clearEntity(): void {
     this.entity = undefined;
   }
+
 }

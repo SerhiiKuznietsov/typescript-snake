@@ -20,15 +20,21 @@ export class Game {
     "click",
     this.restart.bind(this)
   );
-  private _levelSelect = new KeyControl(
+  private _levelSelect = new KeyControl<Event>(
     document.querySelector(".level__list"),
     "change",
-    this.changeLevelHandler.bind(this)
+    (e: Event) => {
+      const { value } = <HTMLSelectElement>e.target;
+
+      this._levelMode.use(value);
+
+      this.restart();
+    }
   );
   private _pauseControl = new KeyControl<KeyboardEvent>(
     document,
     "keydown",
-    (e) => {
+    (e: KeyboardEvent) => {
       if (e.keyCode !== 32) return;
       this.pause();
     }
@@ -40,10 +46,10 @@ export class Game {
   private _board = new Board(".game__body", "gameBoard", this._config);
   public _map = new MapCells(this._config);
   private _levelMode = new LevelMode();
-  private _unitManager = new UnitManager(this);
+  private _unitManager = new UnitManager(this._map);
 
   private update(): void {
-    this._unitManager.moveEntity();
+    this._unitManager.update();
   }
 
   private display(): void {
@@ -97,17 +103,10 @@ export class Game {
     }
   }
 
-  private changeLevelHandler(e: Event) {
-    this.restart();
-  }
-
   public start(): Game {
-    // const value = this._levelSelect.getValue();
-    const value = "easy";
-    this._levelMode.use(value);
-    this._levelMode.getLevelInitHandler()(this._map, this._unitManager);
+    this._config = this._levelMode.getConfig();
     this._map.init();
-    this._unitManager.init();
+    this._unitManager.init(this._config);
     this._loop.start();
 
     gameStateObserver.notify(GameAction.toStart);

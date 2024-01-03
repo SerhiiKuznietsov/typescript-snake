@@ -1,9 +1,9 @@
-import { Game } from './game';
-import { Unit } from './unit';
+import { MapCells } from "./map-cells";
+import { Unit } from "./unit";
 
 export class Food extends Unit {
-  constructor(game: Game) {
-    super(game, 'red', '#FF0059');
+  constructor(map: MapCells) {
+    super(map, "red", "#FF0059");
   }
 
   takeDamage() {
@@ -11,11 +11,11 @@ export class Food extends Unit {
   }
 
   death() {
-    this.getBody().forEach(bodyCell => {
+    this.getBody().forEach((bodyCell) => {
       bodyCell.clearEntity();
     });
 
     this.clearBody();
-    this.setHead(this._game._map.getRandomCell());
-  };
+    this.setHead(this._map.getRandomCell());
+  }
 }
