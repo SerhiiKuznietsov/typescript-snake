@@ -9,6 +9,7 @@ export const buildDevServer = (env: EnvVariables): DevServerConfiguration => {
     },
     open: env.isDev,
     port: env.port,
-    // hot: true,
+    hot: true,
+    liveReload: true,
   };
 };
