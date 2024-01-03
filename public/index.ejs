@@ -6,6 +6,20 @@
   <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 <body>
-  <div id="root"></div>
+  <div class="game">
+    <div class="game__header">
+      <div class="game__level level">
+        <select class="level__list">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+          <option value="impossible">Impossible</option>
+        </select>
+      </div>
+      <div class="score__text">0</div>
+      <button class="reset__btn">Reset</button>
+    </div>
+    <div class="game__body"></div>
+  </div>
 </body>
 </html>

@@ -20,6 +20,7 @@ body {
 	color: #fff;
 	font: 100%/1.5 sans-serif;
 	overflow: hidden;
+
 }
 
 .game {
@@ -76,4 +77,5 @@ body {
 
 canvas {
 	margin: 0 auto;
+	background-color: #fff;
 }
