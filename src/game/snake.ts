@@ -3,7 +3,9 @@ import { Direction } from "./direction";
 import { Unit } from "./unit";
 import { gameStateObserver } from "./observable/gameState";
 import { GameAction } from "./stateControllers/type/type";
-import { MapCells } from "./map-cells";
+import { Tail } from "./tail";
+import { Vector2 } from "./geometry/vector2";
+import { Cube } from "./geometry/cube";
 
 const getSnakeDirection = () => {
   const snakeDirection = new Direction();
@@ -24,26 +26,38 @@ const getSnakeDirection = () => {
 export class Snake extends Unit {
   private _moveDirection = getSnakeDirection();
 
-  constructor(map: MapCells) {
-    super(map, "lightgreen", "#60DA81", "black");
+  constructor(size: number) {
+    super("lightgreen", "#60DA81", "black", size);
   }
 
   move() {
-    const [x, y] = this._moveDirection.calcDirection(this.getHead());
-    const cell = this._map.getCell(x, y);
+    // this._body.forEach((tail, i) => {
+    //   const prevTail = this._body[i + 1];
 
-    if (cell.isEmpty()) {
-      this.removeTail()?.clearEntity();
-    } else {
-      const entity = cell.getEntity();
+    //   if (!prevTail) return;
 
-      if (entity instanceof Snake) {
-        gameStateObserver.notify(GameAction.toLose);
-      } else {
-        entity.takeDamage();
-      }
-    }
+    //   prevTail.position.set(tail.position.x, tail.position.y);
+    // });
 
-    this.setHead(cell);
+    const tail = this.getHead();
+
+    const [x, y] = this._moveDirection.calcDirection(tail.position);
+    tail.position.set(x, y);
+
+    // const cell = this._map.getCell(x, y);
+
+    // if (cell.isEmpty()) {
+    //   this.removeTail()?.clearEntity();
+    // } else {
+    //   const entity = cell.getEntity();
+
+    //   if (entity instanceof Snake) {
+    //     gameStateObserver.notify(GameAction.toLose);
+    //   } else {
+    //     entity.takeDamage();
+    //   }
+    // }
+
+    // this.setHead(cell);
   }
 }

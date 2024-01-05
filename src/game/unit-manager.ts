@@ -1,40 +1,37 @@
 import { Unit } from "./unit";
 import { GameConfig } from "./config/game";
-import { MapCells } from "./map-cells";
+import { Vector2 } from "./geometry/vector2";
 
 export class UnitManager {
-  private _map: MapCells;
   private _list: Unit[] = [];
+  private _gridSize: number;
 
-  constructor(map: MapCells) {
-    this._map = map;
-  }
-
-  public update() {
-    this._list.forEach((entity) => entity?.move());
+  constructor(gridSize: number) {
+    this._gridSize = gridSize;
   }
 
   public init(config: GameConfig) {
-    console.log(config);
-
+    // TODO - transfer only units
     config.units.forEach(([unit, count]) => {
       for (let i = 0; i < count; i++) {
-        this._list.push(new unit(this._map));
+        this._list.push(new unit(this._gridSize));
       }
     });
 
     this._list.forEach((entity) => {
-      entity.init(this._map.getRandomCell());
+      entity.init(new Vector2(0, 0));
     });
+  }
+
+  public update() {
+    this._list.forEach((entity) => entity.move());
+  }
+
+  public draw(ctx: CanvasRenderingContext2D) {
+    this._list.forEach((entity) => entity.draw(ctx));
   }
 
   public clear() {
     this._list = [];
-  }
-
-  public draw(ctx: CanvasRenderingContext2D) {
-    this._list.forEach((entity) => {
-      entity.draw(ctx);
-    });
   }
 }

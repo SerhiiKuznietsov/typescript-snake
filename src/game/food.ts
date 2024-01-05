@@ -1,9 +1,9 @@
-import { MapCells } from "./map-cells";
+import { Vector2 } from "./geometry/vector2";
 import { Unit } from "./unit";
 
 export class Food extends Unit {
-  constructor(map: MapCells) {
-    super(map, "red", "#FF0059");
+  constructor(size: number) {
+    super("red", "#FF0059", "black", size);
   }
 
   takeDamage() {
@@ -11,11 +11,9 @@ export class Food extends Unit {
   }
 
   death() {
-    this.getBody().forEach((bodyCell) => {
-      bodyCell.clearEntity();
-    });
+    this.clearBody();
 
     this.clearBody();
-    this.setHead(this._map.getRandomCell());
+    this.init(new Vector2(8, 8));
   }
 }

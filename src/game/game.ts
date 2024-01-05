@@ -1,5 +1,4 @@
 import { KeyControl } from "./key-control";
-import { MapCells } from "./map-cells";
 import { Loop } from "./loop/loop";
 import { GameStateController } from "./stateControllers/gameStateController";
 import { gameObserver } from "./observable/gameEvent";
@@ -44,9 +43,8 @@ export class Game {
   private _stateController = new GameStateController();
   private _loop = new Loop(this.update.bind(this), this.display.bind(this));
   private _board = new Board(".game__body", "gameBoard", this._config);
-  public _map = new MapCells(this._config);
   private _levelMode = new LevelMode();
-  private _unitManager = new UnitManager(this._map);
+  private _unitManager = new UnitManager(this._config.gridSize);
 
   private update(): void {
     this._unitManager.update();
@@ -54,7 +52,6 @@ export class Game {
 
   private display(): void {
     this._board.clear();
-    this._map.draw();
     this._unitManager.draw(this._board._context);
   }
 
@@ -105,7 +102,6 @@ export class Game {
 
   public start(): Game {
     this._config = this._levelMode.getConfig();
-    this._map.init();
     this._unitManager.init(this._config);
     this._loop.start();
 
@@ -116,8 +112,6 @@ export class Game {
   private clear(): void {
     this._board.clear();
     this._loop.stop();
-    this._map.clear();
-    this._map.draw();
     this._unitManager.clear();
   }
 

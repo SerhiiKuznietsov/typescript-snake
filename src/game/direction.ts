@@ -1,4 +1,3 @@
-import { Cell } from "./cell";
 import { Vector2 } from "./geometry/vector2";
 
 export class Direction {
@@ -45,11 +44,8 @@ export class Direction {
     }
   }
 
-  public calcDirection(cell: Cell): [number, number] {
-    return [
-      cell.position.x + this._direction.x,
-      cell.position.y + this._direction.y,
-    ];
+  public calcDirection(vector: Vector2): [number, number] {
+    return [vector.x + this._direction.x, vector.y + this._direction.y];
   }
 
   private setDirectionX(x: number): void {

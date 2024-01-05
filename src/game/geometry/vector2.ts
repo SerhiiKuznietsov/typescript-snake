@@ -31,4 +31,8 @@ export class Vector2 {
   public isEqual(vector: Vector2) {
     return vector.x === this._x && vector.y === this._y;
   }
+
+  public copy(): Vector2 {
+    return new Vector2(this._x, this._y);
+  }
 }

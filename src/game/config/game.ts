@@ -9,6 +9,6 @@ export class GameConfig {
   public readonly boardHeight: number = this.yGridsCount * this.gridSize;
   public readonly units: Array<[any, number]> = [
     [Snake, 1],
-    [Food, 3],
+    // [Food, 3],
   ];
 }

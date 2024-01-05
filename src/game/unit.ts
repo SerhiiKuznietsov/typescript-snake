@@ -1,38 +1,34 @@
-import { Cell } from "./cell";
-import { MapCells } from "./map-cells";
+import { Cube } from "./geometry/cube";
+import { Vector2 } from "./geometry/vector2";
+import { Tail } from "./tail";
 
 export class Unit {
-  public _map: MapCells;
-  private _headColor: string;
-  private _bodyColor: string;
-  private _borderColor: string;
-  private _body: Cell[] = [];
+  protected _headColor: string;
+  protected _bodyColor: string;
+  protected _borderColor: string;
+  protected _body: Tail[] = [];
+  protected _size: number;
 
   constructor(
-    map: MapCells,
     headColor: string,
     bodyColor: string,
-    borderColor: string = "black"
+    borderColor: string = "black",
+    size: number
   ) {
-    this._map = map;
     this._headColor = headColor;
     this._bodyColor = bodyColor;
     this._borderColor = borderColor;
+    this._size = size;
   }
 
-  protected getHead(): Cell {
-    const cell = this._body.at(0);
+  protected getHead(): Tail {
+    const tail = this._body.at(0);
 
-    if (!cell) {
+    if (!tail) {
       throw new Error("Unit body is empty");
     }
 
-    return cell;
-  }
-
-  protected setHead(cell: Cell) {
-    cell.setEntity(this);
-    this._body.unshift(cell);
+    return tail;
   }
 
   protected getBody() {
@@ -47,8 +43,8 @@ export class Unit {
     this._body = [];
   }
 
-  public init(cell: Cell) {
-    this.setHead(cell);
+  public init(vector2: Vector2) {
+    this._body = [new Tail(vector2, new Cube(this._size), this._headColor)];
   }
 
   public move() {}
@@ -62,18 +58,32 @@ export class Unit {
   }
 
   public draw(ctx: CanvasRenderingContext2D) {
-    const { _headColor, _bodyColor, _borderColor } = this;
-    if (_borderColor) ctx.strokeStyle = _borderColor;
+    // const { _headColor, _bodyColor, _borderColor } = this;
+    // if (_borderColor) ctx.strokeStyle = _borderColor;
 
-    this.getBody().forEach((cell, i) => {
-      if (i === 0) {
-        ctx.fillStyle = _headColor;
-      } else {
-        ctx.fillStyle = _bodyColor || _headColor;
-      }
+    // this._body.forEach((tail, i) => {
+    //   if (i === 0) {
+    //     ctx.fillStyle = _headColor;
+    //   } else {
+    //     ctx.fillStyle = _bodyColor || _headColor;
+    //   }
 
-      ctx.fillRect(...cell.getSize());
-      ctx.strokeRect(...cell.getSize());
+    //   ctx.fillRect(
+    //     tail.position.x * this._size,
+    //     tail.position.y * this._size,
+    //     this._size,
+    //     this._size
+    //   );
+    //   ctx.strokeRect(
+    //     tail.position.x * this._size,
+    //     tail.position.y * this._size,
+    //     this._size,
+    //     this._size
+    //   );
+    // });
+
+    this._body.forEach((tail) => {
+      tail.draw(ctx);
     });
   }
 }
