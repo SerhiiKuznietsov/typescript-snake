@@ -4,6 +4,7 @@ import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import webpack from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { EnvVariables, PluginConfiguration } from "./types/types";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 export const buildPlugins = (env: EnvVariables): PluginConfiguration => {
   const plugins: PluginConfiguration = [
@@ -20,6 +21,11 @@ export const buildPlugins = (env: EnvVariables): PluginConfiguration => {
       // TODO - logo: path.basename(globalEnv.app.logo),
     }),
   ];
+
+  if (!env.isDev) {
+    plugins.push(new MiniCssExtractPlugin());
+
+  }
 
   if (env.isAnalyzer) {
     plugins.push(new BundleAnalyzerPlugin());

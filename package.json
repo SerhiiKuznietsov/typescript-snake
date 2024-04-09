@@ -4,9 +4,10 @@
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
+    "start": "cross-env NODE_ENV=production ts-node server.ts",
+    "start:dev": "cross-env NODE_ENV=development ts-node server.ts",
     "build": "cross-env NODE_ENV=production webpack",
     "build:dev": "cross-env NODE_ENV=development webpack",
-    "start:dev": "cross-env NODE_ENV=development ts-node server.ts",
     "typecheck": "tsc"
   },
   "keywords": [],
