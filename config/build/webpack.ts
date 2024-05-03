@@ -13,7 +13,7 @@ export const buildWebpack = (env: EnvVariables): WebpackConfiguration => {
       filename: "[name].[contenthash].js",
     },
     devServer: buildDevServer(env),
-    devtool: env.isDev ? "inline-source-map" : false,
+    devtool: env.isDev ? "source-map" : false,
     resolve: buildResolve(),
     module: {
       rules: buildLoaders(env),

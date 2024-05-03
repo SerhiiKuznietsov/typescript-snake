@@ -7,7 +7,6 @@ export const buildDevServer = (env: EnvVariables): DevServerConfiguration => {
     devMiddleware: {
       writeToDisk: true,
     },
-    open: env.isDev,
     port: env.port,
     hot: true,
     liveReload: true,
