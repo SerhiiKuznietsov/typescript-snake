@@ -1,7 +1,5 @@
 import { Game } from './game/game';
 
-import "./css/index.css"
+import './css/index.css';
 
-new Game()
-  .init()
-  .start();
+new Game().init().start();

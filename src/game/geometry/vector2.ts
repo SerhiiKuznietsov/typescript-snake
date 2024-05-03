@@ -14,6 +14,14 @@ export class Vector2 {
     this._y = y;
   }
 
+  public setX(x: number) {
+    this._x = x;
+  }
+
+  public setY(y: number) {
+    this._y = y;
+  }
+
   public set(x: number, y: number): Vector2 {
     this._x = x;
     this._y = y;
@@ -21,7 +29,19 @@ export class Vector2 {
     return this;
   }
 
-  public add(vector: Vector2): Vector2 {
+  public setVector(vector: Vector2) {
+    this._x = vector.x;
+    this._y = vector._y;
+  }
+
+  public add(x: number, y: number): Vector2 {
+    this._x += x;
+    this._y += y;
+
+    return this;
+  }
+
+  public addVector(vector: Vector2): Vector2 {
     this._x += vector.x;
     this._y += vector.y;
 

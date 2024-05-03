@@ -1,4 +1,4 @@
-import { GameConfig } from "./config/game";
+import { GameConfig } from './config/game';
 
 export class Board {
   private _parentElement: Element;
@@ -24,9 +24,9 @@ export class Board {
     this._width = config.boardWidth;
     this._height = config.boardHeight;
 
-    this._element = <HTMLCanvasElement>document.createElement("canvas");
+    this._element = <HTMLCanvasElement>document.createElement('canvas');
     this._element.id = selector;
-    this._context = this._element.getContext("2d") as CanvasRenderingContext2D;
+    this._context = this._element.getContext('2d') as CanvasRenderingContext2D;
   }
 
   public init(): Board {
@@ -40,20 +40,5 @@ export class Board {
 
   public clear(): void {
     this._context.clearRect(0, 0, this._width, this._height);
-  }
-
-  public draw(x: number, y: number, width: number, height: number): void {
-    this._context.strokeStyle = "#E9E9ED";
-    this._context.lineWidth = 0.004;
-    this._context.fillStyle = "rgba(0, 0, 0, 0.15)";
-    this._context.strokeRect(x, y, width, height);
-    this._context.fillRect(x, y, width, height);
-  }
-
-  public fillText(text: string, color: string, font: string): void {
-    this._context.font = font;
-    this._context.fillStyle = color;
-    this._context.textAlign = "center";
-    this._context.fillText(text, this._width / 2, this._height / 2);
   }
 }
