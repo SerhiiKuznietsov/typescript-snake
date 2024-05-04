@@ -14,10 +14,12 @@ export class RenderSystem extends System {
 
   public update(): void {
     this._entities.forEach((entity) => {
+      if (!entity.has(Render) || !entity.has(Location)) return;
+
       const render = entity.get(Render);
       const location = entity.get(Location);
 
-      if (!entity.has(Health) || !entity.get(Health).isAlive) return;
+      if (!entity.has(Health) || !entity.get(Health)) return;
 
       render.draw(this._ctx, location.position);
 
