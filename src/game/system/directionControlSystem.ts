@@ -12,11 +12,8 @@ export class DirectionControlSystem extends System {
   public update(): void {
     this._entities.forEach((entity) => {
       const control = entity.get(DirectionControl);
-      const movement = entity.get(Movement);
 
-      if (!control || !movement) return;
-
-      movement.velocity.setVector(control.direction.getCopy());
+      control.changed = false;
     });
   }
 
@@ -30,15 +27,16 @@ export class DirectionControlSystem extends System {
       .addHandler('ArrowDown', this.setControl)
       .addHandler('KeyA', this.setControl)
       .addHandler('ArrowLeft', this.setControl);
+    // TODO - remove chanes and add the ability to pass an array
   }
 
-  private setControl = (e: KeyboardEvent): void => {
+  private setControl = ({ code }: KeyboardEvent): void => {
     this._entities.forEach((entity) => {
       const control = entity.get(DirectionControl);
 
-      if (!control) return;
+      if (control.changed) return;
 
-      const code = e.code;
+      control.changed = true;
 
       if (['KeyW', 'ArrowUp'].includes(code) && control.direction.y !== 1) {
         control.direction.moveY(-1);
