@@ -17,10 +17,7 @@ export class HealthSystem extends System {
     health.current -= takeDamage.damageReceived;
   }
 
-  private respawnLocation(
-    entity: Entity,
-    entities: Entity[]
-  ): { x: number; y: number } {
+  private respawnLocation(entities: Entity[]): { x: number; y: number } {
     let attempts = 0;
     const maxAttempts = 1000;
 
@@ -43,7 +40,7 @@ export class HealthSystem extends System {
     entities: Entity[]
   ): boolean {
     return entities.some((entity) => {
-      if (!entity.get(Location)) return false;
+      if (!entity.has(Location)) return false;
 
       const location = entity.get(Location);
 
@@ -57,14 +54,18 @@ export class HealthSystem extends System {
 
       this.takeDamageIfExists(entity, health);
 
-      if (!entity.has(Respawn) || !entity.get(Respawn).readyToRespawn || !entity.has(Location)) return;
+      if (!entity.has(Respawn) || !entity.get(Respawn).readyToRespawn) {
+        return;
+      }
+
+      health.current = health.maxHealth;
+
+      if (!entity.has(Location)) return;
 
       const location = entity.get(Location);
 
-      const { x, y } = this.respawnLocation(entity, entities);
+      const { x, y } = this.respawnLocation(entities);
       location.position.set(x, y);
-
-      health.current = health.maxHealth;
     });
   }
 }
