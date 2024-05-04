@@ -32,6 +32,17 @@ import { CollisionSystem } from './system/collisionSystem';
 import { Body } from './component/body';
 import { RespawnSystem } from './system/respawnSystem';
 import { Respawn } from './component/respawn';
+import { CollisionOpponent } from './component/collisionOpponent';
+import { AttackSystem } from './system/attackSystem';
+import { TakeDamage } from './component/takeDamage';
+
+// TODO - need EntityManager
+// export class EntityManager {
+//   public getEntity(name: string) {
+//     new Entity(name);
+//   }
+// }
+
 export class Game {
   private _resetBtn = new KeyControl(
     document.querySelector('.reset__btn'),
@@ -55,6 +66,7 @@ export class Game {
   private _teleportSystem = new TeleportSystem(this._config);
   private _collisionSystem = new CollisionSystem();
   private _respawnSystem = new RespawnSystem();
+  private _attackSystem = new AttackSystem();
   private _entities: Entity[] = [];
 
   private update(deltaTime: number): void {
@@ -62,6 +74,7 @@ export class Game {
     this._movementSystem.update();
     this._teleportSystem.update();
     this._collisionSystem.update();
+    this._attackSystem.update();
     this._healthSystem.update();
 
     this._respawnSystem.update(this._entities, deltaTime);
@@ -92,14 +105,25 @@ export class Game {
     const player = new Entity('player');
 
     player
-      .add(new Location(player, new Vector2(0, 5)))
-      .add(new Body(player))
-      .add(new Movement(player, new Vector2(10, 10)))
-      .add(new Render(player, new Square(size, new Color('lightgreen'))))
-      .add(new Health(player, false))
-      .add(new Attack(player))
-      .add(new DirectionControl(player, new Direction(new Vector2(1, 0))))
-      .add(new Teleport(player));
+      .add(new Location(new Vector2(0, 5)))
+      .add(new Body())
+      .add(new Movement(new Vector2(10, 10)))
+      .add(new Render(new Square(size, new Color('lightgreen'))))
+      .add(new Health())
+      .add(new Attack())
+      .add(new DirectionControl(new Direction(new Vector2(1, 0))))
+      .add(new Teleport())
+      .add(new CollisionOpponent());
+
+    // TODO - maybe we can rework the body segment logic
+    // const tail = new Entity('tail');
+
+    // tail
+    // .add(new Target(player))
+    // .add(new Location(new Vector2(0, 5)))
+    // .add(new Movement(new Vector2(10, 10)))
+    // .add(new Render(new Square(size, new Color('lightgreen'))))
+    // .add(new Health(false))
 
     this._directionControlSystem.addEntity(player);
     this._healthSystem.addEntity(player);
@@ -107,18 +131,21 @@ export class Game {
     this._teleportSystem.addEntity(player);
     this._renderSystem.addEntity(player);
     this._collisionSystem.addEntity(player);
+    this._attackSystem.addEntity(player);
 
     const food = new Entity('food');
 
     food
-      .add(new Location(food, new Vector2(5, 5)))
-      .add(new Render(food, new Square(size, new Color('red'))))
-      .add(new Health(food, true))
-      .add(new Respawn(food, 0.3));
+      .add(new Location(new Vector2(5, 5)))
+      .add(new Render(new Square(size, new Color('red'))))
+      .add(new Health())
+      .add(new Respawn(0.3))
+      .add(new TakeDamage());
 
     this._healthSystem.addEntity(food);
     this._renderSystem.addEntity(food);
     this._collisionSystem.addEntity(food);
+    this._attackSystem.addEntity(food);
 
     this._entities.push(player, food);
 

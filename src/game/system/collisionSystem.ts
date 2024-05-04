@@ -1,11 +1,35 @@
-import { Attack } from '../component/attack';
-import { Body } from '../component/body';
+import { CollisionOpponent } from '../component/collisionOpponent';
 import { Health } from '../component/health';
 import { Location } from '../component/location';
+import { Entity } from '../entity/entity';
 import { System } from './system';
 
 export class CollisionSystem extends System {
+  private clearCollisionOpponentIfExists(entity: Entity) {
+    if (!entity.has(CollisionOpponent)) return;
+
+    const collisionOpponent = entity.get(CollisionOpponent);
+
+    collisionOpponent.entities = [];
+    collisionOpponent.isActive = false;
+  }
+
+  private addToCollisionOpponentIfExists(entityA: Entity, entityB: Entity) {
+    if (!entityA.has(CollisionOpponent)) return;
+
+    const collisionOpponent = entityA.get(CollisionOpponent);
+
+    collisionOpponent.entities.push(entityB);
+    collisionOpponent.isActive = true;
+  }
+
   public update(): void {
+    this._entities.forEach((entity) => {
+      if (!entity.has(Location)) return;
+
+      this.clearCollisionOpponentIfExists(entity);
+    });
+
     const collisionEntities = this._entities.filter(
       (e) => e.has(Location) && e.has(Health) && e.get(Health).isAlive
     );
@@ -20,15 +44,8 @@ export class CollisionSystem extends System {
 
         if (!locationA.position.isEqual(locationB.position)) continue;
 
-        if (entityA.has(Attack)) {
-          entityA.get(Body).grow(locationA.position.copy());
-          entityB.get(Health).isAlive = false;
-        }
-
-        if (entityB.has(Attack)) {
-          entityB.get(Body).grow(locationB.position.copy());
-          entityA.get(Health).isAlive = false;
-        }
+        this.addToCollisionOpponentIfExists(entityA, entityB);
+        this.addToCollisionOpponentIfExists(entityB, entityA);
       }
     }
   }

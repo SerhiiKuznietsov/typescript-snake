@@ -26,6 +26,7 @@ export class RespawnSystem {
       if (respawn.remainingTime > 0) return;
 
       health.isAlive = true;
+      health.current = health.maxHealth;
       const { x, y } = this.respawnLocation(entity, entities);
       location.position.set(x, y);
 
