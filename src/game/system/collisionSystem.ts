@@ -31,7 +31,7 @@ export class CollisionSystem extends System {
     });
 
     const collisionEntities = this._entities.filter(
-      (e) => e.has(Location) && e.has(Health) && e.get(Health).isAlive
+      (e) => e.has(Location) && e.has(Health) && e.get(Health).current
     );
 
     for (let i = 0; i < collisionEntities.length; i++) {

@@ -7,7 +7,7 @@ export class HealthSystem extends System {
     this._entities.forEach((entity) => {
       const health = entity.get(Health);
 
-      if (!health.isAlive) return;
+      if (!health.current) return;
 
       if (!entity.has(TakeDamage)) return;
 
@@ -16,10 +16,6 @@ export class HealthSystem extends System {
       if (!takeDamage.damageReceived) return;
 
       health.current -= takeDamage.damageReceived;
-
-      if (health.current) return;
-
-      entity.get(Health).isAlive = false;
     });
   }
 }

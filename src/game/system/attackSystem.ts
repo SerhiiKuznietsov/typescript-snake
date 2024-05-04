@@ -25,7 +25,7 @@ export class AttackSystem extends System {
         !entity.has(CollisionOpponent) ||
         !entity.get(CollisionOpponent).isActive ||
         !entity.has(Health) ||
-        !entity.get(Health).isAlive
+        !entity.get(Health).current
       ) {
         return;
       }
