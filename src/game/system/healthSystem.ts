@@ -1,21 +1,70 @@
 import { Health } from '../component/health';
+import { Location } from '../component/location';
+import { Respawn } from '../component/respawn';
 import { TakeDamage } from '../component/takeDamage';
+import { Entity } from '../entity/entity';
+import { range } from '../utils/random';
 import { System } from './system';
 
 export class HealthSystem extends System {
-  public update(): void {
+  private takeDamageIfExists(entity: Entity, health: Health) {
+    if (!health.current || !entity.has(TakeDamage)) return;
+
+    const takeDamage = entity.get(TakeDamage);
+
+    if (!takeDamage.damageReceived) return;
+
+    health.current -= takeDamage.damageReceived;
+  }
+
+  private respawnLocation(
+    entity: Entity,
+    entities: Entity[]
+  ): { x: number; y: number } {
+    let attempts = 0;
+    const maxAttempts = 1000;
+
+    while (attempts < maxAttempts) {
+      const x = range(0, 19);
+      const y = range(0, 19);
+
+      if (!this.isPositionOccupied(x, y, entities)) {
+        return { x, y };
+      }
+      attempts++;
+    }
+
+    throw new Error('No free positions available');
+  }
+
+  private isPositionOccupied(
+    x: number,
+    y: number,
+    entities: Entity[]
+  ): boolean {
+    return entities.some((entity) => {
+      if (!entity.get(Location)) return false;
+
+      const location = entity.get(Location);
+
+      return location.position.x === x && location.position.y === y;
+    });
+  }
+
+  update(entities: Entity[]): void {
     this._entities.forEach((entity) => {
       const health = entity.get(Health);
 
-      if (!health.current) return;
+      this.takeDamageIfExists(entity, health);
 
-      if (!entity.has(TakeDamage)) return;
+      if (!entity.has(Respawn) || !entity.get(Respawn).readyToRespawn || !entity.has(Location)) return;
 
-      const takeDamage = entity.get(TakeDamage);
+      const location = entity.get(Location);
 
-      if (!takeDamage.damageReceived) return;
+      const { x, y } = this.respawnLocation(entity, entities);
+      location.position.set(x, y);
 
-      health.current -= takeDamage.damageReceived;
+      health.current = health.maxHealth;
     });
   }
 }

@@ -75,9 +75,9 @@ export class Game {
     this._teleportSystem.update();
     this._collisionSystem.update();
     this._attackSystem.update();
-    this._healthSystem.update();
+    this._healthSystem.update(this._entities);
 
-    this._respawnSystem.update(this._entities, deltaTime);
+    this._respawnSystem.update(deltaTime);
 
     this._board.clear();
     this._renderSystem.update();
@@ -146,6 +146,7 @@ export class Game {
     this._renderSystem.addEntity(food);
     this._collisionSystem.addEntity(food);
     this._attackSystem.addEntity(food);
+    this._respawnSystem.addEntity(food);
 
     this._entities.push(player, food);
 

@@ -1,69 +1,40 @@
 import { Health } from '../component/health';
-import { Location } from '../component/location';
 import { Respawn } from '../component/respawn';
-import { Entity } from '../entity/entity';
-import { range } from '../utils/random';
+import { System } from './system';
 
-export class RespawnSystem {
-  update(entities: Entity[], deltaTime: number): void {
-    entities.forEach((entity) => {
-      if (!entity.has(Health) || !entity.has(Respawn) || !entity.has(Location))
-        return;
+export class RespawnSystem extends System {
+  private clearRespawnIfIfExists(health: Health, respawn: Respawn) {
+    if (health.current && respawn.readyToRespawn) {
+      respawn.readyToRespawn = false;
+    }
+  }
+
+  public update(deltaTime: number): void {
+    this._entities.forEach((entity) => {
+      if (!entity.has(Health) || !entity.has(Respawn)) return;
 
       const health = entity.get(Health);
       const respawn = entity.get(Respawn);
-      const location = entity.get(Location);
 
-      if (!health.current && !respawn.processing) {
-        respawn.processing = true;
+      this.clearRespawnIfIfExists(health, respawn);
+
+      if (
+        !health.current &&
+        !respawn.remainingTime &&
+        !respawn.readyToRespawn
+      ) {
         respawn.remainingTime = respawn.respawnTime;
       }
 
-      if (!respawn.processing) return;
+      if (respawn.remainingTime < 1) return;
 
       respawn.remainingTime -= deltaTime;
 
       if (respawn.remainingTime > 0) return;
 
-      health.current = health.maxHealth;
-      const { x, y } = this.respawnLocation(entity, entities);
-      location.position.set(x, y);
+      respawn.remainingTime = 0;
 
-      respawn.processing = false;
-    });
-  }
-
-  private respawnLocation(
-    entity: Entity,
-    entities: Entity[]
-  ): { x: number; y: number } {
-    let attempts = 0;
-    const maxAttempts = 1000;
-
-    while (attempts < maxAttempts) {
-      const x = range(0, 19);
-      const y = range(0, 19);
-
-      if (!this.isPositionOccupied(x, y, entities)) {
-        return { x, y };
-      }
-      attempts++;
-    }
-
-    throw new Error('No free positions available');
-  }
-
-  private isPositionOccupied(
-    x: number,
-    y: number,
-    entities: Entity[]
-  ): boolean {
-    return entities.some((entity) => {
-      if (!entity.get(Location)) return false;
-
-      const location = entity.get(Location);
-
-      return location.position.x === x && location.position.y === y;
+      respawn.readyToRespawn = true;
     });
   }
 }

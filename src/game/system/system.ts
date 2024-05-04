@@ -15,5 +15,5 @@ export abstract class System {
     this._entities.splice(index, 1);
   }
 
-  abstract update(deltaTime?: number): void;
+  abstract update(...args: any[]): void;
 }
