@@ -19,7 +19,7 @@ export class RenderSystem extends System {
       const render = entity.get(Render);
       const location = entity.get(Location);
 
-      if (!entity.has(Health) || !entity.get(Health)) return;
+      if (!entity.has(Health) || !entity.get(Health).current) return;
 
       render.draw(this._ctx, location.position);
 
