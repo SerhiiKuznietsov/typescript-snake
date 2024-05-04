@@ -1,4 +1,4 @@
-import path from "node:path";
+import path from 'node:path';
 
 interface IPaths {
   entry: string;
@@ -6,12 +6,12 @@ interface IPaths {
   template: string;
 }
 
-const rootPath: string = path.resolve(".");
-const sourcePath: string = path.join(rootPath, "src");
-const entryPath: string = path.join(sourcePath, "index.ts");
-const outputPath: string = path.join(rootPath, "dist");
-const publicFilePath: string = path.join(rootPath, "public");
-const templatePath: string = path.join(publicFilePath, "index.ejs");
+const rootPath: string = path.resolve('.');
+const sourcePath: string = path.join(rootPath, 'src');
+const entryPath: string = path.join(sourcePath, 'index.ts');
+const outputPath: string = path.join(rootPath, 'dist');
+const publicFilePath: string = path.join(rootPath, 'public');
+const templatePath: string = path.join(publicFilePath, 'index.ejs');
 
 const pathConfig: IPaths = {
   entry: entryPath,

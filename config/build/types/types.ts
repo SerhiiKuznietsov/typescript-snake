@@ -1,7 +1,7 @@
-import { Configuration, ModuleOptions } from "webpack";
-import type { Configuration as DevServerConf } from "webpack-dev-server";
+import { Configuration, ModuleOptions } from 'webpack';
+import type { Configuration as DevServerConf } from 'webpack-dev-server';
 
-export type Mode = "development" | "production";
+export type Mode = 'development' | 'production';
 
 interface IEnvPaths {
   entry: string;
@@ -19,7 +19,7 @@ export interface EnvVariables {
 }
 
 export type WebpackConfiguration = Configuration;
-export type PluginConfiguration = Configuration["plugins"];
-export type ResolveConfiguration = Configuration["resolve"];
-export type LoaderConfiguration = ModuleOptions["rules"];
+export type PluginConfiguration = Configuration['plugins'];
+export type ResolveConfiguration = Configuration['resolve'];
+export type LoaderConfiguration = ModuleOptions['rules'];
 export type DevServerConfiguration = DevServerConf | undefined;

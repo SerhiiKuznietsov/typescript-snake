@@ -1,30 +1,31 @@
-import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import { CleanWebpackPlugin } from "clean-webpack-plugin";
-import webpack from "webpack";
-import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
-import { EnvVariables, PluginConfiguration } from "./types/types";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import webpack from 'webpack';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import { EnvVariables, PluginConfiguration } from './types/types';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 export const buildPlugins = (env: EnvVariables): PluginConfiguration => {
   const plugins: PluginConfiguration = [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      filename: "index.html", // TODO - index.[contenthash].html
+      filename: 'index.html', // TODO - index.[contenthash].html
       template: env.paths.template,
       minify: {
         collapseWhitespace: true,
         minifyCSS: true,
         removeComments: true,
       },
-      title: env.isDev ? "Development" : "Snake game",
+      title: env.isDev ? 'Development' : 'Snake game',
       // TODO - logo: path.basename(globalEnv.app.logo),
     }),
   ];
 
+  //
+
   if (!env.isDev) {
     plugins.push(new MiniCssExtractPlugin());
-
   }
 
   if (env.isAnalyzer) {

@@ -1,4 +1,4 @@
-import { DevServerConfiguration, EnvVariables } from "./types/types";
+import { DevServerConfiguration, EnvVariables } from './types/types';
 
 export const buildDevServer = (env: EnvVariables): DevServerConfiguration => {
   if (env.isProd) return;
@@ -8,7 +8,6 @@ export const buildDevServer = (env: EnvVariables): DevServerConfiguration => {
       writeToDisk: true,
     },
     port: env.port,
-    hot: true,
     liveReload: true,
   };
 };
