@@ -33,4 +33,16 @@ export class Entity {
 
     return this;
   }
+
+  public remove<T extends Component>(componentClass: {
+    new (...args: any[]): T;
+  }): void {
+    if (!this.has(componentClass)) {
+      throw new Error(
+        `component class with name "${componentClass.name}" not found`
+      );
+    }
+
+    this._components.delete(componentClass.name);
+  }
 }
