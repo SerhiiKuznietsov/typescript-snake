@@ -1,11 +1,7 @@
-import { Entity } from '../entity/entity';
-import { Component } from './component';
-
-export class Teleport extends Component {
+export class Teleport {
   public isActive: boolean;
 
-  constructor(entity: Entity, isActive: boolean = true) {
-    super(entity);
+  constructor(isActive: boolean = true) {
     this.isActive = isActive;
   }
 }

@@ -1,13 +1,9 @@
-import { Entity } from '../entity/entity';
-import { Component } from './component';
-
-export class Respawn extends Component {
+export class Respawn {
   public readonly respawnTime: number;
   public remainingTime: number = 0;
   public processing: boolean = false;
 
-  constructor(entity: Entity, respawnTime: number = 1) {
-    super(entity);
+  constructor(respawnTime: number = 1) {
     this.respawnTime = respawnTime * 1000;
   }
 }

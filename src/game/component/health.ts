@@ -1,12 +1,11 @@
-import { Entity } from '../entity/entity';
-import { Component } from './component';
-
-export class Health extends Component {
-  public readonly canRespawn: boolean;
+export class Health {
+  public readonly maxHealth: number;
+  public current: number;
   public isAlive: boolean = true;
 
-  constructor(entity: Entity, canRespawn: boolean) {
-    super(entity);
-    this.canRespawn = canRespawn;
+  constructor(maxHealth: number = 1) {
+    this.maxHealth = maxHealth;
+    this.current = maxHealth;
+    this.isAlive = !!maxHealth;
   }
 }

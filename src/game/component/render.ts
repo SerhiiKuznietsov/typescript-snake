@@ -1,13 +1,10 @@
-import { Entity } from '../entity/entity';
 import { Shape } from '../geometry/shape/shape';
 import { Vector2 } from '../geometry/vector2';
-import { Component } from './component';
 
-export class Render extends Component {
+export class Render {
   private _shape: Shape;
 
-  constructor(entity: Entity, shape: Shape) {
-    super(entity);
+  constructor(shape: Shape) {
     this._shape = shape;
   }
 

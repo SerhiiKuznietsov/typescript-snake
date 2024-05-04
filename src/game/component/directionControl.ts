@@ -1,12 +1,7 @@
-import { Entity } from '../entity/entity';
 import { Direction } from '../geometry/direction';
-import { Component } from './component';
 
-export class DirectionControl extends Component {
-  direction: Direction;
+export class DirectionControl {
+  public changed = false;
 
-  constructor(entity: Entity, vector: Direction) {
-    super(entity);
-    this.direction = vector;
-  }
+  constructor(public direction: Direction) {}
 }
