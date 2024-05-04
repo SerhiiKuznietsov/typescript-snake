@@ -3,7 +3,6 @@ export class KeyControl<E> {
   private _eventName: string;
   private _handler: (e: E) => void;
 
-
   constructor(element: any, eventName: string, handler: (e: E) => void) {
     if (!element) {
       throw new Error('Element is undefined');
@@ -12,7 +11,7 @@ export class KeyControl<E> {
     this._element = element;
     this._eventName = eventName;
     this._handler = handler;
-  };
+  }
 
   on() {
     this._element?.addEventListener(this._eventName, this._handler);

@@ -1,4 +1,4 @@
-import { ActionList } from "../type/type";
+import { ActionList } from '../type/type';
 
 export class State<S, A> {
   public readonly name: S;

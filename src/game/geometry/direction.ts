@@ -10,7 +10,6 @@ export class Direction {
     return this._vector.y;
   }
 
-
   constructor(vector: Vector2 = new Vector2(0, 0)) {
     this._vector = vector;
   }

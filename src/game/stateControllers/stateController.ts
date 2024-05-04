@@ -1,5 +1,5 @@
-import { State } from "./state/state";
-import { StateList } from "./type/type";
+import { State } from './state/state';
+import { StateList } from './type/type';
 
 export class StateController<S, A> {
   private _state = new Map<S, State<S, A>>();

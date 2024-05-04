@@ -95,14 +95,10 @@ export class Game {
       .add(new Location(player, new Vector2(0, 5)))
       .add(new Body(player))
       .add(new Movement(player, new Vector2(10, 10)))
-      .add(
-        new Render(player, new Square(size, new Color('lightgreen')))
-      )
+      .add(new Render(player, new Square(size, new Color('lightgreen'))))
       .add(new Health(player, false))
       .add(new Attack(player))
-      .add(
-        new DirectionControl(player, new Direction(new Vector2(1, 0)))
-      )
+      .add(new DirectionControl(player, new Direction(new Vector2(1, 0))))
       .add(new Teleport(player));
 
     this._directionControlSystem.addEntity(player);

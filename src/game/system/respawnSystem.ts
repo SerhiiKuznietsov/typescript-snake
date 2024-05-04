@@ -7,11 +7,7 @@ import { range } from '../utils/random';
 export class RespawnSystem {
   update(entities: Entity[], deltaTime: number): void {
     entities.forEach((entity) => {
-      if (
-        !entity.has(Health) ||
-        !entity.has(Respawn) ||
-        !entity.has(Location)
-      )
+      if (!entity.has(Health) || !entity.has(Respawn) || !entity.has(Location))
         return;
 
       const health = entity.get(Health);

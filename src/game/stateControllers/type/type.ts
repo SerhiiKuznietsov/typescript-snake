@@ -2,13 +2,13 @@ export type StateList<S> = Array<S>;
 export type ActionList<A, S> = Array<[A, S]>;
 
 export enum GameStateList {
-  init = "init",
-  start = "start",
-  readyToStart = "readyToStart",
-  win = "win",
-  lose = "lose",
-  restart = "restart",
-  end = "end",
+  init = 'init',
+  start = 'start',
+  readyToStart = 'readyToStart',
+  win = 'win',
+  lose = 'lose',
+  restart = 'restart',
+  end = 'end',
 }
 
 export type GameStateType =
@@ -23,12 +23,12 @@ export type GameStateType =
 export type GameActionListType = ActionList<GameActionNameType, GameStateType>;
 
 export enum GameAction {
-  toStart = "toStart",
-  toRestart = "toRestart",
-  toReadyToStart = "toReadyToStart",
-  toWin = "toWin",
-  toLose = "toLose",
-  toEnd = "toEnd",
+  toStart = 'toStart',
+  toRestart = 'toRestart',
+  toReadyToStart = 'toReadyToStart',
+  toWin = 'toWin',
+  toLose = 'toLose',
+  toEnd = 'toEnd',
 }
 
 export type GameActionNameType =
