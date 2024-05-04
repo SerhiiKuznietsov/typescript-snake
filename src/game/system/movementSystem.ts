@@ -6,11 +6,11 @@ import { Body } from '../component/body';
 export class MovementSystem extends System {
   update(): void {
     this._entities.forEach((entity) => {
-      const location = entity.getComponent(Location);
-      const movement = entity.getComponent(Movement);
+      const location = entity.get(Location);
+      const movement = entity.get(Movement);
 
-      if (entity.hasComponent(Body)) {
-        const body = entity.getComponent(Body);
+      if (entity.has(Body)) {
+        const body = entity.get(Body);
 
         const temp = [location, ...body.segments];
 

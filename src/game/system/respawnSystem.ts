@@ -8,15 +8,15 @@ export class RespawnSystem {
   update(entities: Entity[], deltaTime: number): void {
     entities.forEach((entity) => {
       if (
-        !entity.hasComponent(Health) ||
-        !entity.hasComponent(Respawn) ||
-        !entity.hasComponent(Location)
+        !entity.has(Health) ||
+        !entity.has(Respawn) ||
+        !entity.has(Location)
       )
         return;
 
-      const health = entity.getComponent(Health);
-      const respawn = entity.getComponent(Respawn);
-      const location = entity.getComponent(Location);
+      const health = entity.get(Health);
+      const respawn = entity.get(Respawn);
+      const location = entity.get(Location);
 
       if (!health.isAlive && !respawn.processing) {
         respawn.processing = true;
@@ -63,9 +63,9 @@ export class RespawnSystem {
     entities: Entity[]
   ): boolean {
     return entities.some((entity) => {
-      if (!entity.getComponent(Location)) return false;
+      if (!entity.get(Location)) return false;
 
-      const location = entity.getComponent(Location);
+      const location = entity.get(Location);
 
       return location.position.x === x && location.position.y === y;
     });

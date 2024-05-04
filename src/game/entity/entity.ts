@@ -8,26 +8,27 @@ export class Entity {
     this.name = name;
   }
 
-  public hasComponent<T extends Component>(componentClass: {
+  public has<T extends Component>(componentClass: {
     new (...args: any[]): T;
   }): boolean {
     return this._components.has(componentClass.name);
   }
 
-  public getComponent<T extends Component>(componentClass: {
+  public get<T extends Component>(componentClass: {
     new (...args: any[]): T;
   }): T {
-
     const component = this._components.get(componentClass.name) as T;
 
     if (!component) {
-      throw new Error(`component with name "${componentClass.name}" not found for entity "${this.name}"`);
+      throw new Error(
+        `component with name "${componentClass.name}" not found for entity "${this.name}"`
+      );
     }
 
     return component;
   }
 
-  public addComponent(component: Component): this {
+  public add(component: Component): this {
     this._components.set(component.constructor.name, component);
 
     return this;

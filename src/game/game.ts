@@ -92,18 +92,18 @@ export class Game {
     const player = new Entity('player');
 
     player
-      .addComponent(new Location(player, new Vector2(0, 5)))
-      .addComponent(new Body(player))
-      .addComponent(new Movement(player, new Vector2(10, 10)))
-      .addComponent(
+      .add(new Location(player, new Vector2(0, 5)))
+      .add(new Body(player))
+      .add(new Movement(player, new Vector2(10, 10)))
+      .add(
         new Render(player, new Square(size, new Color('lightgreen')))
       )
-      .addComponent(new Health(player, false))
-      .addComponent(new Attack(player))
-      .addComponent(
+      .add(new Health(player, false))
+      .add(new Attack(player))
+      .add(
         new DirectionControl(player, new Direction(new Vector2(1, 0)))
       )
-      .addComponent(new Teleport(player));
+      .add(new Teleport(player));
 
     this._directionControlSystem.addEntity(player);
     this._healthSystem.addEntity(player);
@@ -115,10 +115,10 @@ export class Game {
     const food = new Entity('food');
 
     food
-      .addComponent(new Location(food, new Vector2(5, 5)))
-      .addComponent(new Render(food, new Square(size, new Color('red'))))
-      .addComponent(new Health(food, true))
-      .addComponent(new Respawn(food, 0.3));
+      .add(new Location(food, new Vector2(5, 5)))
+      .add(new Render(food, new Square(size, new Color('red'))))
+      .add(new Health(food, true))
+      .add(new Respawn(food, 0.3));
 
     this._healthSystem.addEntity(food);
     this._renderSystem.addEntity(food);

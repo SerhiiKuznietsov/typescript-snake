@@ -11,8 +11,8 @@ export class DirectionControlSystem extends System {
 
   public update(): void {
     this._entities.forEach((entity) => {
-      const control = entity.getComponent(DirectionControl);
-      const movement = entity.getComponent(Movement);
+      const control = entity.get(DirectionControl);
+      const movement = entity.get(Movement);
 
       if (!control || !movement) return;
 
@@ -34,7 +34,7 @@ export class DirectionControlSystem extends System {
 
   private setControl = (e: KeyboardEvent): void => {
     this._entities.forEach((entity) => {
-      const control = entity.getComponent(DirectionControl);
+      const control = entity.get(DirectionControl);
 
       if (!control) return;
 

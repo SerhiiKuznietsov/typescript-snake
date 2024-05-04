@@ -14,17 +14,17 @@ export class RenderSystem extends System {
 
   public update(): void {
     this._entities.forEach((entity) => {
-      const render = entity.getComponent(Render);
-      const location = entity.getComponent(Location);
+      const render = entity.get(Render);
+      const location = entity.get(Location);
 
-      if (!entity.hasComponent(Health) || !entity.getComponent(Health).isAlive)
+      if (!entity.has(Health) || !entity.get(Health).isAlive)
         return;
 
       render.draw(this._ctx, location.position);
 
-      if (!entity.hasComponent(Body)) return;
+      if (!entity.has(Body)) return;
 
-      const body = entity.getComponent(Body);
+      const body = entity.get(Body);
 
       body.segments.forEach((location) => {
         render.draw(this._ctx, location.position);

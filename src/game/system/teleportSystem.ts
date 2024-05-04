@@ -19,8 +19,8 @@ export class TeleportSystem extends System {
   }
 
   private teleportationCheck(entity: Entity) {
-    const location = entity.getComponent(Location);
-    const teleport = entity.getComponent(Teleport);
+    const location = entity.get(Location);
+    const teleport = entity.get(Teleport);
 
     if (!teleport.isActive) return;
 
