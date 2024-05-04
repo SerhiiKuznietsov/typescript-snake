@@ -22,7 +22,7 @@ export class TeleportSystem extends System {
     const location = entity.getComponent(Location);
     const teleport = entity.getComponent(Teleport);
 
-    if (!location || !teleport) return;
+    if (!teleport.isActive) return;
 
     if (location.position.x > this._config.xGridsCount - 1) {
       location.position.setX(0);

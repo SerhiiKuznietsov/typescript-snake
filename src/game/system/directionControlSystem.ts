@@ -38,7 +38,27 @@ export class DirectionControlSystem extends System {
 
       if (!control) return;
 
-      control.setKey(e);
+      const code = e.code;
+
+      if (['KeyW', 'ArrowUp'].includes(code) && control.direction.y !== 1) {
+        control.direction.moveY(-1);
+        return;
+      }
+
+      if (['KeyD', 'ArrowRight'].includes(code) && control.direction.x !== -1) {
+        control.direction.moveX(1);
+        return;
+      }
+
+      if (['KeyS', 'ArrowDown'].includes(code) && control.direction.y !== -1) {
+        control.direction.moveY(1);
+        return;
+      }
+
+      if (['KeyA', 'ArrowLeft'].includes(code) && control.direction.x !== 1) {
+        control.direction.moveX(-1);
+        return;
+      }
     });
-  }
+  };
 }

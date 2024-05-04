@@ -2,6 +2,14 @@ import { Vector2 } from './vector2';
 
 export class Direction {
   private _vector: Vector2;
+  public get x(): number {
+    return this._vector.x;
+  }
+
+  public get y(): number {
+    return this._vector.y;
+  }
+
 
   constructor(vector: Vector2 = new Vector2(0, 0)) {
     this._vector = vector;

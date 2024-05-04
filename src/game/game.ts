@@ -28,6 +28,10 @@ import { Teleport } from './component/teleport';
 import { TeleportSystem } from './system/teleportSystem';
 import { Attack } from './component/attack';
 import { Square } from './geometry/shape/square';
+import { CollisionSystem } from './system/collisionSystem';
+import { Body } from './component/body';
+import { RespawnSystem } from './system/respawnSystem';
+import { Respawn } from './component/respawn';
 export class Game {
   private _resetBtn = new KeyControl(
     document.querySelector('.reset__btn'),
@@ -37,26 +41,31 @@ export class Game {
 
   private _pauseHandler = () => {
     this.pause();
+    console.log('pause');
   };
 
   private _config = new GameConfig();
   private _stateController = new GameStateController();
-  private _loop = new Loop(this.update.bind(this), this.display.bind(this));
+  private _loop = new Loop(this.update.bind(this));
   private _board = new Board('.game__body', 'gameBoard', this._config);
   private _renderSystem = new RenderSystem(this._board._context);
   private _movementSystem = new MovementSystem();
   private _healthSystem = new HealthSystem();
   private _directionControlSystem = new DirectionControlSystem();
   private _teleportSystem = new TeleportSystem(this._config);
+  private _collisionSystem = new CollisionSystem();
+  private _respawnSystem = new RespawnSystem();
+  private _entities: Entity[] = [];
 
-  private update(): void {
+  private update(deltaTime: number): void {
     this._directionControlSystem.update();
     this._movementSystem.update();
     this._teleportSystem.update();
+    this._collisionSystem.update();
     this._healthSystem.update();
-  }
 
-  private display(): void {
+    this._respawnSystem.update(this._entities, deltaTime);
+
     this._board.clear();
     this._renderSystem.update();
   }
@@ -84,7 +93,8 @@ export class Game {
 
     player
       .addComponent(new Location(player, new Vector2(0, 5)))
-      .addComponent(new Movement(player, new Vector2(0.5, 0.5)))
+      .addComponent(new Body(player))
+      .addComponent(new Movement(player, new Vector2(10, 10)))
       .addComponent(
         new Render(player, new Square(size, new Color('lightgreen')))
       )
@@ -100,20 +110,25 @@ export class Game {
     this._movementSystem.addEntity(player);
     this._teleportSystem.addEntity(player);
     this._renderSystem.addEntity(player);
+    this._collisionSystem.addEntity(player);
 
     const food = new Entity('food');
 
     food
       .addComponent(new Location(food, new Vector2(5, 5)))
       .addComponent(new Render(food, new Square(size, new Color('red'))))
-      .addComponent(new Health(food, true));
+      .addComponent(new Health(food, true))
+      .addComponent(new Respawn(food, 0.3));
 
     this._healthSystem.addEntity(food);
     this._renderSystem.addEntity(food);
+    this._collisionSystem.addEntity(food);
+
+    this._entities.push(player, food);
 
     // const poison = new Entity('poison'); // purple
     // const hunter = new Entity('hunter');
-
+    this._renderSystem.update();
     return this;
   }
 
@@ -147,8 +162,6 @@ export class Game {
 
   private over(): void {
     keyBoard.removeHandler('Space', this._pauseHandler);
-    // this._loop.stop();
-    // this._board.fillText('GAME OVER!', 'black', '50px MV Boli');
   }
 
   private pause(): void {

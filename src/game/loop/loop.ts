@@ -1,30 +1,43 @@
+var fps = 16;
+var interval = 1000 / fps;
+var then: undefined | number = 0;
 export class Loop {
   private _update: Function;
-  private _display: Function;
   private animateId: any = undefined;
-  private _count: number = 0;
+  private _frameCount: number = 0;
+  private _lastSecond: number = 0;
 
-  constructor(update: Function, display: Function) {
+  constructor(update: Function) {
     this._update = update;
-    this._display = display;
   }
 
-  private animate(): void {
-    this.animateId = requestAnimationFrame(() => this.animate());
+  private animate(timestamp: number): void {
+    this.animateId = requestAnimationFrame(this.animate.bind(this));
 
-    if (this._count < 5) {
-      this._count++;
+    if (then === undefined) then = timestamp;
+
+    const delta = timestamp - then;
+
+    if (delta > interval) {
+      then = timestamp - (delta % interval);
+    } else {
       return;
     }
 
-    this._count = 0;
+    this._frameCount++;
+
+    if (timestamp >= this._lastSecond + 1000) {
+      console.log(`Current FPS: ${this._frameCount}`);
+
+      this._frameCount = 0;
+      this._lastSecond = timestamp - (timestamp - this._lastSecond - 1000);
+    }
 
     try {
-      this._update();
-      this._display();
+      this._update(Math.floor(delta));
     } catch (e) {
       this.stop();
-      console.error("Animate error:", e);
+      console.error('Animate error:', e);
     }
   }
 
@@ -38,7 +51,7 @@ export class Loop {
   }
 
   public start(): void {
-    this.animateId = requestAnimationFrame(() => this.animate());
+    this.animateId = requestAnimationFrame(this.animate.bind(this));
   }
 
   public toggle(): void {

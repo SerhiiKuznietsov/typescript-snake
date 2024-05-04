@@ -15,6 +15,6 @@ export class Square extends Shape {
 
   draw(ctx: CanvasRenderingContext2D, position: Vector2): void {
     ctx.fillStyle = this.color.value;
-    ctx.fillRect(position.x, position.y, this._size, this._size);
+    ctx.fillRect(position.x * this._size, position.y * this._size, this._size, this._size);
   }
 }
