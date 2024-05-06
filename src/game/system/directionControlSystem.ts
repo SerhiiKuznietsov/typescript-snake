@@ -1,9 +1,10 @@
 import { DirectionControl } from '../component/directionControl';
-import { Movement } from '../component/movement';
 import { keyBoard } from '../keyBoard';
 import { System } from './system';
 
 export class DirectionControlSystem extends System {
+  public requiredComponents = [DirectionControl];
+
   constructor() {
     super();
     this.initializeListeners();

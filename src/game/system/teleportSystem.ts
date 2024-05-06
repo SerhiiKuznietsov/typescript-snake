@@ -5,6 +5,8 @@ import { Entity } from '../entity/entity';
 import { System } from './system';
 
 export class TeleportSystem extends System {
+  public requiredComponents = [Teleport, Location];
+
   private _config: GameConfig;
 
   constructor(config: GameConfig) {
@@ -19,8 +21,6 @@ export class TeleportSystem extends System {
   }
 
   private teleportationCheck(entity: Entity) {
-    if (!entity.has(Location) || !entity.has(Teleport)) return;
-
     const location = entity.get(Location);
     const teleport = entity.get(Teleport);
 

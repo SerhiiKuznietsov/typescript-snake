@@ -1,3 +1,5 @@
+import { Entity } from '../entity/entity';
+
 export class Attack {
-  constructor(public damage: number = 1) {}
+  constructor(public targets: Entity[] = []) {}
 }

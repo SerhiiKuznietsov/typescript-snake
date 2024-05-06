@@ -5,6 +5,8 @@ import { Entity } from '../entity/entity';
 import { System } from './system';
 
 export class CollisionSystem extends System {
+  public requiredComponents = [Location];
+
   private clearCollisionOpponentIfExists(entity: Entity) {
     if (!entity.has(CollisionOpponent)) return;
 

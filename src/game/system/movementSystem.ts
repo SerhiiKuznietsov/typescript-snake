@@ -5,16 +5,10 @@ import { Body } from '../component/body';
 import { DirectionControl } from '../component/directionControl';
 
 export class MovementSystem extends System {
+  public requiredComponents = [Location, Movement, DirectionControl];
+
   update(): void {
     this._entities.forEach((entity) => {
-      if (
-        !entity.has(Location) ||
-        !entity.has(Movement) ||
-        !entity.has(DirectionControl)
-      ) {
-        return;
-      }
-
       const location = entity.get(Location);
       const movement = entity.get(Movement);
       const control = entity.get(DirectionControl);

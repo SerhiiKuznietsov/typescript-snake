@@ -30,16 +30,24 @@ import { Attack } from './component/attack';
 import { Square } from './geometry/shape/square';
 import { CollisionSystem } from './system/collisionSystem';
 import { Body } from './component/body';
-import { RespawnSystem } from './system/respawnSystem';
+import { SpawnSystem } from './system/spawnSystem';
 import { Respawn } from './component/respawn';
 import { CollisionOpponent } from './component/collisionOpponent';
 import { AttackSystem } from './system/attackSystem';
 import { TakeDamage } from './component/takeDamage';
+import { SystemManager } from './manager/systemManager';
+import { Damage } from './component/damage';
+import { DamageSystem } from './system/damageSystem';
 
-// TODO - need EntityManager
 // export class EntityManager {
+//   private _list = new Map<string, Entity>();
+
 //   public getEntity(name: string) {
-//     new Entity(name);
+//     const entity = new Entity(name);
+
+//     this._list.set(name, entity);
+
+//     return entity;
 //   }
 // }
 
@@ -60,27 +68,12 @@ export class Game {
   private _loop = new Loop(this.update.bind(this));
   private _board = new Board('.game__body', 'gameBoard', this._config);
   private _renderSystem = new RenderSystem(this._board._context);
-  private _movementSystem = new MovementSystem();
-  private _healthSystem = new HealthSystem();
-  private _directionControlSystem = new DirectionControlSystem();
-  private _teleportSystem = new TeleportSystem(this._config);
-  private _collisionSystem = new CollisionSystem();
-  private _respawnSystem = new RespawnSystem();
-  private _attackSystem = new AttackSystem();
+  private _systemManager = new SystemManager();
   private _entities: Entity[] = [];
 
   private update(deltaTime: number): void {
-    this._directionControlSystem.update();
-    this._movementSystem.update();
-    this._teleportSystem.update();
-    this._collisionSystem.update();
-    this._attackSystem.update();
-    this._healthSystem.update(this._entities);
-
-    this._respawnSystem.update(deltaTime);
-
     this._board.clear();
-    this._renderSystem.update();
+    this._systemManager.update(this._entities, deltaTime);
   }
 
   public init(): Game {
@@ -100,17 +93,27 @@ export class Game {
       .attach(this.observerHandler.bind(this))
       .notify(GameAction.toReadyToStart);
 
+    this._systemManager
+      .register(1, new DirectionControlSystem())
+      .register(2, new MovementSystem())
+      .register(3, new TeleportSystem(this._config))
+      .register(4, new CollisionSystem())
+      .register(5, new AttackSystem())
+      .register(6, new DamageSystem())
+      .register(7, new HealthSystem())
+      .register(8, new SpawnSystem())
+      .register(9, this._renderSystem);
+
     const size = this._config.gridSize;
 
-    const player = new Entity('player');
-
-    player
+    const player = new Entity('player')
       .add(new Location(new Vector2(0, 5)))
       .add(new Body())
       .add(new Movement(new Vector2(10, 10)))
       .add(new Render(new Square(size, new Color('lightgreen'))))
       .add(new Health())
       .add(new Attack())
+      .add(new Damage())
       .add(new DirectionControl(new Direction(new Vector2(1, 0))))
       .add(new Teleport())
       .add(new CollisionOpponent());
@@ -125,29 +128,14 @@ export class Game {
     // .add(new Render(new Square(size, new Color('lightgreen'))))
     // .add(new Health(false))
 
-    this._directionControlSystem.addEntity(player);
-    this._healthSystem.addEntity(player);
-    this._movementSystem.addEntity(player);
-    this._teleportSystem.addEntity(player);
-    this._renderSystem.addEntity(player);
-    this._collisionSystem.addEntity(player);
-    this._attackSystem.addEntity(player);
-
-    const food = new Entity('food');
-
-    food
+    const food = new Entity('food')
       .add(new Location(new Vector2(5, 5)))
       .add(new Render(new Square(size, new Color('red'))))
       .add(new Health())
       .add(new Respawn(0.3))
       .add(new TakeDamage());
 
-    this._healthSystem.addEntity(food);
-    this._renderSystem.addEntity(food);
-    this._collisionSystem.addEntity(food);
-    this._attackSystem.addEntity(food);
-    this._respawnSystem.addEntity(food);
-
+    this._systemManager;
     this._entities.push(player, food);
 
     // const poison = new Entity('poison'); // purple

@@ -1,4 +1,5 @@
 import { Component } from '../component/component';
+import { entityComponentObserver } from '../observable/entityComponent';
 
 export class Entity {
   private _components: Map<string, Component> = new Map();
@@ -31,6 +32,8 @@ export class Entity {
   public add(component: Component): this {
     this._components.set(component.constructor.name, component);
 
+    entityComponentObserver.notify({ entity: this, operation: 1 });
+
     return this;
   }
 
@@ -44,5 +47,7 @@ export class Entity {
     }
 
     this._components.delete(componentClass.name);
+
+    entityComponentObserver.notify({ entity: this, operation: 0 });
   }
 }

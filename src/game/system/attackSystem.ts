@@ -1,45 +1,35 @@
 import { Attack } from '../component/attack';
-import { Body } from '../component/body';
 import { CollisionOpponent } from '../component/collisionOpponent';
 import { Health } from '../component/health';
-import { Location } from '../component/location';
-import { TakeDamage } from '../component/takeDamage';
-import { Entity } from '../entity/entity';
 import { System } from './system';
 
 export class AttackSystem extends System {
-  private clearDamageReceivedIfExists(entity: Entity) {
-    if (!entity.has(TakeDamage)) return;
+  public requiredComponents = [Attack, CollisionOpponent, Health];
 
-    entity.get(TakeDamage).damageReceived = 0;
+  private clearAttackTargets(attack: Attack) {
+    attack.targets = [];
+  }
+
+  private setAttackTargets(
+    attack: Attack,
+    collisionOpponent: CollisionOpponent
+  ) {
+    if (!collisionOpponent.isActive) return;
+
+    collisionOpponent.entities.forEach((e) => {
+      attack.targets.push(e);
+    });
   }
 
   public update(): void {
     this._entities.forEach((entity) => {
-      this.clearDamageReceivedIfExists(entity);
-    });
+      if (!entity.get(Health).current) return;
 
-    this._entities.forEach((entity) => {
-      if (
-        !entity.has(Attack) ||
-        !entity.has(CollisionOpponent) ||
-        !entity.get(CollisionOpponent).isActive ||
-        !entity.has(Health) ||
-        !entity.get(Health).current
-      ) {
-        return;
-      }
-
-      const collisionOpponent = entity.get(CollisionOpponent);
       const attack = entity.get(Attack);
+      const collisionOpponent = entity.get(CollisionOpponent);
 
-      collisionOpponent.entities.forEach((e) => {
-        e.get(TakeDamage).damageReceived = attack.damage;
-      });
-
-      if (!entity.has(Body)) return;
-
-      entity.get(Body).grow(entity.get(Location).position.copy());
+      this.clearAttackTargets(attack);
+      this.setAttackTargets(attack, collisionOpponent);
     });
   }
 }

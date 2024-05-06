@@ -5,6 +5,8 @@ import { Render } from '../component/render';
 import { System } from './system';
 
 export class RenderSystem extends System {
+  public requiredComponents = [Render, Location];
+
   private _ctx: CanvasRenderingContext2D;
 
   constructor(ctx: CanvasRenderingContext2D) {
@@ -14,8 +16,6 @@ export class RenderSystem extends System {
 
   public update(): void {
     this._entities.forEach((entity) => {
-      if (!entity.has(Render) || !entity.has(Location)) return;
-
       const render = entity.get(Render);
       const location = entity.get(Location);
 
