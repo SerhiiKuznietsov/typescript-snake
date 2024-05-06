@@ -1,6 +1,5 @@
 import { Attack } from '../component/attack';
 import { Damage } from '../component/damage';
-import { Location } from '../component/location';
 import { TakeDamage } from '../component/takeDamage';
 import { Entity } from '../entity/entity';
 import { UpdateSystemData } from '../manager/type';

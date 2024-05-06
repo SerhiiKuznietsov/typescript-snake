@@ -116,16 +116,6 @@ export class Game {
       .add(new Teleport())
       .add(new CollisionOpponent());
 
-    // TODO - maybe we can rework the body segment logic
-    // const tail = new Entity('tail');
-
-    // tail
-    // .add(new Target(player))
-    // .add(new Location(new Vector2(0, 5)))
-    // .add(new Movement(new Vector2(10, 10)))
-    // .add(new Render(new Square(size, new Color('lightgreen'))))
-    // .add(new Health(false))
-
     const food = new Entity('food')
       .add(new Location(new Vector2(5, 5)))
       .add(new Render(new Square(size, new Color('red'))))
@@ -133,7 +123,6 @@ export class Game {
       .add(new Respawn(0.3))
       .add(new TakeDamage());
 
-    this._systemManager;
     this._entities.push(player, food);
 
     // const poison = new Entity('poison'); // purple
