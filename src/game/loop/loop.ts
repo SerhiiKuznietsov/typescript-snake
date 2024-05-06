@@ -1,4 +1,4 @@
-var fps = 16;
+var fps = 32;
 var interval = 1000 / fps;
 var then: undefined | number = 0;
 export class Loop {
