@@ -1,5 +1,4 @@
 import { Attack } from '../component/attack';
-import { Body } from '../component/body';
 import { Damage } from '../component/damage';
 import { Location } from '../component/location';
 import { TakeDamage } from '../component/takeDamage';
@@ -34,10 +33,6 @@ export class DamageSystem extends System {
 
         takeDamage.damageReceived += damage.damage;
       });
-
-      if (!e.has(Body)) return;
-
-      e.get(Body).grow(e.get(Location).position.copy());
     });
   }
 }

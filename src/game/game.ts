@@ -29,7 +29,6 @@ import { TeleportSystem } from './system/teleportSystem';
 import { Attack } from './component/attack';
 import { Square } from './geometry/shape/square';
 import { CollisionSystem } from './system/collisionSystem';
-import { Body } from './component/body';
 import { SpawnSystem } from './system/spawnSystem';
 import { Respawn } from './component/respawn';
 import { CollisionOpponent } from './component/collisionOpponent';
@@ -108,7 +107,6 @@ export class Game {
 
     const player = new Entity('player')
       .add(new Location(new Vector2(0, 5)))
-      .add(new Body())
       .add(new Movement(new Vector2(10, 10)))
       .add(new Render(new Square(size, new Color('lightgreen'))))
       .add(new Health())

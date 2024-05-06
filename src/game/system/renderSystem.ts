@@ -1,4 +1,3 @@
-import { Body } from '../component/body';
 import { Health } from '../component/health';
 import { Location } from '../component/location';
 import { Render } from '../component/render';
@@ -22,14 +21,6 @@ export class RenderSystem extends System {
       if (!entity.has(Health) || !entity.get(Health).current) return;
 
       render.draw(this._ctx, location.position);
-
-      if (!entity.has(Body)) return;
-
-      const body = entity.get(Body);
-
-      body.segments.forEach((location) => {
-        render.draw(this._ctx, location.position);
-      });
     });
   }
 }
