@@ -108,7 +108,8 @@ export class Game {
     const player = new Entity('player')
       .add(new Location(new Vector2(0, 5)))
       .add(new Movement(new Vector2(10, 10), 0.8))
-      .add(new Render(new Square(size, new Color('lightgreen'))))
+      .add(new Render(new Square(size)))
+      .add(new Color('lightgreen'))
       .add(new Health())
       .add(new Attack())
       .add(new Damage())
@@ -118,7 +119,8 @@ export class Game {
 
     const food = new Entity('food')
       .add(new Location(new Vector2(5, 5)))
-      .add(new Render(new Square(size, new Color('red'))))
+      .add(new Render(new Square(size)))
+      .add(new Color('red'))
       .add(new Health())
       .add(new Respawn(0.3))
       .add(new TakeDamage());
