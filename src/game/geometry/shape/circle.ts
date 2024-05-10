@@ -8,15 +8,15 @@ export class Circle extends Shape {
     return this._radius;
   }
 
-  constructor(radius: number, color: Color) {
-    super(color);
+  constructor(radius: number) {
+    super();
     this._radius = radius;
   }
 
-  draw(ctx: CanvasRenderingContext2D, position: Vector2): void {
+  draw(ctx: CanvasRenderingContext2D, position: Vector2, color: Color): void {
     ctx.beginPath();
     ctx.arc(position.x, position.y, this._radius, 0, Math.PI * 2);
-    ctx.fillStyle = this.color.value;
+    ctx.fillStyle = color.value;
     ctx.fill();
   }
 }

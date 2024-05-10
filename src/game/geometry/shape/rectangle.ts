@@ -13,14 +13,18 @@ export class Rectangle extends Shape {
     return this._height;
   }
 
-  constructor(width: number, height: number, color: Color) {
-    super(color);
+  constructor(width: number, height: number) {
+    super();
     this._width = width;
     this._height = height;
   }
 
-  public draw(ctx: CanvasRenderingContext2D, position: Vector2): void {
-    ctx.fillStyle = this.color.value;
+  public draw(
+    ctx: CanvasRenderingContext2D,
+    position: Vector2,
+    color: Color
+  ): void {
+    ctx.fillStyle = color.value;
     ctx.fillRect(position.x, position.y, this._width, this._height);
   }
 }

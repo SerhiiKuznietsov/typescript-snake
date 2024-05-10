@@ -1,6 +1,7 @@
 import { Health } from '../component/health';
 import { Location } from '../component/location';
 import { Render } from '../component/render';
+import { Color } from '../utils/color';
 import { System } from './system';
 
 export class RenderSystem extends System {
@@ -17,10 +18,11 @@ export class RenderSystem extends System {
     this._entities.forEach((entity) => {
       const render = entity.get(Render);
       const location = entity.get(Location);
+      const color = entity.get(Color);
 
       if (!entity.has(Health) || !entity.get(Health).current) return;
 
-      render.draw(this._ctx, location.position);
+      render.draw(this._ctx, location.position, color);
     });
   }
 }

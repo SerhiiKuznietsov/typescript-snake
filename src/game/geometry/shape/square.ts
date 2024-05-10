@@ -8,13 +8,13 @@ export class Square extends Shape {
     return this._size;
   }
 
-  constructor(size: number, color: Color) {
-    super(color);
+  constructor(size: number) {
+    super();
     this._size = size;
   }
 
-  draw(ctx: CanvasRenderingContext2D, position: Vector2): void {
-    ctx.fillStyle = this.color.value;
+  draw(ctx: CanvasRenderingContext2D, position: Vector2, color: Color): void {
+    ctx.fillStyle = color.value;
     ctx.fillRect(
       position.x * this._size,
       position.y * this._size,
