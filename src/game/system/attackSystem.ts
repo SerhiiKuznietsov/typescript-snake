@@ -1,10 +1,12 @@
 import { Attack } from '../component/attack';
 import { CollisionOpponent } from '../component/collisionOpponent';
 import { Health } from '../component/health';
-import { System } from './system';
+import { Entity } from '../../ecs/entity';
+import { ISystem } from '../../ecs/system';
 
-export class AttackSystem extends System {
-  public requiredComponents = [Attack, CollisionOpponent, Health];
+export class AttackSystem implements ISystem {
+  public readonly requiredComponents = [Attack, CollisionOpponent, Health];
+  public entities: Entity[] = [];
 
   private clearAttackTargets(attack: Attack) {
     attack.targets = [];
@@ -22,7 +24,7 @@ export class AttackSystem extends System {
   }
 
   public update(): void {
-    this._entities.forEach((entity) => {
+    this.entities.forEach((entity) => {
       if (!entity.get(Health).current) return;
 
       const attack = entity.get(Attack);

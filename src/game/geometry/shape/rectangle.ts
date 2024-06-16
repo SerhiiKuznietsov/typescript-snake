@@ -1,4 +1,4 @@
-import { Color } from '@/game/utils/color';
+import { Color } from '@/game/component/color';
 import { Vector2 } from '../vector2';
 import { Shape } from './shape';
 

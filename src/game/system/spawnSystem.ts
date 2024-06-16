@@ -1,13 +1,13 @@
 import { Health } from '../component/health';
 import { Location } from '../component/location';
 import { Respawn } from '../component/respawn';
-import { Entity } from '../entity/entity';
-import { UpdateSystemData } from '../manager/type';
+import { Entity } from '../../ecs/entity';
+import { ISystem, UpdateSystemData } from '../../ecs/system';
 import { range } from '../utils/random';
-import { System } from './system';
 
-export class SpawnSystem extends System {
+export class SpawnSystem implements ISystem {
   public requiredComponents = [Respawn, Health];
+  public entities: Entity[] = [];
 
   private respawnLocation(entities: Entity[]): { x: number; y: number } {
     let attempts = 0;
@@ -79,7 +79,7 @@ export class SpawnSystem extends System {
   }
 
   public update({ deltaTime, entities }: UpdateSystemData): void {
-    this._entities.forEach((entity) => {
+    this.entities.forEach((entity) => {
       const health = entity.get(Health);
       const respawn = entity.get(Respawn);
 

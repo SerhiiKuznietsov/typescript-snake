@@ -13,12 +13,11 @@ import { GameConfig } from './config/game';
 import { keyBoard } from './keyBoard';
 import { Vector2 } from './geometry/vector2';
 import { Direction } from './geometry/direction';
-import { Color } from './utils/color';
+import { Color } from './component/color';
 import { Health } from './component/health';
 import { Movement } from './component/movement';
 import { Location } from './component/location';
 import { Render } from './component/render';
-import { Entity } from './entity/entity';
 import { HealthSystem } from './system/healthSystem';
 import { MovementSystem } from './system/movementSystem';
 import { RenderSystem } from './system/renderSystem';
@@ -34,9 +33,9 @@ import { Respawn } from './component/respawn';
 import { CollisionOpponent } from './component/collisionOpponent';
 import { AttackSystem } from './system/attackSystem';
 import { TakeDamage } from './component/takeDamage';
-import { SystemManager } from './manager/systemManager';
 import { Damage } from './component/damage';
 import { DamageSystem } from './system/damageSystem';
+import { World } from '../ecs/world';
 
 // export class EntityManager {
 //   private _list = new Map<string, Entity>();
@@ -66,13 +65,11 @@ export class Game {
   private _stateController = new GameStateController();
   private _loop = new Loop(this.update.bind(this));
   private _board = new Board('.game__body', 'gameBoard', this._config);
-  private _renderSystem = new RenderSystem(this._board._context);
-  private _systemManager = new SystemManager();
-  private _entities: Entity[] = [];
+  private _world = new World();
 
   private update(deltaTime: number): void {
     this._board.clear();
-    this._systemManager.update(this._entities, deltaTime);
+    this._world.update(deltaTime);
   }
 
   public init(): Game {
@@ -92,44 +89,143 @@ export class Game {
       .attach(this.observerHandler.bind(this))
       .notify(GameAction.toReadyToStart);
 
-    this._systemManager
-      .register(1, new DirectionControlSystem())
-      .register(2, new MovementSystem())
-      .register(3, new TeleportSystem(this._config))
-      .register(4, new CollisionSystem())
-      .register(5, new AttackSystem())
-      .register(6, new DamageSystem())
-      .register(7, new HealthSystem())
-      .register(8, new SpawnSystem())
-      .register(9, this._renderSystem);
-
     const size = this._config.gridSize;
 
-    const player = new Entity('player')
-      .add(new Location(new Vector2(0, 5)))
-      .add(new Movement(new Vector2(10, 10), 0.8))
-      .add(new Render(new Square(size)))
-      .add(new Color('lightgreen'))
-      .add(new Health())
-      .add(new Attack())
-      .add(new Damage())
-      .add(new DirectionControl(new Direction(new Vector2(1, 0))))
-      .add(new Teleport())
-      .add(new CollisionOpponent());
+    this._world.registerComponentType(
+      Location,
+      10,
+      (x: number = 0, y: number = 0) => [new Vector2(x, y)],
+      (component: Location) => {
+        component.position.set(0, 0);
+      }
+    );
 
-    const food = new Entity('food')
-      .add(new Location(new Vector2(5, 5)))
-      .add(new Render(new Square(size)))
-      .add(new Color('red'))
-      .add(new Health())
-      .add(new Respawn(0.3))
-      .add(new TakeDamage());
+    this._world.registerComponentType(
+      Movement,
+      10,
+      (x: number = 10, y: number = 10) => [new Vector2(x, y), 0.8],
+      (component: Movement) => {
+        component.velocity.set(0, 0);
+      }
+    );
 
-    this._entities.push(player, food);
+    this._world.registerComponentType<Render>(
+      Render,
+      10,
+      () => [new Square(size)],
+      () => {}
+    );
+
+    this._world.registerComponentType<Color>(
+      Color,
+      10,
+      () => ['white'],
+      () => {}
+    );
+
+    this._world.registerComponentType<Health>(
+      Health,
+      10,
+      () => [1],
+      (component: Health) => {
+        component.current = 0;
+        component.maxHealth = 0;
+      }
+    );
+    this._world.registerComponentType<Attack>(
+      Attack,
+      10,
+      () => [],
+      (component: Attack) => {
+        component.targets = [];
+      }
+    );
+    this._world.registerComponentType<Damage>(
+      Damage,
+      10,
+      () => [1],
+      (component: Damage) => {
+        component.damage = 0;
+      }
+    );
+    this._world.registerComponentType<DirectionControl>(
+      DirectionControl,
+      10,
+      () => [new Direction(new Vector2(1, 0))],
+      () => {}
+    );
+
+    this._world.registerComponentType<Teleport>(
+      Teleport,
+      10,
+      () => [true],
+      () => {}
+    );
+    this._world.registerComponentType<CollisionOpponent>(
+      CollisionOpponent,
+      10,
+      () => [],
+      () => {}
+    );
+
+    this._world.registerComponentType<Respawn>(
+      Respawn,
+      10,
+      () => [0.3],
+      () => {}
+    );
+
+    this._world.registerComponentType<TakeDamage>(
+      TakeDamage,
+      10,
+      () => [],
+      (component: TakeDamage) => {
+        component.damageReceived = 0;
+      }
+    );
+
+    const player = this._world
+      .createEntity()
+      .add(Location)
+      .add(Movement)
+      .add(Render)
+      .add(Color)
+      .add(Health)
+      .add(Attack)
+      .add(Damage)
+      .add(DirectionControl)
+      .add(Teleport)
+      .add(CollisionOpponent);
+
+    player.get(Color).value = 'lightgreen';
+
+    const food = this._world
+      .createEntity()
+      .add(Location)
+      .add(Render)
+      .add(Color)
+      .add(Health)
+      .add(Respawn)
+      .add(TakeDamage);
+
+    food.get(Color).value = 'red';
 
     // const poison = new Entity('poison'); // purple
     // const hunter = new Entity('hunter');
-    this._renderSystem.update();
+
+    this._world
+      .registerSystem(new DirectionControlSystem(), 1)
+      .registerSystem(new MovementSystem(), 2)
+      .registerSystem(new TeleportSystem(this._config), 3)
+      .registerSystem(new CollisionSystem(), 4)
+      .registerSystem(new AttackSystem(), 5)
+      .registerSystem(new DamageSystem(), 6)
+      .registerSystem(new HealthSystem(), 7)
+      .registerSystem(new SpawnSystem(), 8)
+      .registerSystem(new RenderSystem(this._board._context), 9, true);
+
+    this._world.init(0);
+
     return this;
   }
 

@@ -1,21 +1,22 @@
 import { Health } from '../component/health';
 import { Location } from '../component/location';
 import { Render } from '../component/render';
-import { Color } from '../utils/color';
-import { System } from './system';
+import { Color } from '../component/color';
+import { ISystem } from '../../ecs/system';
+import { Entity } from '../../ecs/entity';
 
-export class RenderSystem extends System {
+export class RenderSystem implements ISystem {
   public requiredComponents = [Render, Location];
+  public entities: Entity[] = [];
 
   private _ctx: CanvasRenderingContext2D;
 
   constructor(ctx: CanvasRenderingContext2D) {
-    super();
     this._ctx = ctx;
   }
 
   public update(): void {
-    this._entities.forEach((entity) => {
+    this.entities.forEach((entity) => {
       const render = entity.get(Render);
       const location = entity.get(Location);
       const color = entity.get(Color);

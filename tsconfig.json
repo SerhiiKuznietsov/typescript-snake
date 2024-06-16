@@ -4,7 +4,9 @@
     "module": "ESNext",
     "sourceMap": true,
     "removeComments": false,
+    "downlevelIteration": true,
     "lib": [
+      "ES2015",
       "ESNext",
       "DOM"
     ],

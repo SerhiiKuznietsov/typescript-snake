@@ -1,11 +1,12 @@
 import { Health } from '../component/health';
 import { Respawn } from '../component/respawn';
 import { TakeDamage } from '../component/takeDamage';
-import { Entity } from '../entity/entity';
-import { System } from './system';
+import { Entity } from '../../ecs/entity';
+import { ISystem } from '../../ecs/system';
 
-export class HealthSystem extends System {
-  public requiredComponents = [Health];
+export class HealthSystem implements ISystem {
+  public readonly requiredComponents = [Health];
+  public entities: Entity[] = [];
 
   private takeDamageIfExists(entity: Entity, health: Health) {
     if (!health.current || !entity.has(TakeDamage)) return;
@@ -18,7 +19,7 @@ export class HealthSystem extends System {
   }
 
   public update(): void {
-    this._entities.forEach((entity) => {
+    this.entities.forEach((entity) => {
       const health = entity.get(Health);
 
       this.takeDamageIfExists(entity, health);

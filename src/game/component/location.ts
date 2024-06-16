@@ -1,5 +1,6 @@
 import { Vector2 } from '../geometry/vector2';
+import { IComponent } from '../../ecs/component';
 
-export class Location {
-  constructor(public readonly position: Vector2) {}
+export class Location implements IComponent {
+  constructor(readonly id: number, public readonly position: Vector2) {}
 }

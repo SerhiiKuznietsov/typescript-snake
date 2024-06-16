@@ -1,9 +1,9 @@
-export class Health {
-  public readonly maxHealth: number;
-  public current: number;
+import { IComponent } from '../../ecs/component';
 
-  constructor(maxHealth: number = 1) {
-    this.maxHealth = maxHealth;
-    this.current = maxHealth;
-  }
+export class Health implements IComponent {
+  constructor(
+    readonly id: number,
+    public maxHealth: number = 1,
+    public current: number = maxHealth
+  ) {}
 }

@@ -1,5 +1,6 @@
-import { Entity } from '../entity/entity';
+import { IComponent } from '../../ecs/component';
+import { Entity } from '../../ecs/entity';
 
-export class Attack {
-  constructor(public targets: Entity[] = []) {}
+export class Attack implements IComponent {
+  constructor(readonly id: number, public targets: Entity[] = []) {}
 }

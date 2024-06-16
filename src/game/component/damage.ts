@@ -1,3 +1,5 @@
-export class Damage {
-  constructor(public damage: number = 1) {}
+import { IComponent } from '../../ecs/component';
+
+export class Damage implements IComponent {
+  constructor(readonly id: number, public damage: number = 1) {}
 }

@@ -1,11 +1,15 @@
 import { CollisionOpponent } from '../component/collisionOpponent';
 import { Health } from '../component/health';
 import { Location } from '../component/location';
-import { Entity } from '../entity/entity';
-import { System } from './system';
+import { Entity } from '../../ecs/entity';
+import { ISystem } from '../../ecs/system';
+import { World } from '../../ecs/world';
 
-export class CollisionSystem extends System {
-  public requiredComponents = [Location];
+export class CollisionSystem implements ISystem {
+  public readonly requiredComponents = [Location];
+  public readonly excludedComponents = [];
+  public declare world: World;
+  public entities: Entity[] = [];
 
   private clearCollisionOpponentIfExists(entity: Entity) {
     if (!entity.has(CollisionOpponent)) return;
@@ -26,13 +30,13 @@ export class CollisionSystem extends System {
   }
 
   public update(): void {
-    this._entities.forEach((entity) => {
+    this.entities.forEach((entity) => {
       if (!entity.has(Location)) return;
 
       this.clearCollisionOpponentIfExists(entity);
     });
 
-    const collisionEntities = this._entities.filter(
+    const collisionEntities = this.entities.filter(
       (e) => e.has(Location) && e.has(Health) && e.get(Health).current
     );
 

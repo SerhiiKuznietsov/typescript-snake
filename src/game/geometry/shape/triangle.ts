@@ -1,6 +1,6 @@
-import { Color } from '@/game/utils/color';
 import { Shape } from './shape';
 import { Vector2 } from '../vector2';
+import { Color } from '@/game/component/color';
 
 export class Triangle extends Shape {
   constructor(public size: number) {

@@ -1,21 +1,21 @@
 import { Location } from '../component/location';
 import { Teleport } from '../component/teleport';
 import { GameConfig } from '../config/game';
-import { Entity } from '../entity/entity';
-import { System } from './system';
+import { Entity } from '../../ecs/entity';
+import { ISystem } from '../../ecs/system';
 
-export class TeleportSystem extends System {
+export class TeleportSystem implements ISystem {
   public requiredComponents = [Teleport, Location];
+  public entities: Entity[] = [];
 
   private _config: GameConfig;
 
   constructor(config: GameConfig) {
-    super();
     this._config = config;
   }
 
   public update(): void {
-    this._entities.forEach((entity) => {
+    this.entities.forEach((entity) => {
       this.teleportationCheck(entity);
     });
   }

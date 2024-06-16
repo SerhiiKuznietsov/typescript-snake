@@ -1,14 +1,15 @@
 import { Movement } from '../component/movement';
 import { Location } from '../component/location';
-import { System } from './system';
 import { DirectionControl } from '../component/directionControl';
-import { UpdateSystemData } from '../manager/type';
+import { Entity } from '../../ecs/entity';
+import { ISystem, UpdateSystemData } from '../../ecs/system';
 
-export class MovementSystem extends System {
+export class MovementSystem implements ISystem {
   public requiredComponents = [Location, Movement, DirectionControl];
+  public entities: Entity[] = [];
 
   public update({ deltaTime }: UpdateSystemData): void {
-    this._entities.forEach((entity) => {
+    this.entities.forEach((entity) => {
       const location = entity.get(Location);
       const movement = entity.get(Movement);
       const control = entity.get(DirectionControl);

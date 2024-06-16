@@ -1,11 +1,12 @@
 import { Shape } from '../geometry/shape/shape';
 import { Vector2 } from '../geometry/vector2';
-import { Color } from '../utils/color';
+import { Color } from './color';
+import { IComponent } from '../../ecs/component';
 
-export class Render {
+export class Render implements IComponent {
   private _shape: Shape;
 
-  constructor(shape: Shape) {
+  constructor(readonly id: number, shape: Shape) {
     this._shape = shape;
   }
 
