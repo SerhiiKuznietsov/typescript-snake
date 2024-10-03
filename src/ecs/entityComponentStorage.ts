@@ -1,5 +1,5 @@
 import { IComponent, IComponentConstructor } from './component';
-import { ComponentPoolManager } from './componentPoolManager';
+import { ComponentPoolManager } from './manager/componentPoolManager';
 import { Entity } from './entity';
 
 export class EntityComponentStorage {
@@ -36,18 +36,16 @@ export class EntityComponentStorage {
 
   public get<T extends IComponent>(
     entityId: number,
-    type: IComponentConstructor<T>
+    { name }: IComponentConstructor<T>
   ): T | undefined {
-    const typeName = type.name;
-    return this._entityComponents.get(entityId)?.get(typeName) as T | undefined;
+    return this._entityComponents.get(entityId)?.get(name) as T | undefined;
   }
 
   public has<T extends IComponent>(
     entityId: number,
-    type: IComponentConstructor<T>
+    { name }: IComponentConstructor<T>
   ): boolean {
-    const typeName = type.name;
-    return this._entityComponents.get(entityId)?.has(typeName) ?? false;
+    return this._entityComponents.get(entityId)?.has(name) ?? false;
   }
 
   public getAll(entityId: number): IComponent[] {

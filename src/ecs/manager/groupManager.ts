@@ -1,6 +1,6 @@
-import { Entity } from './entity';
-import { EntityComponentStorage } from './entityComponentStorage';
-import { ISystem } from './system';
+import { Entity } from '../entity';
+import { EntityComponentStorage } from '../entityComponentStorage';
+import { ISystem } from '../system';
 
 export class GroupManager {
   private _entityStorage: EntityComponentStorage;

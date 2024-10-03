@@ -37,17 +37,84 @@ import { Damage } from './component/damage';
 import { DamageSystem } from './system/damageSystem';
 import { World } from '../ecs/world';
 
-// export class EntityManager {
-//   private _list = new Map<string, Entity>();
+const initComponents = (world: World, size: number) => {
+  world.registerComponentType(Location, 10, (x: number = 0, y: number = 0) => [
+    new Vector2(x, y),
+  ]);
 
-//   public getEntity(name: string) {
-//     const entity = new Entity(name);
+  world.registerComponentType(
+    Movement,
+    10,
+    (x: number = 10, y: number = 10) => [new Vector2(x, y), 0.8]
+  );
 
-//     this._list.set(name, entity);
+  world.registerComponentType<Render>(Render, 10, () => [new Square(size)]);
 
-//     return entity;
-//   }
-// }
+  world.registerComponentType<Color>(Color, 10, () => ['white']);
+
+  world.registerComponentType<Health>(Health, 10, () => [1]);
+  world.registerComponentType<Attack>(Attack, 10);
+  world.registerComponentType<Damage>(Damage, 10, () => [1]);
+  world.registerComponentType<DirectionControl>(DirectionControl, 10, () => [
+    new Direction(new Vector2(1, 0)),
+  ]);
+
+  world.registerComponentType<Teleport>(Teleport, 10, () => [true]);
+  world.registerComponentType<CollisionOpponent>(CollisionOpponent, 10);
+
+  world.registerComponentType<Respawn>(Respawn, 10, () => [0.3]);
+
+  world.registerComponentType<TakeDamage>(TakeDamage, 10);
+};
+
+const initEntities = (world: World) => {
+  const player = world
+    .createEntity()
+    .add(Location)
+    .add(Movement)
+    .add(Render)
+    .add(Color)
+    .add(Health)
+    .add(Attack)
+    .add(Damage)
+    .add(DirectionControl)
+    .add(Teleport)
+    .add(CollisionOpponent);
+
+  player.get(Color).value = 'lightgreen';
+
+  const food = world
+    .createEntity()
+    .add(Location)
+    .add(Render)
+    .add(Color)
+    .add(Health)
+    .add(Respawn)
+    .add(TakeDamage);
+
+  food.get(Color).value = 'red';
+
+  // TODO
+  // const poison = new Entity('poison'); // purple
+  // const hunter = new Entity('hunter');
+};
+
+const initSystems = (
+  world: World,
+  config: GameConfig,
+  context: CanvasRenderingContext2D
+) => {
+  world
+    .registerSystem(new DirectionControlSystem(), 1)
+    .registerSystem(new MovementSystem(), 2)
+    .registerSystem(new TeleportSystem(config), 3)
+    .registerSystem(new CollisionSystem(), 4)
+    .registerSystem(new AttackSystem(), 5)
+    .registerSystem(new DamageSystem(), 6)
+    .registerSystem(new HealthSystem(), 7)
+    .registerSystem(new SpawnSystem(), 8)
+    .registerSystem(new RenderSystem(context), 9, true);
+};
 
 export class Game {
   private _resetBtn = new KeyControl(
@@ -89,140 +156,9 @@ export class Game {
       .attach(this.observerHandler.bind(this))
       .notify(GameAction.toReadyToStart);
 
-    const size = this._config.gridSize;
-
-    this._world.registerComponentType(
-      Location,
-      10,
-      (x: number = 0, y: number = 0) => [new Vector2(x, y)],
-      (component: Location) => {
-        component.position.set(0, 0);
-      }
-    );
-
-    this._world.registerComponentType(
-      Movement,
-      10,
-      (x: number = 10, y: number = 10) => [new Vector2(x, y), 0.8],
-      (component: Movement) => {
-        component.velocity.set(0, 0);
-      }
-    );
-
-    this._world.registerComponentType<Render>(
-      Render,
-      10,
-      () => [new Square(size)],
-      () => {}
-    );
-
-    this._world.registerComponentType<Color>(
-      Color,
-      10,
-      () => ['white'],
-      () => {}
-    );
-
-    this._world.registerComponentType<Health>(
-      Health,
-      10,
-      () => [1],
-      (component: Health) => {
-        component.current = 0;
-        component.maxHealth = 0;
-      }
-    );
-    this._world.registerComponentType<Attack>(
-      Attack,
-      10,
-      () => [],
-      (component: Attack) => {
-        component.targets = [];
-      }
-    );
-    this._world.registerComponentType<Damage>(
-      Damage,
-      10,
-      () => [1],
-      (component: Damage) => {
-        component.damage = 0;
-      }
-    );
-    this._world.registerComponentType<DirectionControl>(
-      DirectionControl,
-      10,
-      () => [new Direction(new Vector2(1, 0))],
-      () => {}
-    );
-
-    this._world.registerComponentType<Teleport>(
-      Teleport,
-      10,
-      () => [true],
-      () => {}
-    );
-    this._world.registerComponentType<CollisionOpponent>(
-      CollisionOpponent,
-      10,
-      () => [],
-      () => {}
-    );
-
-    this._world.registerComponentType<Respawn>(
-      Respawn,
-      10,
-      () => [0.3],
-      () => {}
-    );
-
-    this._world.registerComponentType<TakeDamage>(
-      TakeDamage,
-      10,
-      () => [],
-      (component: TakeDamage) => {
-        component.damageReceived = 0;
-      }
-    );
-
-    const player = this._world
-      .createEntity()
-      .add(Location)
-      .add(Movement)
-      .add(Render)
-      .add(Color)
-      .add(Health)
-      .add(Attack)
-      .add(Damage)
-      .add(DirectionControl)
-      .add(Teleport)
-      .add(CollisionOpponent);
-
-    player.get(Color).value = 'lightgreen';
-
-    const food = this._world
-      .createEntity()
-      .add(Location)
-      .add(Render)
-      .add(Color)
-      .add(Health)
-      .add(Respawn)
-      .add(TakeDamage);
-
-    food.get(Color).value = 'red';
-
-    // const poison = new Entity('poison'); // purple
-    // const hunter = new Entity('hunter');
-
-    this._world
-      .registerSystem(new DirectionControlSystem(), 1)
-      .registerSystem(new MovementSystem(), 2)
-      .registerSystem(new TeleportSystem(this._config), 3)
-      .registerSystem(new CollisionSystem(), 4)
-      .registerSystem(new AttackSystem(), 5)
-      .registerSystem(new DamageSystem(), 6)
-      .registerSystem(new HealthSystem(), 7)
-      .registerSystem(new SpawnSystem(), 8)
-      .registerSystem(new RenderSystem(this._board._context), 9, true);
+    initComponents(this._world, this._config.gridSize);
+    initEntities(this._world);
+    initSystems(this._world, this._config, this._board._context);
 
     this._world.init(0);
 

@@ -1,42 +1,41 @@
 import { IComponent, IComponentConstructor } from './component';
-import { ComponentPoolManager } from './componentPoolManager';
+import { ComponentPoolManager } from './manager/componentPoolManager';
 import { Entity } from './entity';
 import { EntityComponentStorage } from './entityComponentStorage';
-import { GroupManager } from './groupManager';
-import { IdManager } from './idManager';
+import { GroupManager } from './manager/groupManager';
+import { IdManager } from './manager/idManager';
 import { EntityPool } from './pool/entityPool';
 import { ISystem } from './system';
 import { SystemRegistry } from './systemRegistry';
 
 export class World {
-  private _componentPoolManager: ComponentPoolManager;
-  private _componentStorage: EntityComponentStorage;
-  private _groupManager: GroupManager;
-  private _systemRegistry: SystemRegistry;
-  private _entityPool: EntityPool;
+  private _componentPoolManager = new ComponentPoolManager(new IdManager());
+  private _componentStorage = new EntityComponentStorage(
+    this._componentPoolManager
+  );
+  private _groupManager = new GroupManager(this._componentStorage);
+  private _systemRegistry = new SystemRegistry();
   private _entityIdManager = new IdManager();
-
-  constructor() {
-    const componentIdManager = new IdManager();
-    this._componentPoolManager = new ComponentPoolManager(componentIdManager);
-    this._componentStorage = new EntityComponentStorage(
-      this._componentPoolManager
-    );
-    this._groupManager = new GroupManager(this._componentStorage);
-    this._entityPool = new EntityPool(
-      () =>
-        new Entity(this._entityIdManager.generateId(), this._componentStorage),
-      (entity: Entity) => {
-        this._componentStorage.removeEntity(entity.id);
-        this._groupManager.entityUpdated(entity);
-      },
-      10
-    );
-    this._systemRegistry = new SystemRegistry(this._entityPool, this._groupManager);
-  }
+  private _entityPool = new EntityPool(
+    () =>
+      new Entity(this._entityIdManager.generateId(), this._componentStorage),
+    10,
+    (entity: Entity) => {
+      this._componentStorage.removeEntity(entity.id);
+      this._groupManager.entityUpdated(entity);
+    },
+  );
 
   public init(deltaTime: number): void {
-    this._systemRegistry.initSystem(deltaTime);
+    const entities = this._entityPool.getAllObjects();
+
+    this._systemRegistry.initSystem({ deltaTime, entities });
+  }
+
+  public update(deltaTime: number): void {
+    const entities = this._entityPool.getAllObjects();
+
+    this._systemRegistry.updateSystems({ deltaTime, entities });
   }
 
   public createEntity(): Entity {
@@ -52,34 +51,41 @@ export class World {
   public registerComponentType<T extends IComponent>(
     type: IComponentConstructor<T>,
     initialSize: number,
-    createParams: () => any[],
-    deactivateParams: (component: T) => void
+    createParams?: () => any[],
   ): void {
     this._componentPoolManager.registerComponentType(
       type,
       initialSize,
       createParams,
-      deactivateParams
     );
   }
 
-  public registerSystem(system: ISystem, priority: number, initSystem?: boolean): this {
-    if (system.hasOwnProperty('world')) {
-      system.world = this;
-    }
+  public registerSystem(
+    system: ISystem,
+    priority: number,
+    initSystem?: boolean
+  ): this {
+    if (system.hasOwnProperty('world')) system.world = this;
 
     this._systemRegistry.registerSystem(system, priority, initSystem);
+
+    this._groupManager.registerSystem(system);
+
+    const entities = this._groupManager.getEntitiesForSystem(system);
+    system.entities = [...entities.values()];
 
     return this;
   }
 
   public removeSystem(system: ISystem): this {
+    if (system.hasOwnProperty('world')) delete system.world;
+
     this._systemRegistry.removeSystem(system);
 
-    return this;
-  }
+    this._groupManager.unregisterSystem(system);
 
-  public update(deltaTime: number): void {
-    this._systemRegistry.updateSystems(deltaTime);
+    system.entities = [];
+
+    return this;
   }
 }

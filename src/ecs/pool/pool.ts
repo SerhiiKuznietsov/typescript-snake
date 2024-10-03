@@ -4,8 +4,8 @@ export class ObjectPool<T> {
 
   constructor(
     private _createFn: () => T,
-    private _deactivateFn: (item: T) => void,
-    initialSize: number
+    public initialSize: number,
+    private _deactivateFn?: (item: T) => void,
   ) {
     this._initializePool(initialSize);
   }
@@ -32,7 +32,9 @@ export class ObjectPool<T> {
   }
 
   public release(item: T): void {
-    this._deactivateFn(item);
+    if (this._deactivateFn) {
+      this._deactivateFn(item);
+    }
     this._inactiveObjects.push(item);
   }
 
