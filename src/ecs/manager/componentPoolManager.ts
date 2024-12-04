@@ -19,7 +19,7 @@ export class ComponentPoolManager {
     const createItemFunc =  () => {
       const values = !!createParams ? createParams() : [];
 
-      return new Constructor(this._idManager.generateId(), values);
+      return new Constructor(this._idManager.generateId(), ...values);
     }
 
     const pool = new ComponentPool(
