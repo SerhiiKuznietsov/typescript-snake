@@ -67,7 +67,7 @@ export class Game {
     this.start();
   }
 
-  public init(): Game {
+  public init(): this {
     this._board.init();
     keyBoard.addHandler('Space', this._pauseHandler);
     this._resetBtn.on();
@@ -92,7 +92,7 @@ export class Game {
     return this;
   }
 
-  public start(): Game {
+  public start(): this {
     this._loop.start();
 
     gameStateObserver.notify(GameAction.toStart);
