@@ -22,5 +22,7 @@ export const createFood = (world: World, config: GameConfig): Entity => {
   render.color = 'red';
   render.zIndex = 1;
 
+  entity.get(Location).position.set(10, 0);
+
   return entity;
 };

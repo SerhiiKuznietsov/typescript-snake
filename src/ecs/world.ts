@@ -1,5 +1,3 @@
-import { IComponent, IComponentConstructor } from './component';
-import { ComponentPoolManager } from './manager/componentPoolManager';
 import { Entity } from './entity';
 import { EntityComponentStorage } from './entityComponentStorage';
 import { GroupManager } from './manager/groupManager';
@@ -14,23 +12,29 @@ export class World {
   private _systemRegistry = new SystemRegistry();
   private _entityIdManager = new IdManager();
   private _entityPool = new EntityPool(
-    () =>
-      new Entity(this._entityIdManager.generateId(), this._componentStorage),
+    () => {
+      const newEntityId = this._entityIdManager.generateId();
+      this._componentStorage.addEntity(newEntityId);
+
+      const newEntity = new Entity(newEntityId, this._componentStorage);
+
+      return newEntity;
+    },
     10,
     (entity: Entity) => {
-      this._componentStorage.removeEntity(entity.id);
       this._groupManager.entityUpdated(entity);
+      this._componentStorage.removeEntity(entity.id);
     }
   );
 
   public init(deltaTime: number): void {
-    const entities = this._entityPool.getAllObjects();
+    const entities = this._entityPool.getActiveObjects();
 
     this._systemRegistry.initSystem({ deltaTime, entities });
   }
 
   public update(deltaTime: number): void {
-    const entities = this._entityPool.getAllObjects();
+    const entities = this._entityPool.getActiveObjects();
 
     this._systemRegistry.updateSystems({ deltaTime, entities });
   }

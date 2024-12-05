@@ -1,6 +1,7 @@
 export class ObjectPool<T> {
   private _allObjects: T[] = [];
   private _inactiveObjects: T[] = [];
+  private _activeObjects = new Set<T>()
 
   constructor(
     private _createFn: () => T,
@@ -21,7 +22,7 @@ export class ObjectPool<T> {
     this._inactiveObjects.push(obj);
   }
 
-  public acquire(): T {
+  private makeObject(): T {
     if (this._inactiveObjects.length > 0) {
       return this._inactiveObjects.pop()!;
     } else {
@@ -31,10 +32,20 @@ export class ObjectPool<T> {
     }
   }
 
+  public acquire(): T {
+    const obj = this.makeObject();
+
+    this._activeObjects.add(obj);
+
+    return obj;
+  }
+
   public release(item: T): void {
     if (this._deactivateFn) {
       this._deactivateFn(item);
     }
+
+    this._activeObjects.delete(item);
     this._inactiveObjects.push(item);
   }
 
@@ -44,5 +55,9 @@ export class ObjectPool<T> {
 
   public getInactiveObjects(): T[] {
     return this._inactiveObjects;
+  }
+
+  public getActiveObjects(): T[] {
+    return Array.from(this._activeObjects);
   }
 }
