@@ -1,4 +1,3 @@
-import { Color } from '@/game/component/color';
 import { Shape } from './shape';
 import { Vector2 } from '../vector2';
 
@@ -13,10 +12,10 @@ export class Circle extends Shape {
     this._radius = radius;
   }
 
-  draw(ctx: CanvasRenderingContext2D, position: Vector2, color: Color): void {
+  draw(ctx: CanvasRenderingContext2D, position: Vector2, color: string): void {
     ctx.beginPath();
     ctx.arc(position.x, position.y, this._radius, 0, Math.PI * 2);
-    ctx.fillStyle = color.value;
+    ctx.fillStyle = color;
     ctx.fill();
   }
 }

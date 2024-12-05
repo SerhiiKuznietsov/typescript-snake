@@ -1,4 +1,3 @@
-import { Color } from '@/game/component/color';
 import { Vector2 } from '../vector2';
 import { Shape } from './shape';
 
@@ -22,9 +21,9 @@ export class Rectangle extends Shape {
   public draw(
     ctx: CanvasRenderingContext2D,
     position: Vector2,
-    color: Color
+    color: string
   ): void {
-    ctx.fillStyle = color.value;
+    ctx.fillStyle = color;
     ctx.fillRect(position.x, position.y, this._width, this._height);
   }
 }

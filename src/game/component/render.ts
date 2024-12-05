@@ -1,20 +1,16 @@
 import { Shape } from '../geometry/shape/shape';
 import { Vector2 } from '../geometry/vector2';
-import { Color } from './color';
 import { IComponent } from '../../ecs/component';
+import { Square } from '../geometry/shape/square';
 
 export class Render implements IComponent {
-  private _shape: Shape;
+  constructor(
+    readonly id: number,
+    public shape: Shape = new Square(20),
+    public color: string = 'black'
+  ) {}
 
-  constructor(readonly id: number, shape: Shape) {
-    this._shape = shape;
-  }
-
-  public draw(
-    ctx: CanvasRenderingContext2D,
-    position: Vector2,
-    color: Color
-  ): void {
-    this._shape.draw(ctx, position, color);
+  public draw(ctx: CanvasRenderingContext2D, position: Vector2): void {
+    this.shape.draw(ctx, position, this.color);
   }
 }

@@ -1,4 +1,9 @@
 import { GameConfig } from './config/game';
+import { Vector2 } from './geometry/vector2';
+
+interface Drawable {
+  draw(ctx: CanvasRenderingContext2D, vector2: Vector2): void;
+}
 
 export class Board {
   private _parentElement: Element;
@@ -36,6 +41,10 @@ export class Board {
     this._parentElement.appendChild(this._element);
 
     return this;
+  }
+
+  public render(drawable: Drawable, vector2: Vector2): void {
+    drawable.draw(this._context, vector2);
   }
 
   public clear(): void {

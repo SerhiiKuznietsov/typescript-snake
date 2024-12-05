@@ -1,5 +1,3 @@
-
-import { Color } from '@/game/component/color';
 import { Vector2 } from '../vector2';
 import { Shape } from './shape';
 
@@ -14,8 +12,8 @@ export class Square extends Shape {
     this._size = size;
   }
 
-  draw(ctx: CanvasRenderingContext2D, position: Vector2, color: Color): void {
-    ctx.fillStyle = color.value;
+  draw(ctx: CanvasRenderingContext2D, position: Vector2, color: string): void {
+    ctx.fillStyle = color;
     ctx.fillRect(
       position.x * this._size,
       position.y * this._size,
