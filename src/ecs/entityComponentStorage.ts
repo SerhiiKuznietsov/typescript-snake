@@ -14,6 +14,14 @@ export class EntityComponentStorage {
     this._componentPoolManager = new ComponentPoolManager(idManager);
   }
 
+  public addEntity(entityId: number): void {
+    this._entityComponents.set(entityId, new Map<string, IComponent>());
+  }
+
+  public hasEntity(entityId: number): boolean {
+    return this._entityComponents.has(entityId);
+  }
+
   public add<T extends IComponent>(
     entityId: number,
     type: IComponentConstructor<T>
@@ -25,8 +33,8 @@ export class EntityComponentStorage {
     }
 
     const component = this._componentPoolManager.acquireComponent(type);
-    if (!this._entityComponents.has(entityId)) {
-      this._entityComponents.set(entityId, new Map<string, IComponent>());
+    if (!this.hasEntity(entityId)) {
+      this.addEntity(entityId);
     }
 
     this._entityComponents.get(entityId)!.set(typeName, component);
@@ -55,6 +63,10 @@ export class EntityComponentStorage {
     entityId: number,
     { name }: IComponentConstructor<T>
   ): boolean {
+    if (!this._entityComponents.has(entityId)) {
+      throw new Error(`entity with id: "${entityId}" not found`);
+    }
+
     return this._entityComponents.get(entityId)?.has(name) ?? false;
   }
 
