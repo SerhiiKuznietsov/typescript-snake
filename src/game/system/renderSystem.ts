@@ -16,6 +16,13 @@ export class RenderSystem implements ISystem {
   }
 
   public update(): void {
+    this.entities.sort((entity1, entity2) => {
+      const a = entity1.get(Render);
+      const b = entity2.get(Render);
+
+      return a.zIndex - b.zIndex;
+    });
+
     this.entities.forEach((entity) => {
       const render = entity.get(Render);
       const location = entity.get(Location);

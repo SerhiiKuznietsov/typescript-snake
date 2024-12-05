@@ -7,7 +7,8 @@ export class Render implements IComponent {
   constructor(
     readonly id: number,
     public shape: Shape = new Square(20),
-    public color: string = 'black'
+    public color: string = 'black',
+    public zIndex: number = 0
   ) {}
 
   public draw(ctx: CanvasRenderingContext2D, position: Vector2): void {
