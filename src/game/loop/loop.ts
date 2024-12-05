@@ -1,25 +1,23 @@
-var fps = 32;
-var interval = 1000 / fps;
-var then: undefined | number = 0;
 export class Loop {
-  private _update: Function;
   private animateId: any = undefined;
   private _frameCount: number = 0;
   private _lastSecond: number = 0;
+  private _then: undefined | number = 0;
+  private _interval: number;
 
-  constructor(update: Function) {
-    this._update = update;
+  constructor(private _update: Function, fps: number = 32) {
+    this._interval = 1000 / fps;
   }
 
   private animate(timestamp: number): void {
     this.animateId = requestAnimationFrame(this.animate.bind(this));
 
-    if (then === undefined) then = timestamp;
+    if (this._then === undefined) this._then = timestamp;
 
-    const delta = timestamp - then;
+    const delta = timestamp - this._then;
 
-    if (delta > interval) {
-      then = timestamp - (delta % interval);
+    if (delta > this._interval) {
+      this._then = timestamp - (delta % this._interval);
     } else {
       return;
     }
