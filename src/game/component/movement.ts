@@ -7,8 +7,8 @@ export class Movement implements IComponent {
 
   constructor(
     readonly id: number,
-    public readonly velocity: Vector2,
-    moveInterval: number = 0.1
+    public velocity: Vector2 = new Vector2(20, 0),
+    moveInterval: number = 0.8
   ) {
     this.moveInterval = moveInterval * 100;
   }

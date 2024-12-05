@@ -9,10 +9,7 @@ import { ISystem } from './system';
 import { SystemRegistry } from './systemRegistry';
 
 export class World {
-  private _componentPoolManager = new ComponentPoolManager(new IdManager());
-  private _componentStorage = new EntityComponentStorage(
-    this._componentPoolManager
-  );
+  private _componentStorage = new EntityComponentStorage(new IdManager());
   private _groupManager = new GroupManager(this._componentStorage);
   private _systemRegistry = new SystemRegistry();
   private _entityIdManager = new IdManager();
@@ -23,7 +20,7 @@ export class World {
     (entity: Entity) => {
       this._componentStorage.removeEntity(entity.id);
       this._groupManager.entityUpdated(entity);
-    },
+    }
   );
 
   public init(deltaTime: number): void {
@@ -46,18 +43,6 @@ export class World {
 
   public removeEntity(entity: Entity): void {
     this._entityPool.release(entity);
-  }
-
-  public registerComponentType<T extends IComponent>(
-    type: IComponentConstructor<T>,
-    initialSize: number,
-    createParams?: () => any[],
-  ): void {
-    this._componentPoolManager.registerComponentType(
-      type,
-      initialSize,
-      createParams,
-    );
   }
 
   public registerSystem(

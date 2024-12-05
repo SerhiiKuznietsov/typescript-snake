@@ -16,6 +16,7 @@ export class MovementSystem implements ISystem {
 
       movement.accumulatedTime += deltaTime;
 
+
       movement.velocity.setVector(control.direction.getCopy());
 
       while (movement.accumulatedTime >= movement.moveInterval) {

@@ -1,7 +1,7 @@
 export class IdManager {
   private _nextId: number = 0;
 
-  generateId(): number {
+  public generateId(): number {
     return this._nextId++;
   }
 }

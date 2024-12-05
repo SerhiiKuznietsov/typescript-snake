@@ -2,12 +2,16 @@ import { IComponent, IComponentConstructor } from './component';
 import { ComponentPoolManager } from './manager/componentPoolManager';
 import { Entity } from './entity';
 
+interface IIdManager {
+  generateId: () => number;
+}
+
 export class EntityComponentStorage {
   private _entityComponents: Map<number, Map<string, IComponent>> = new Map();
   private _componentPoolManager: ComponentPoolManager;
 
-  constructor(componentPoolManager: ComponentPoolManager) {
-    this._componentPoolManager = componentPoolManager;
+  constructor(idManager: IIdManager) {
+    this._componentPoolManager = new ComponentPoolManager(idManager);
   }
 
   public add<T extends IComponent>(
@@ -15,10 +19,16 @@ export class EntityComponentStorage {
     type: IComponentConstructor<T>
   ): void {
     const typeName = type.name;
+
+    if (!this._componentPoolManager.hasComponentType(type)) {
+      this._componentPoolManager.registerComponentType(type, 1);
+    }
+
     const component = this._componentPoolManager.acquireComponent(type);
     if (!this._entityComponents.has(entityId)) {
       this._entityComponents.set(entityId, new Map<string, IComponent>());
     }
+
     this._entityComponents.get(entityId)!.set(typeName, component);
   }
 

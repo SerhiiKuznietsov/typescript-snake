@@ -2,30 +2,36 @@ import { IComponent, IComponentConstructor } from '../component';
 import { IdManager } from './idManager';
 import { ComponentPool } from '../pool/componentPool';
 
+interface IIdManager {
+  generateId: () => number;
+}
+
 export class ComponentPoolManager {
   private _componentPools: Map<string, ComponentPool> = new Map();
 
-  constructor(private _idManager: IdManager) {}
+  constructor(private _idManager: IIdManager) {}
+
+  public hasComponentType<T extends IComponent>(
+    Constructor: IComponentConstructor<T>
+  ): boolean {
+    const { name: typeName } = Constructor;
+
+    return this._componentPools.has(typeName);
+  }
 
   public registerComponentType<T extends IComponent>(
     Constructor: IComponentConstructor<T>,
-    initialSize: number,
-    createParams?: () => any[],
+    initialSize: number
   ): void {
     const { name: typeName } = Constructor;
 
     if (this._componentPools.has(typeName)) return;
 
-    const createItemFunc =  () => {
-      const values = !!createParams ? createParams() : [];
+    const createItemFunc = () => {
+      return new Constructor(this._idManager.generateId());
+    };
 
-      return new Constructor(this._idManager.generateId(), ...values);
-    }
-
-    const pool = new ComponentPool(
-      createItemFunc,
-      initialSize
-    );
+    const pool = new ComponentPool(createItemFunc, initialSize);
 
     this._componentPools.set(typeName, pool);
   }

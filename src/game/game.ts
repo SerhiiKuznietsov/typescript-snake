@@ -11,9 +11,6 @@ import {
 import { Board } from './board';
 import { GameConfig } from './config/game';
 import { keyBoard } from './keyBoard';
-import { Vector2 } from './geometry/vector2';
-import { Direction } from './geometry/direction';
-import { Color } from './component/color';
 import { Health } from './component/health';
 import { Movement } from './component/movement';
 import { Location } from './component/location';
@@ -26,7 +23,6 @@ import { DirectionControlSystem } from './system/directionControlSystem';
 import { Teleport } from './component/teleport';
 import { TeleportSystem } from './system/teleportSystem';
 import { Attack } from './component/attack';
-import { Square } from './geometry/shape/square';
 import { CollisionSystem } from './system/collisionSystem';
 import { SpawnSystem } from './system/spawnSystem';
 import { Respawn } from './component/respawn';
@@ -36,44 +32,14 @@ import { TakeDamage } from './component/takeDamage';
 import { Damage } from './component/damage';
 import { DamageSystem } from './system/damageSystem';
 import { World } from '../ecs/world';
+import { Square } from './geometry/shape/square';
 
-const initComponents = (world: World, size: number) => {
-  world.registerComponentType(Location, 10, (x: number = 0, y: number = 0) => [
-    new Vector2(x, y),
-  ]);
-
-  world.registerComponentType(
-    Movement,
-    10,
-    (x: number = 10, y: number = 10) => [new Vector2(x, y), 0.8]
-  );
-
-  world.registerComponentType<Render>(Render, 10, () => [new Square(size)]);
-
-  world.registerComponentType<Color>(Color, 10, () => ['white']);
-
-  world.registerComponentType<Health>(Health, 10, () => [1]);
-  world.registerComponentType<Attack>(Attack, 10);
-  world.registerComponentType<Damage>(Damage, 10, () => [1]);
-  world.registerComponentType<DirectionControl>(DirectionControl, 10, () => [
-    new Direction(new Vector2(1, 0)),
-  ]);
-
-  world.registerComponentType<Teleport>(Teleport, 10, () => [true]);
-  world.registerComponentType<CollisionOpponent>(CollisionOpponent, 10);
-
-  world.registerComponentType<Respawn>(Respawn, 10, () => [0.3]);
-
-  world.registerComponentType<TakeDamage>(TakeDamage, 10);
-};
-
-const initEntities = (world: World) => {
+const initEntities = (world: World, config: GameConfig) => {
   const player = world
     .createEntity()
     .add(Location)
     .add(Movement)
     .add(Render)
-    .add(Color)
     .add(Health)
     .add(Attack)
     .add(Damage)
@@ -81,18 +47,20 @@ const initEntities = (world: World) => {
     .add(Teleport)
     .add(CollisionOpponent);
 
-  player.get(Color).value = 'lightgreen';
+  player.get(Damage).damage = 1;
+  player.get(Render).shape = new Square(config.gridSize);
+  player.get(Render).color = 'lightgreen';
 
   const food = world
     .createEntity()
     .add(Location)
     .add(Render)
-    .add(Color)
     .add(Health)
     .add(Respawn)
     .add(TakeDamage);
 
-  food.get(Color).value = 'red';
+  food.get(Render).shape = new Square(config.gridSize);
+  food.get(Render).color = 'red';
 
   // TODO
   // const poison = new Entity('poison'); // purple
@@ -102,7 +70,7 @@ const initEntities = (world: World) => {
 const initSystems = (
   world: World,
   config: GameConfig,
-  context: CanvasRenderingContext2D
+  board: Board
 ) => {
   world
     .registerSystem(new DirectionControlSystem(), 1)
@@ -113,7 +81,7 @@ const initSystems = (
     .registerSystem(new DamageSystem(), 6)
     .registerSystem(new HealthSystem(), 7)
     .registerSystem(new SpawnSystem(), 8)
-    .registerSystem(new RenderSystem(context), 9, true);
+    .registerSystem(new RenderSystem(board), 9, true);
 };
 
 export class Game {
@@ -156,9 +124,8 @@ export class Game {
       .attach(this.observerHandler.bind(this))
       .notify(GameAction.toReadyToStart);
 
-    initComponents(this._world, this._config.gridSize);
-    initEntities(this._world);
-    initSystems(this._world, this._config, this._board._context);
+    initEntities(this._world, this._config);
+    initSystems(this._world, this._config, this._board);
 
     this._world.init(0);
 
