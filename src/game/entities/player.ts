@@ -11,6 +11,7 @@ import { DirectionControl } from '../component/directionControl';
 import { Teleport } from '../component/teleport';
 import { CollisionOpponent } from '../component/collisionOpponent';
 import { Square } from '../geometry/shape/square';
+import { Tail } from '../component/tail';
 
 export const createPlayer = (world: World, config: GameConfig): Entity => {
   const entity = world
@@ -23,7 +24,8 @@ export const createPlayer = (world: World, config: GameConfig): Entity => {
     .add(Damage)
     .add(DirectionControl)
     .add(Teleport)
-    .add(CollisionOpponent);
+    .add(CollisionOpponent)
+    .add(Tail);
 
   entity.get(Damage).damage = 1;
 
