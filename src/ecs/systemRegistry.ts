@@ -1,12 +1,14 @@
 import { EventBus } from './EventBus';
 import { EcsEvents } from './EcsEvents';
 import { World } from './World';
+import { Group } from './group/Group';
 
 export interface UpdateSystemData {
   deltaTime: number;
 }
 
 export interface ISystem {
+  w: World
   init?(): void;
   update(data: UpdateSystemData): void;
 }
@@ -14,7 +16,7 @@ export interface ISystem {
 export class SystemRegistry {
   private _systems: ISystem[] = [];
 
-  constructor(private _eventBus: EventBus) {}
+  constructor(private _eventBus: EventBus, private _world: World) {}
 
   public addSystem(system: ISystem): void {
     if (system.init) {
