@@ -18,7 +18,7 @@ export class World {
   constructor() {
     this._eventBus = new EventBus();
     this._storage = new EntityComponentStorage(this._eventBus);
-    this._systemRegistry = new SystemRegistry(this._eventBus);
+    this._systemRegistry = new SystemRegistry(this._eventBus, this);
     this._groupManager = new GroupManager(this._eventBus, this._storage);
   }
 
@@ -30,11 +30,12 @@ export class World {
     this._storage.deleteEntity(entityId);
   }
 
-  public addComponent(
+  public addComponent<T extends IComponent>(
     entityId: EntityId,
-    component: IComponentConstructor<IComponent>
-  ): IComponent {
-    return this._storage.addComponent(entityId, component);
+    component: IComponentConstructor<T>,
+    ...args: any[]
+  ): T {
+    return this._storage.addComponent(entityId, component, args);
   }
 
   public removeComponent(
