@@ -1,20 +1,13 @@
-// import { Health } from '../component/health';
-import { Location } from '../component/location';
-import { Render } from '../component/render';
+import { Position } from '../component/Position';
+import { Render } from '../component/Render';
 import { ISystem } from '@/ecs/SystemRegistry';
-import { EntityId } from '@/ecs/entity';
 import { Board } from '../board';
 import { World } from '@/ecs/World';
-import { Attack } from '../component/attack';
 
 export class RenderSystem implements ISystem {
-  public entities: EntityId[] = [];
+  public entities = this.w.newGroup(this, [Render, Position]);
 
-  constructor(private _board: Board, public w: World) {}
-
-  public init() {
-    this.entities = this.w.newGroup(this, [Render, Location]);
-  }
+  constructor(public w: World, private _board: Board) {}
 
   public update(): void {
     this.entities.sort((entity1, entity2) => {
@@ -26,7 +19,7 @@ export class RenderSystem implements ISystem {
 
     this.entities.forEach((entity) => {
       const render = this.w.getComponent(entity, Render);
-      const location = this.w.getComponent(entity, Location);
+      const location = this.w.getComponent(entity, Position);
 
       this._board.render(render, location.position);
     });
