@@ -32,6 +32,15 @@ body {
 	flex-wrap: wrap;
 }
 
+.game__fps {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding-top: 10px;
+	padding-right: 10px;
+}
+
+
 .game__header {
 	flex: 0 0 100%;
 	display: flex;

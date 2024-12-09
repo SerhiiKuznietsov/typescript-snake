@@ -18,7 +18,7 @@ import { initSystems } from './system';
 export class Game {
   private _config = new GameConfig();
   private _stateController = new GameStateController();
-  private _loop = new Loop(this.update.bind(this));
+  private _loop = new Loop(this.update.bind(this), this.updateFPS.bind(this));
   private _board = new Board('.game__body', 'gameBoard', this._config);
   private _world = new World();
   private _resetBtn = new KeyControl(
@@ -27,10 +27,16 @@ export class Game {
     this.restart.bind(this)
   );
 
+  private _fpsElement = document.querySelector('.game__fps') as Element;
+
   private _pauseHandler = () => {
     this.pause();
     console.log('pause');
   };
+
+  private updateFPS(fps: number = 0) {
+    this._fpsElement.textContent = `${fps}`;
+  }
 
   private update(deltaTime: number): void {
     this._board.clear();
