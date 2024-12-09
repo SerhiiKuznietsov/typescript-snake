@@ -4,10 +4,12 @@ import { Position } from '../component/Position';
 import { Render } from '../component/Render';
 import { Square } from '../geometry/shape/square';
 import { Collider } from '../component/Collider';
+import { Poison } from '../component/Poison';
 
 export const createPoison = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
 
+  world.addComponent(entityId, Poison);
   world.addComponent(entityId, Position).position.set(10, 0);
   world.addComponent(entityId, Collider, config.gridSize, config.gridSize);
 
