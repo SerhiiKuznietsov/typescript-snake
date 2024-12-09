@@ -5,7 +5,11 @@ export class Loop {
   private _then: undefined | number = 0;
   private _interval: number;
 
-  constructor(private _update: Function, fps: number = 32) {
+  constructor(
+    private _update: Function,
+    private _updateFPS?: Function,
+    fps: number = 32
+  ) {
     this._interval = 1000 / fps;
   }
 
@@ -25,7 +29,7 @@ export class Loop {
     this._frameCount++;
 
     if (timestamp >= this._lastSecond + 1000) {
-      console.log(`Current FPS: ${this._frameCount}`);
+      this._updateFPS && this._updateFPS(this._frameCount);
 
       this._frameCount = 0;
       this._lastSecond = timestamp - (timestamp - this._lastSecond - 1000);
