@@ -7,6 +7,7 @@ export class EntityComponentStorage {
   private _components: Map<number, Map<string, IComponent>> = new Map();
   private _componentPools: Map<string, ObjectPool<IComponent>> = new Map();
   private _nextEntityId: number = 1;
+  private _nextComponentId: number = 1;
 
   constructor(private _eventBus: EventBus) {}
 
@@ -36,7 +37,7 @@ export class EntityComponentStorage {
   public addComponent<T extends IComponent>(
     entityId: number,
     componentType: IComponentConstructor<T>,
-    ...args: any[]
+    args: any[]
   ): T {
     const componentKey = this.getComponentKey(componentType);
     const entityComponents = this._components.get(entityId);
@@ -46,7 +47,10 @@ export class EntityComponentStorage {
 
     const component = this.acquireComponent(
       componentKey,
-      () => new componentType(entityId, ...args)
+      () => {
+        const componentId = this._nextComponentId++;
+        return new componentType(componentId, ...args)
+      }
     );
     entityComponents.set(componentKey, component);
 
