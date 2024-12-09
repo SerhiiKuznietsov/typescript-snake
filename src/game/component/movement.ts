@@ -1,5 +1,5 @@
 import { Vector2 } from '../geometry/vector2';
-import { IComponent } from '../../ecs/component';
+import { IComponent } from '@/ecs/component';
 
 export class Movement implements IComponent {
   public accumulatedTime: number = 0;

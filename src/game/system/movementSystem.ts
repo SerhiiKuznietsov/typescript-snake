@@ -1,18 +1,28 @@
 import { Movement } from '../component/movement';
 import { Location } from '../component/location';
 import { DirectionControl } from '../component/directionControl';
-import { Entity } from '../../ecs/entity';
-import { ISystem, UpdateSystemData } from '../../ecs/system';
+import { EntityId } from '@/ecs/entity';
+import { ISystem, UpdateSystemData } from '@/ecs/SystemRegistry';
+import { World } from '@/ecs/World';
 
 export class MovementSystem implements ISystem {
-  public requiredComponents = [Location, Movement, DirectionControl];
-  public entities: Entity[] = [];
+  public entities: EntityId[] = [];
+
+  constructor(public w: World) {}
+
+  public init() {
+    this.entities = this.w.newGroup(this, [
+      Location,
+      Movement,
+      DirectionControl,
+    ]);
+  }
 
   public update({ deltaTime }: UpdateSystemData): void {
     this.entities.forEach((entity) => {
-      const location = entity.get(Location);
-      const movement = entity.get(Movement);
-      const control = entity.get(DirectionControl);
+      const location = this.w.getComponent(entity, Location);
+      const movement = this.w.getComponent(entity, Movement);
+      const control = this.w.getComponent(entity, DirectionControl);
 
       movement.accumulatedTime += deltaTime;
 

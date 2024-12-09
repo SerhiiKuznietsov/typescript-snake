@@ -1,103 +1,141 @@
 import { IComponent, IComponentConstructor } from './component';
-import { ComponentPoolManager } from './manager/componentPoolManager';
-import { Entity } from './entity';
-
-interface IIdManager {
-  generateId: () => number;
-}
+import { EcsEvents } from './EcsEvents';
+import { EventBus } from './EventBus';
+import { ObjectPool } from './pool';
 
 export class EntityComponentStorage {
-  private _entityComponents: Map<number, Map<string, IComponent>> = new Map();
-  private _componentPoolManager: ComponentPoolManager;
+  private _components: Map<number, Map<string, IComponent>> = new Map();
+  private _componentPools: Map<string, ObjectPool<IComponent>> = new Map();
+  private _nextEntityId: number = 1;
 
-  constructor(idManager: IIdManager) {
-    this._componentPoolManager = new ComponentPoolManager(idManager);
+  constructor(private _eventBus: EventBus) {}
+
+  public createEntity(): number {
+    const entityId = this._nextEntityId++;
+    this._components.set(entityId, new Map());
+
+    this._eventBus.emit(EcsEvents.ENTITY_CREATED, { entityId });
+
+    return entityId;
   }
 
-  public addEntity(entityId: number): void {
-    this._entityComponents.set(entityId, new Map<string, IComponent>());
-  }
-
-  public hasEntity(entityId: number): boolean {
-    return this._entityComponents.has(entityId);
-  }
-
-  public add<T extends IComponent>(
-    entityId: number,
-    type: IComponentConstructor<T>
-  ): void {
-    const typeName = type.name;
-
-    if (!this._componentPoolManager.hasComponentType(type)) {
-      this._componentPoolManager.registerComponentType(type, 1);
+  public deleteEntity(entityId: number): void {
+    const entityComponents = this._components.get(entityId);
+    if (!entityComponents) {
+      throw new Error(`Entity with id: "${entityId}" not found`);
     }
 
-    const component = this._componentPoolManager.acquireComponent(type);
-    if (!this.hasEntity(entityId)) {
-      this.addEntity(entityId);
-    }
-
-    this._entityComponents.get(entityId)!.set(typeName, component);
-  }
-
-  public remove<T extends IComponent>(
-    entityId: number,
-    type: IComponentConstructor<T>
-  ): void {
-    const typeName = type.name;
-    const component = this._entityComponents.get(entityId)?.get(typeName);
-    if (component) {
-      this._entityComponents.get(entityId)?.delete(typeName);
-      this._componentPoolManager.releaseComponent(type, component);
-    }
-  }
-
-  public get<T extends IComponent>(
-    entityId: number,
-    { name }: IComponentConstructor<T>
-  ): T | undefined {
-    return this._entityComponents.get(entityId)?.get(name) as T | undefined;
-  }
-
-  public has<T extends IComponent>(
-    entityId: number,
-    { name }: IComponentConstructor<T>
-  ): boolean {
-    if (!this._entityComponents.has(entityId)) {
-      throw new Error(`entity with id: "${entityId}" not found`);
-    }
-
-    return this._entityComponents.get(entityId)?.has(name) ?? false;
-  }
-
-  public getAll(entityId: number): IComponent[] {
-    return Array.from(this._entityComponents.get(entityId)?.values() ?? []);
-  }
-
-  public clear(entityId: number): void {
-    const components = this._entityComponents.get(entityId);
-
-    components?.forEach((component) => {
-      this._componentPoolManager.releaseComponent(
-        component.constructor as IComponentConstructor<IComponent>,
-        component
-      );
-      components.clear();
+    entityComponents.forEach((component, componentKey) => {
+      this.releaseComponent(componentKey, component);
     });
+    this._components.delete(entityId);
+
+    this._eventBus.emit(EcsEvents.ENTITY_DELETED, { entityId });
   }
 
-  public removeEntity(entityId: number): void {
-    this.clear(entityId);
-    this._entityComponents.delete(entityId);
-  }
+  public addComponent<T extends IComponent>(
+    entityId: number,
+    componentType: IComponentConstructor<T>,
+    ...args: any[]
+  ): T {
+    const componentKey = this.getComponentKey(componentType);
+    const entityComponents = this._components.get(entityId);
+    if (!entityComponents) {
+      throw new Error(`Entity with ID ${entityId} does not exist.`);
+    }
 
-  public getAllEntities(): Entity[] {
-    return Array.from(this._entityComponents.keys()).map(
-      (id) => new Entity(id, this)
+    const component = this.acquireComponent(
+      componentKey,
+      () => new componentType(entityId, ...args)
     );
+    entityComponents.set(componentKey, component);
+
+    this._eventBus.emit(EcsEvents.COMPONENT_ADDED, { entityId, componentType });
+
+    return component;
   }
 
-  public onComponentAdded(entityId: number, componentType: string): void {}
+  public removeComponent<T extends IComponent>(
+    entityId: number,
+    componentType: IComponentConstructor<T>
+  ): void {
+    const componentKey = this.getComponentKey(componentType);
+    const entityComponents = this._components.get(entityId);
+    if (!entityComponents) {
+      throw new Error(`Entity with ID ${entityId} does not exist.`);
+    }
 
-  public onComponentRemoved(entityId: number, componentType: string): void {}
+    const component = entityComponents.get(componentKey);
+    if (component) {
+      this.releaseComponent(componentKey, component);
+      entityComponents.delete(componentKey);
+
+      this._eventBus.emit(EcsEvents.COMPONENT_REMOVED, {
+        entityId,
+        componentType,
+      });
+    }
+  }
+
+  public getComponent<T extends IComponent>(
+    entityId: number,
+    componentType: IComponentConstructor<T>
+  ): T {
+    const key = this.getComponentKey(componentType);
+    const entityComponents = this._components.get(entityId);
+
+    const findComponent = entityComponents?.get(key);
+
+    if (!findComponent) {
+      throw new Error(
+        `Component with key: "${key}" no found for entity: ${entityId}`
+      );
+    }
+
+    return findComponent as T;
+  }
+
+  public hasComponent<T extends IComponent>(
+    entityId: number,
+    componentType: IComponentConstructor<T>
+  ): boolean {
+    const componentKey = this.getComponentKey(componentType);
+    const entityComponents = this._components.get(entityId);
+    return entityComponents?.has(componentKey) || false;
+  }
+
+  private acquireComponent<T extends IComponent>(
+    componentKey: string,
+    factory: () => T
+  ): T {
+    if (!this._componentPools.has(componentKey)) {
+      this._componentPools.set(
+        componentKey,
+        new ObjectPool<IComponent>(factory, 10, this.resetComponent)
+      );
+    }
+    return this._componentPools.get(componentKey)!.acquire() as T;
+  }
+
+  private releaseComponent(componentKey: string, component: IComponent): void {
+    this._componentPools.get(componentKey)?.release(component);
+  }
+
+  private resetComponent(component: IComponent): void {
+    if (component.data) {
+      for (const key of Object.keys(component.data)) {
+        (component.data as any)[key] = undefined;
+      }
+    }
+  }
+
+  private getComponentKey<T extends IComponent>(
+    componentType: IComponentConstructor<T>
+  ): string {
+    return componentType.name;
+  }
+
+  public getAllEntities(): number[] {
+    return Array.from(this._components.keys());
+  }
 }

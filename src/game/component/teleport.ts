@@ -1,4 +1,4 @@
-import { IComponent } from '../../ecs/component';
+import { IComponent } from '@/ecs/component';
 
 export class Teleport implements IComponent {
   public isActive: boolean;

@@ -1,20 +1,23 @@
 import { DirectionControl } from '../component/directionControl';
-import { Entity } from '../../ecs/entity';
-import { ISystem } from '../../ecs/system';
+import { EntityId } from '@/ecs/entity';
+import { ISystem } from '@/ecs/SystemRegistry';
 import { keyBoard } from '../keyBoard';
+import { World } from '@/ecs/World';
 
 export class DirectionControlSystem implements ISystem {
-  public readonly requiredComponents = [DirectionControl];
-  public readonly excludedComponents = [];
-  public entities: Entity[] = [];
+  public entities: EntityId[] = [];
 
-  constructor() {
+  constructor(public w: World) {
     this.initializeListeners();
+  }
+
+  public init() {
+    this.entities = this.w.newGroup(this, [DirectionControl]);
   }
 
   public update(): void {
     this.entities.forEach((entity) => {
-      const control = entity.get(DirectionControl);
+      const control = this.w.getComponent(entity, DirectionControl);
 
       control.changed = false;
     });
@@ -35,7 +38,7 @@ export class DirectionControlSystem implements ISystem {
 
   private setControl = ({ code }: KeyboardEvent): void => {
     this.entities.forEach((entity) => {
-      const control = entity.get(DirectionControl);
+      const control = this.w.getComponent(entity, DirectionControl);
 
       if (control.changed) return;
 

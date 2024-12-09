@@ -1,30 +1,48 @@
-import { ISystem, UpdateSystemData } from './system';
+import { EventBus } from './EventBus';
+import { EcsEvents } from './EcsEvents';
+import { World } from './World';
 
-type SystemList = { system: ISystem; priority: number; initSystem: boolean }[];
+export interface UpdateSystemData {
+  deltaTime: number;
+}
+
+export interface ISystem {
+  init?(): void;
+  update(data: UpdateSystemData): void;
+}
 
 export class SystemRegistry {
-  private _systems: SystemList = [];
+  private _systems: ISystem[] = [];
 
-  public registerSystem(
-    system: ISystem,
-    priority: number,
-    initSystem: boolean = false
-  ): void {
-    this._systems.push({ system, priority, initSystem });
-    this._systems.sort((a, b) => a.priority - b.priority);
+  constructor(private _eventBus: EventBus) {}
+
+  public addSystem(system: ISystem): void {
+    if (system.init) {
+      system?.init();
+    }
+
+    this._systems.push(system);
+    this._eventBus.emit(EcsEvents.SYSTEM_ADDED, { system });
+  }
+
+  public updateSystems(deltaTime: number): void {
+    this._systems.forEach((system) => system.update({ deltaTime }));
   }
 
   public removeSystem(system: ISystem): void {
-    this._systems = this._systems.filter((s) => s.system !== system);
+    const index = this._systems.indexOf(system);
+    if (index !== -1) {
+      this._systems.splice(index, 1);
+      this._eventBus.emit(EcsEvents.SYSTEM_REMOVED, { system });
+    } else {
+      console.warn(`System not found in registry:`, system);
+    }
   }
 
-  public initSystem(data: UpdateSystemData): void {
-    this._systems.forEach(
-      ({ system, initSystem }) => initSystem && system.update(data)
-    );
-  }
-
-  public updateSystems(data: UpdateSystemData): void {
-    this._systems.forEach(({ system }) => system.update(data));
+  public clear(): void {
+    this._systems.forEach((system) => {
+      this._eventBus.emit(EcsEvents.SYSTEM_REMOVED, { system });
+    });
+    this._systems = [];
   }
 }

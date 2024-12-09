@@ -1,4 +1,4 @@
-import { World } from '@/ecs/world';
+import { World } from '@/ecs/World';
 import { GameConfig } from '../config/game';
 import { createPlayer } from './player';
 import { createFood } from './food';

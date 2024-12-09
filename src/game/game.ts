@@ -11,7 +11,7 @@ import {
 import { Board } from './board';
 import { GameConfig } from './config/game';
 import { keyBoard } from './keyBoard';
-import { World } from '../ecs/world';
+import { World } from '../ecs/World';
 import { initEntities } from './entities';
 import { initSystems } from './system';
 
@@ -86,8 +86,6 @@ export class Game {
 
     initEntities(this._world, this._config);
     initSystems(this._world, this._config, this._board);
-
-    this._world.init(0);
 
     return this;
   }

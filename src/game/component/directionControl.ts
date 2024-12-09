@@ -1,5 +1,5 @@
 import { Direction } from '../geometry/direction';
-import { IComponent } from '../../ecs/component';
+import { IComponent } from '@/ecs/component';
 import { Vector2 } from '../geometry/vector2';
 
 export class DirectionControl implements IComponent {

@@ -1,15 +1,23 @@
 import { Health } from '../component/health';
 import { Location } from '../component/location';
 import { Respawn } from '../component/respawn';
-import { Entity } from '../../ecs/entity';
-import { ISystem, UpdateSystemData } from '../../ecs/system';
+import { EntityId } from '@/ecs/entity';
+import { ISystem, UpdateSystemData } from '@/ecs/SystemRegistry';
 import { range } from '../utils/random';
+import { World } from '@/ecs/World';
 
 export class SpawnSystem implements ISystem {
-  public requiredComponents = [Respawn, Health];
-  public entities: Entity[] = [];
+  public entities: EntityId[] = [];
+  public respawnEntities: EntityId[] = [];
 
-  private respawnLocation(entities: Entity[]): { x: number; y: number } {
+  constructor(public w: World) {}
+
+  public init() {
+    this.entities = this.w.newGroup(this, [Respawn, Health], [Location]);
+    this.respawnEntities = this.w.newGroup(this, [Location, Health]);
+  }
+
+  private respawnLocation(): { x: number; y: number } {
     let attempts = 0;
     const maxAttempts = 1000;
 
@@ -17,7 +25,7 @@ export class SpawnSystem implements ISystem {
       const x = range(0, 19);
       const y = range(0, 19);
 
-      if (!this.isPositionOccupied(x, y, entities)) {
+      if (!this.isPositionOccupied(x, y)) {
         return { x, y };
       }
       attempts++;
@@ -26,23 +34,18 @@ export class SpawnSystem implements ISystem {
     throw new Error('No free positions available');
   }
 
-  private isPositionOccupied(
-    x: number,
-    y: number,
-    entities: Entity[]
-  ): boolean {
-    return entities.some((entity) => {
-      if (!entity.has(Location)) return false;
+  private isPositionOccupied(x: number, y: number): boolean {
+    return this.respawnEntities.some((entity) => {
+      if (!this.w.hasComponent(entity, Location)) return false;
 
-      const location = entity.get(Location);
+      const location = this.w.getComponent(entity, Location);
 
       return location.position.x === x && location.position.y === y;
     });
   }
 
   private respawnIfIfExists(
-    entity: Entity,
-    entities: Entity[],
+    entity: EntityId,
     health: Health,
     respawn: Respawn
   ) {
@@ -50,12 +53,10 @@ export class SpawnSystem implements ISystem {
 
     respawn.readyToRespawn = false;
 
-    if (!entity.has(Location)) return;
+    const { x, y } = this.respawnLocation();
 
-    const location = entity.get(Location);
-
-    const { x, y } = this.respawnLocation(entities);
-    location.position.set(x, y);
+    this.w.addComponent(entity, Location);
+    this.w.getComponent(entity, Location).position.set(x, y);
   }
 
   private checkNeedRespawn(
@@ -78,12 +79,12 @@ export class SpawnSystem implements ISystem {
     respawn.readyToRespawn = true;
   }
 
-  public update({ deltaTime, entities }: UpdateSystemData): void {
+  public update({ deltaTime }: UpdateSystemData): void {
     this.entities.forEach((entity) => {
-      const health = entity.get(Health);
-      const respawn = entity.get(Respawn);
+      const health = this.w.getComponent(entity, Health);
+      const respawn = this.w.getComponent(entity, Respawn);
 
-      this.respawnIfIfExists(entity, entities, health, respawn);
+      this.respawnIfIfExists(entity, health, respawn);
       this.checkNeedRespawn(health, respawn, deltaTime);
     });
   }

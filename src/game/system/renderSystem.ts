@@ -1,33 +1,32 @@
-import { Health } from '../component/health';
+// import { Health } from '../component/health';
 import { Location } from '../component/location';
 import { Render } from '../component/render';
-import { ISystem } from '../../ecs/system';
-import { Entity } from '../../ecs/entity';
+import { ISystem } from '@/ecs/SystemRegistry';
+import { EntityId } from '@/ecs/entity';
 import { Board } from '../board';
+import { World } from '@/ecs/World';
+import { Attack } from '../component/attack';
 
 export class RenderSystem implements ISystem {
-  public requiredComponents = [Render, Location];
-  public entities: Entity[] = [];
+  public entities: EntityId[] = [];
 
-  private _board: Board;
+  constructor(private _board: Board, public w: World) {}
 
-  constructor(board: Board) {
-    this._board = board;
+  public init() {
+    this.entities = this.w.newGroup(this, [Render, Location]);
   }
 
   public update(): void {
     this.entities.sort((entity1, entity2) => {
-      const a = entity1.get(Render);
-      const b = entity2.get(Render);
+      const a = this.w.getComponent(entity1, Render);
+      const b = this.w.getComponent(entity2, Render);
 
       return a.zIndex - b.zIndex;
     });
 
     this.entities.forEach((entity) => {
-      const render = entity.get(Render);
-      const location = entity.get(Location);
-
-      if (!entity.has(Health) || !entity.get(Health).current) return;
+      const render = this.w.getComponent(entity, Render);
+      const location = this.w.getComponent(entity, Location);
 
       this._board.render(render, location.position);
     });

@@ -1,8 +1,8 @@
-import { IComponent } from '../../ecs/component';
-import { Entity } from '../../ecs/entity';
+import { IComponent } from '@/ecs/component';
+import { EntityId } from '@/ecs/entity';
 
 export class CollisionOpponent implements IComponent {
-  public entities: Entity[] = [];
+  public entities: EntityId[] = [];
   public isActive = false;
 
   constructor(readonly id: number) {}

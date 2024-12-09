@@ -1,32 +1,39 @@
 import { Attack } from '../component/attack';
 import { Damage } from '../component/damage';
 import { TakeDamage } from '../component/takeDamage';
-import { Entity } from '../../ecs/entity';
-import { ISystem, UpdateSystemData } from '../../ecs/system';
+import { EntityId } from '@/ecs/entity';
+import { ISystem } from '@/ecs/SystemRegistry';
+import { World } from '@/ecs/World';
 
 export class DamageSystem implements ISystem {
-  public readonly requiredComponents = [TakeDamage];
-  public entities: Entity[] = [];
+  public entities: EntityId[] = [];
+  public attackEntities: EntityId[] = [];
 
-  private clearDamageReceivedIfExists(entity: Entity) {
-    if (!entity.has(TakeDamage)) return;
+  constructor(public w: World) {}
 
-    entity.get(TakeDamage).damageReceived = 0;
+  public init() {
+    this.entities = this.w.newGroup(this, [TakeDamage]);
+    this.attackEntities = this.w.newGroup(this, [Attack, Damage]);
   }
 
-  public update({ entities }: UpdateSystemData): void {
+  private clearDamageReceivedIfExists(entity: EntityId) {
+    if (!this.w.hasComponent(entity, TakeDamage)) return;
+
+    this.w.getComponent(entity, TakeDamage).damageReceived = 0;
+  }
+
+  public update(): void {
     this.entities.forEach((entity) => this.clearDamageReceivedIfExists(entity));
 
-    entities.forEach((e) => {
-      if (!e.has(Attack) || !e.has(Damage)) return;
-      const attack = e.get(Attack);
+    this.attackEntities.forEach((e) => {
+      const attack = this.w.getComponent(e, Attack);
 
       if (!attack.targets.length) return;
 
-      const damage = e.get(Damage);
+      const damage = this.w.getComponent(e, Damage);
 
       attack.targets.forEach((e) => {
-        const takeDamage = e.get(TakeDamage);
+        const takeDamage = this.w.getComponent(e, TakeDamage);
 
         takeDamage.damageReceived += damage.damage;
       });
