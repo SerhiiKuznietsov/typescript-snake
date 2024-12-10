@@ -1,5 +1,4 @@
 import { Direction } from '../component/Direction';
-import { EntityId } from '@/ecs/entity';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { keyBoard } from '../keyBoard';
 import { World } from '@/ecs/World';

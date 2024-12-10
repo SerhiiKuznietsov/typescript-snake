@@ -2,6 +2,7 @@ import { CollisionOpponent } from '../component/CollisionOpponent';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { Food } from '../component/Food';
+import { Position } from '../component/Position';
 
 export class AttackFoodSystem implements ISystem {
   public entities = this.w.newGroup(this, [CollisionOpponent]);
@@ -17,7 +18,7 @@ export class AttackFoodSystem implements ISystem {
       collision.entities.forEach((target) => {
         if (!this.w.hasComponent(target, Food)) return;
 
-        this.w.deleteEntity(target);
+        this.w.removeComponent(target, Position);
       });
     });
   }
