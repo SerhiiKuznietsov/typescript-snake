@@ -19,9 +19,9 @@ export class RenderSystem implements ISystem {
 
     this.entities.forEach((entity) => {
       const render = this.w.getComponent(entity, Render);
-      const location = this.w.getComponent(entity, Position);
+      const position = this.w.getComponent(entity, Position);
 
-      this._board.render(render, location.position);
+      this._board.render(render, position);
     });
   }
 }

@@ -15,7 +15,7 @@ export const createSnakeHead = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
 
   world.getComponent(entityId, PlayerInput);
-  world.getComponent(entityId, Position).position.set(1, 1);
+  world.getComponent(entityId, Position, 1, 1);
   world.getComponent(entityId, Movement, 5);
   world.getComponent(entityId, Velocity, 1);
   world.getComponent(entityId, Direction);

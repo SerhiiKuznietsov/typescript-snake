@@ -4,6 +4,7 @@ import { EntityId } from '@/ecs/entity';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { Collider } from '../component/Collider';
+import { vectorUtils } from '../geometry/utils/vectorUtils';
 
 export class CollisionSystem implements ISystem {
   public entities = this.w.newGroup(this, [Position, Collider]);
@@ -44,7 +45,7 @@ export class CollisionSystem implements ISystem {
         const locationA = this.w.getComponent(entityA, Position);
         const locationB = this.w.getComponent(entityB, Position);
 
-        if (!locationA.position.isEqual(locationB.position)) continue;
+        if (!vectorUtils.isEqual(locationA, locationB)) continue;
 
         this.addToCollisionOpponentIfExists(entityA, entityB);
         this.addToCollisionOpponentIfExists(entityB, entityA);

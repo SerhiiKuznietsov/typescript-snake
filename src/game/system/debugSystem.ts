@@ -2,7 +2,7 @@ import * as dat from 'dat.gui';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { DebugFlag } from '../component/DebugFlag';
-import { guiConfig, vector2Handler } from '../GUI/config';
+import { guiConfig } from '../GUI/config';
 
 export class DebugSystem implements ISystem {
   private gui: dat.GUI;
@@ -63,9 +63,6 @@ export class DebugSystem implements ISystem {
           break;
         case 'color':
           componentFolder.addColor(componentData, key).listen();
-          break;
-        case 'vector2':
-          vector2Handler(value, componentFolder);
           break;
         default:
           console.warn(`Unsupported GUI type: ${config.type}`);

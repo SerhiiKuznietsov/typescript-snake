@@ -19,6 +19,10 @@ export class PlayerInputSystem implements ISystem {
     });
   }
 
+  private normalizeNum(num: number): number {
+    return Math.sign(num);
+  }
+
   private initializeListeners(): void {
     keyBoard
       .addHandler('KeyW', this.setControl)
@@ -34,29 +38,33 @@ export class PlayerInputSystem implements ISystem {
 
   private setControl = ({ code }: KeyboardEvent): void => {
     this.entities.forEach((entity) => {
-      const control = this.w.getComponent(entity, Direction);
+      const direction = this.w.getComponent(entity, Direction);
 
-      if (control.changed) return;
+      if (direction.changed) return;
 
-      control.changed = true;
+      direction.changed = true;
 
-      if (['KeyW', 'ArrowUp'].includes(code) && control.direction.y !== 1) {
-        control.direction.moveY(-1);
+      if (['KeyW', 'ArrowUp'].includes(code) && direction.y !== 1) {
+        direction.x = 0;
+        direction.y = this.normalizeNum(-1);
         return;
       }
 
-      if (['KeyD', 'ArrowRight'].includes(code) && control.direction.x !== -1) {
-        control.direction.moveX(1);
+      if (['KeyD', 'ArrowRight'].includes(code) && direction.x !== -1) {
+        direction.x = this.normalizeNum(1);
+        direction.y = 0;
         return;
       }
 
-      if (['KeyS', 'ArrowDown'].includes(code) && control.direction.y !== -1) {
-        control.direction.moveY(1);
+      if (['KeyS', 'ArrowDown'].includes(code) && direction.y !== -1) {
+        direction.x = 0;
+        direction.y = this.normalizeNum(1);
         return;
       }
 
-      if (['KeyA', 'ArrowLeft'].includes(code) && control.direction.x !== 1) {
-        control.direction.moveX(-1);
+      if (['KeyA', 'ArrowLeft'].includes(code) && direction.x !== 1) {
+        direction.x = this.normalizeNum(-1);
+        direction.y = 0;
         return;
       }
     });

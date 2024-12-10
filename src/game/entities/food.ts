@@ -11,7 +11,9 @@ export const createFood = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
 
   world.getComponent(entityId, Food);
-  world.getComponent(entityId, Position).position.set(10, 1);
+  world.getComponent(entityId, Position).x = 10;
+  world.getComponent(entityId, Position).y = 1;
+
   world.getComponent(entityId, Collider, config.gridSize, config.gridSize);
 
   const render = world.getComponent(entityId, Render);

@@ -1,7 +1,10 @@
 import { EntityId } from './entity';
 import { SystemRegistry, ISystem } from './SystemRegistry';
 import { EventBus } from './EventBus';
-import { ComponentMapType, EntityComponentStorage } from './EntityComponentStorage';
+import {
+  ComponentMapType,
+  EntityComponentStorage,
+} from './EntityComponentStorage';
 import { GroupManager } from './group/GroupManager';
 import {
   ComponentConstructorList,
