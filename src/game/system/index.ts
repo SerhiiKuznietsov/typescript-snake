@@ -8,6 +8,8 @@ import { RenderSystem } from './renderSystem';
 import { AttackFoodSystem } from './attackFoodSystem';
 import { DebugSystem } from './debugSystem';
 import { MovementCooldownSystem } from './movementCooldownSystem';
+import { RespawnCooldownSystem } from './respawnCooldownSystem';
+import { RespawnSystem } from './respawnSystem';
 
 export const initSystems = (world: World, config: GameConfig, board: Board) => {
   world
@@ -16,6 +18,10 @@ export const initSystems = (world: World, config: GameConfig, board: Board) => {
     .addSystem(new MovementCooldownSystem(world))
     .addSystem(new MovementSystem(world))
     .addSystem(new CollisionSystem(world))
-    .addSystem(new AttackFoodSystem(world))
+    .addSystem(new AttackFoodSystem(world, config))
+    .addSystem(new RespawnCooldownSystem(world))
+    .addSystem(
+      new RespawnSystem(world, { x: config.xGridsCount, y: config.yGridsCount })
+    )
     .addSystem(new DebugSystem(world));
 };
