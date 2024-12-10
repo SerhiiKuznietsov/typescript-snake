@@ -5,6 +5,7 @@ import { Render } from '../component/Render';
 import { Square } from '../geometry/shape/square';
 import { Collider } from '../component/Collider';
 import { Food } from '../component/Food';
+import { DebugFlag } from '../component/DebugFlag';
 
 export const createFood = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
@@ -15,6 +16,8 @@ export const createFood = (world: World, config: GameConfig): void => {
 
   const render = world.getComponent(entityId, Render);
   render.shape = new Square(config.gridSize);
-  render.color = 'red';
+  render.color = '#b93232';
   render.zIndex = 1;
+
+  world.getComponent(entityId, DebugFlag);
 };

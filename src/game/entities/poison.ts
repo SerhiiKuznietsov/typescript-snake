@@ -5,6 +5,7 @@ import { Render } from '../component/Render';
 import { Square } from '../geometry/shape/square';
 import { Collider } from '../component/Collider';
 import { Poison } from '../component/Poison';
+import { DebugFlag } from '../component/DebugFlag';
 
 export const createPoison = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
@@ -15,6 +16,8 @@ export const createPoison = (world: World, config: GameConfig): void => {
 
   const render = world.getComponent(entityId, Render);
   render.shape = new Square(config.gridSize);
-  render.color = 'purple';
+  render.color = '#6f41c5';
   render.zIndex = 1;
+
+  world.getComponent(entityId, DebugFlag);
 };
