@@ -10,10 +10,10 @@ import { DebugSystem } from './debugSystem';
 
 export const initSystems = (world: World, config: GameConfig, board: Board) => {
   world
+    .addSystem(new RenderSystem(world, board))
     .addSystem(new PlayerInputSystem(world))
     .addSystem(new MovementSystem(world))
     .addSystem(new CollisionSystem(world))
     .addSystem(new AttackFoodSystem(world))
-    .addSystem(new RenderSystem(world, board))
     .addSystem(new DebugSystem(world));
 };

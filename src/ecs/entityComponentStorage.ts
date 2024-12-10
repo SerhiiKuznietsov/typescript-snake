@@ -3,7 +3,7 @@ import { EcsEvents } from './EcsEvents';
 import { EventBus } from './EventBus';
 import { ObjectPool } from './pool';
 
-export type ComponentMapType = Map<string, IComponent>
+export type ComponentMapType = Map<string, IComponent>;
 
 export class EntityComponentStorage {
   private _components: Map<number, ComponentMapType> = new Map();

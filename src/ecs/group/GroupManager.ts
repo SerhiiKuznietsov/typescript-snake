@@ -44,6 +44,18 @@ export class GroupManager {
     has: ComponentConstructorList,
     not: ComponentConstructorList = []
   ): EntityId[] {
+    if (has?.length > 5) {
+      throw new Error(
+        'Group limit error. There can be no more than 5 search components'
+      );
+    }
+
+    if (not?.length > 2) {
+      throw new Error(
+        'Group limit error. There can be no more than 2 search components'
+      );
+    }
+
     const key = generateKey(has, not);
     let group: Group;
 
