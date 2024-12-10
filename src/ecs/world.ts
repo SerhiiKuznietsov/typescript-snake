@@ -1,7 +1,7 @@
 import { EntityId } from './entity';
 import { SystemRegistry, ISystem } from './SystemRegistry';
 import { EventBus } from './EventBus';
-import { EntityComponentStorage } from './EntityComponentStorage';
+import { ComponentMapType, EntityComponentStorage } from './EntityComponentStorage';
 import { GroupManager } from './group/GroupManager';
 import {
   ComponentConstructorList,
@@ -47,6 +47,10 @@ export class World {
     }
 
     return this._storage.getComponent(entityId, componentType);
+  }
+
+  public getComponents(entityId: EntityId): ComponentMapType {
+    return this._storage.getComponents(entityId);
   }
 
   public removeComponent(
