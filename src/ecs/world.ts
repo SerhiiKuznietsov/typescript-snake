@@ -30,12 +30,23 @@ export class World {
     this._storage.deleteEntity(entityId);
   }
 
-  public addComponent<T extends IComponent>(
+  public hasComponent(
     entityId: EntityId,
-    component: IComponentConstructor<T>,
+    componentType: IComponentConstructor<IComponent>
+  ): boolean {
+    return this._storage.hasComponent(entityId, componentType);
+  }
+
+  public getComponent<T extends IComponent>(
+    entityId: EntityId,
+    componentType: IComponentConstructor<T>,
     ...args: any[]
   ): T {
-    return this._storage.addComponent(entityId, component, args);
+    if (!this.hasComponent(entityId, componentType)) {
+      this._storage.addComponent(entityId, componentType, args);
+    }
+
+    return this._storage.getComponent(entityId, componentType);
   }
 
   public removeComponent(
@@ -45,20 +56,6 @@ export class World {
     this._storage.removeComponent(entityId, componentType);
 
     return this;
-  }
-
-  public getComponent<T extends IComponent>(
-    entityId: EntityId,
-    componentType: IComponentConstructor<T>
-  ): T {
-    return this._storage.getComponent(entityId, componentType);
-  }
-
-  public hasComponent(
-    entityId: EntityId,
-    componentType: IComponentConstructor<IComponent>
-  ): boolean {
-    return this._storage.hasComponent(entityId, componentType);
   }
 
   public newGroup(

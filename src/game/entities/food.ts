@@ -9,11 +9,11 @@ import { Food } from '../component/Food';
 export const createFood = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
 
-  world.addComponent(entityId, Food);
-  world.addComponent(entityId, Position).position.set(10, 1);
-  world.addComponent(entityId, Collider, config.gridSize, config.gridSize);
+  world.getComponent(entityId, Food);
+  world.getComponent(entityId, Position).position.set(10, 1);
+  world.getComponent(entityId, Collider, config.gridSize, config.gridSize);
 
-  const render = world.addComponent(entityId, Render);
+  const render = world.getComponent(entityId, Render);
   render.shape = new Square(config.gridSize);
   render.color = 'red';
   render.zIndex = 1;

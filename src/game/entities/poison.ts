@@ -9,11 +9,11 @@ import { Poison } from '../component/Poison';
 export const createPoison = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
 
-  world.addComponent(entityId, Poison);
-  world.addComponent(entityId, Position).position.set(10, 0);
-  world.addComponent(entityId, Collider, config.gridSize, config.gridSize);
+  world.getComponent(entityId, Poison);
+  world.getComponent(entityId, Position).position.set(10, 0);
+  world.getComponent(entityId, Collider, config.gridSize, config.gridSize);
 
-  const render = world.addComponent(entityId, Render);
+  const render = world.getComponent(entityId, Render);
   render.shape = new Square(config.gridSize);
   render.color = 'purple';
   render.zIndex = 1;

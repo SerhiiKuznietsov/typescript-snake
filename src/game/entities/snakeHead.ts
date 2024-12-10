@@ -13,15 +13,15 @@ import { Collider } from '../component/Collider';
 export const createSnakeHead = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
 
-  world.addComponent(entityId, PlayerInput);
-  world.addComponent(entityId, Position).position.set(1, 1);
-  world.addComponent(entityId, Movement, 5);
-  world.addComponent(entityId, Velocity, 1);
-  world.addComponent(entityId, Direction);
-  world.addComponent(entityId, Collider);
-  world.addComponent(entityId, CollisionOpponent);
+  world.getComponent(entityId, PlayerInput);
+  world.getComponent(entityId, Position).position.set(1, 1);
+  world.getComponent(entityId, Movement, 5);
+  world.getComponent(entityId, Velocity, 1);
+  world.getComponent(entityId, Direction);
+  world.getComponent(entityId, Collider);
+  world.getComponent(entityId, CollisionOpponent);
 
-  const render = world.addComponent(entityId, Render);
+  const render = world.getComponent(entityId, Render);
   render.shape = new Square(config.gridSize);
   render.color = 'lightgreen';
   render.zIndex = 2;
