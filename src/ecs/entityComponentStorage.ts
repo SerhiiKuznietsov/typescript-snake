@@ -3,8 +3,10 @@ import { EcsEvents } from './EcsEvents';
 import { EventBus } from './EventBus';
 import { ObjectPool } from './pool';
 
+export type ComponentMapType = Map<string, IComponent>
+
 export class EntityComponentStorage {
-  private _components: Map<number, Map<string, IComponent>> = new Map();
+  private _components: Map<number, ComponentMapType> = new Map();
   private _componentPools: Map<string, ObjectPool<IComponent>> = new Map();
   private _nextEntityId: number = 1;
   private _nextComponentId: number = 1;
@@ -45,13 +47,10 @@ export class EntityComponentStorage {
       throw new Error(`Entity with ID ${entityId} does not exist.`);
     }
 
-    const component = this.acquireComponent(
-      componentKey,
-      () => {
-        const componentId = this._nextComponentId++;
-        return new componentType(componentId, ...args)
-      }
-    );
+    const component = this.acquireComponent(componentKey, () => {
+      const componentId = this._nextComponentId++;
+      return new componentType(componentId, ...args);
+    });
     entityComponents.set(componentKey, component);
 
     this._eventBus.emit(EcsEvents.COMPONENT_ADDED, { entityId, componentType });
@@ -99,6 +98,16 @@ export class EntityComponentStorage {
     return findComponent as T;
   }
 
+  public getComponents(entityId: number): Map<string, IComponent> {
+    const componentsMap = this._components.get(entityId);
+
+    if (!componentsMap) {
+      throw new Error(`Component for entity: ${entityId} not found`);
+    }
+
+    return componentsMap;
+  }
+
   public hasComponent<T extends IComponent>(
     entityId: number,
     componentType: IComponentConstructor<T>
@@ -115,7 +124,7 @@ export class EntityComponentStorage {
     if (!this._componentPools.has(componentKey)) {
       this._componentPools.set(
         componentKey,
-        new ObjectPool<IComponent>(factory, 10, this.resetComponent)
+        new ObjectPool<IComponent>(factory, 1, this.resetComponent)
       );
     }
     return this._componentPools.get(componentKey)!.acquire() as T;
