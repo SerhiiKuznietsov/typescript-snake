@@ -31,6 +31,8 @@ export class MovementPositionCalculationSystem implements ISystem {
         position.x + direction.x * velocity,
         position.y + direction.y * velocity
       );
+
+      this.w.removeComponent(entity, CanMove);
     });
   }
 }

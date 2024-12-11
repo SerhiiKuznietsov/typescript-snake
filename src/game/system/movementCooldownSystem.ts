@@ -15,15 +15,13 @@ export class MovementCooldownSystem implements ISystem {
 
       movement.accumulatedTime += deltaTime;
 
-      if (movement.accumulatedTime >= movement.moveInterval) {
-        movement.accumulatedTime -= movement.moveInterval;
-
-        this.w.getComponent(entity, CanMove);
-      } else {
-        if (this.w.hasComponent(entity, CanMove)) {
-          this.w.removeComponent(entity, CanMove);
-        }
+      if (movement.accumulatedTime < movement.moveInterval) {
+        return;
       }
+
+      movement.accumulatedTime = 0;
+
+      this.w.getComponent(entity, CanMove);
     });
   }
 }
