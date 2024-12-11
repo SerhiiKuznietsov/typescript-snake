@@ -8,9 +8,10 @@ export interface UpdateSystemData {
 }
 
 export interface ISystem {
-  w: World
+  w: World;
   init?(): void;
   update(data: UpdateSystemData): void;
+  destroy?(): void;
 }
 
 export class SystemRegistry {
@@ -20,7 +21,7 @@ export class SystemRegistry {
 
   public addSystem(system: ISystem): void {
     if (system.init) {
-      system?.init();
+      system.init();
     }
 
     this._systems.push(system);
@@ -32,6 +33,10 @@ export class SystemRegistry {
   }
 
   public removeSystem(system: ISystem): void {
+    if (system.destroy) {
+      system.destroy();
+    }
+
     const index = this._systems.indexOf(system);
     if (index !== -1) {
       this._systems.splice(index, 1);
