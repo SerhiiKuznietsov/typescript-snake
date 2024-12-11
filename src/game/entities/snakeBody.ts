@@ -7,8 +7,9 @@ import { Square } from '../geometry/shape/square';
 import { Velocity } from '../component/Velocity';
 import { Collider } from '../component/Collider';
 import { DebugFlag } from '../component/DebugFlag';
+import { EntityId } from '@/ecs/entity';
 
-export const createSnakeHead = (world: World, config: GameConfig): void => {
+export const createSnakeBody = (world: World, config: GameConfig): EntityId => {
   const entityId = world.createEntity();
 
   world.getComponent(entityId, Position);
@@ -18,8 +19,8 @@ export const createSnakeHead = (world: World, config: GameConfig): void => {
 
   const render = world.getComponent(entityId, Render);
   render.shape = new Square(config.gridSize);
-  render.color = '#fff';
+  render.color = '#176639';
   render.zIndex = 2;
 
-  world.getComponent(entityId, DebugFlag);
+  return entityId;
 };

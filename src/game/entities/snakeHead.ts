@@ -10,13 +10,15 @@ import { PlayerInput } from '../component/PlayerInput';
 import { Velocity } from '../component/Velocity';
 import { Collider } from '../component/Collider';
 import { DebugFlag } from '../component/DebugFlag';
+import { Snake } from '../component/Snake';
 
 export const createSnakeHead = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
 
   world.getComponent(entityId, PlayerInput);
-  world.getComponent(entityId, Position, 1, 1);
-  world.getComponent(entityId, Movement, 5);
+  world.getComponent(entityId, Snake);
+  world.getComponent(entityId, Position, 0, 0);
+  world.getComponent(entityId, Movement, 1);
   world.getComponent(entityId, Velocity, 1);
   world.getComponent(entityId, Direction);
   world.getComponent(entityId, Collider);
@@ -25,7 +27,7 @@ export const createSnakeHead = (world: World, config: GameConfig): void => {
   const render = world.getComponent(entityId, Render);
   render.shape = new Square(config.gridSize);
   render.color = '#1fa224';
-  render.zIndex = 2;
+  render.zIndex = 3;
 
   world.getComponent(entityId, DebugFlag);
 };

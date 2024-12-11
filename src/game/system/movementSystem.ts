@@ -1,28 +1,31 @@
 import { Position } from '../component/Position';
-import { Direction } from '../component/Direction';
-import { CanMove } from '../component/CanMove';
-import { Velocity } from '../component/Velocity';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
+import { PrevPosition } from '../component/PrevPosition';
+import { MoveTo } from '../component/MoveTo';
 
 export class MovementSystem implements ISystem {
-  public entities = this.w.newGroup(this, [Position, Direction, CanMove]);
+  public entities = this.w.newGroup(this, [Position, MoveTo]);
+  public positionEntities = this.w.newGroup(this, [Position]);
 
   constructor(public w: World) {}
 
   public update(): void {
+    this.positionEntities.forEach((entity) => {
+      if (this.w.hasComponent(entity, PrevPosition)) {
+        this.w.removeComponent(entity, PrevPosition);
+      }
+    });
     this.entities.forEach((entity) => {
       const position = this.w.getComponent(entity, Position);
-      const direction = this.w.getComponent(entity, Direction);
+      const moveTo = this.w.getComponent(entity, MoveTo);
+      const prevPosition = this.w.getComponent(entity, PrevPosition);
 
-      let velocity = this.w.hasComponent(entity, Velocity)
-        ? this.w.getComponent(entity, Velocity).value
-        : 0.1;
+      vectorUtils.setVector(prevPosition, position);
+      vectorUtils.setVector(position, moveTo);
 
-      vectorUtils.add(position, direction.x * velocity, direction.y * velocity);
-
-      this.w.removeComponent(entity, CanMove);
+      this.w.removeComponent(entity, MoveTo);
     });
   }
 }
