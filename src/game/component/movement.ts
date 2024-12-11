@@ -1,4 +1,4 @@
-import { IComponent } from '@/ecs/component';
+import { IComponent } from '@/ecs/Component';
 
 export class Movement implements IComponent {
   public accumulatedTime: number = 0;

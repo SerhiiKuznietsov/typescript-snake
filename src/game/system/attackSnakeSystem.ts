@@ -7,7 +7,7 @@ import { createSnakeBody } from '../entities/snakeBody';
 import { GameConfig } from '../config/game';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { Snake } from '../component/Snake';
-import { EntityId } from '@/ecs/entity';
+import { EntityId } from '@/ecs/Entity';
 import { Poison } from '../component/Poison';
 
 export class AttackSnakeSystem implements ISystem {

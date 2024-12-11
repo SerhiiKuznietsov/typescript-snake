@@ -1,17 +1,17 @@
 import { World } from '@/ecs/World';
 import { GameConfig } from '../config/game';
 import { Board } from '../board';
-import { PlayerInputSystem } from './playerInputSystem';
-import { MovementSystem } from './movementSystem';
-import { CollisionSystem } from './collisionSystem';
-import { RenderSystem } from './renderSystem';
-import { AttackSnakeSystem } from './attackSnakeSystem';
-import { DebugSystem } from './debugSystem';
-import { MovementCooldownSystem } from './movementCooldownSystem';
-import { RespawnCooldownSystem } from './respawnCooldownSystem';
-import { RespawnSystem } from './respawnSystem';
-import { MovementPositionCalculationSystem } from './movementPositionCalculationSystem';
-import { SnakeMovementSystem } from './snakeMovementSystem';
+import { PlayerInputSystem } from './PlayerInputSystem';
+import { MovementSystem } from './MovementSystem';
+import { CollisionSystem } from './AollisionSystem';
+import { RenderSystem } from './RenderSystem';
+import { AttackSnakeSystem } from './AttackSnakeSystem';
+import { DebugSystem } from './DebugSystem';
+import { MovementCooldownSystem } from './MovementCooldownSystem';
+import { RespawnCooldownSystem } from './RespawnCooldownSystem';
+import { RespawnSystem } from './RespawnSystem';
+import { MovementPositionCalculationSystem } from './MovementPositionCalculationSystem';
+import { SnakeMovementSystem } from './SnakeMovementSystem';
 
 export const initSystems = (world: World, config: GameConfig, board: Board) => {
   world

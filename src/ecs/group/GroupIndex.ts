@@ -1,4 +1,4 @@
-import { EntityId } from '../entity';
+import { EntityId } from '../Entity';
 import { GroupKey } from './GroupUtils';
 
 export class GroupIndex {

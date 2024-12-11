@@ -1,7 +1,7 @@
-import { IComponent, IComponentConstructor } from './component';
+import { IComponent, IComponentConstructor } from './Component';
 import { EcsEvents } from './EcsEvents';
 import { EventBus } from './EventBus';
-import { ObjectPool } from './pool';
+import { ObjectPool } from './ObjectPool';
 
 export type ComponentMapType = Map<string, IComponent>;
 

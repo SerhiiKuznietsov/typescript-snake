@@ -1,6 +1,6 @@
 import { Shape } from '../geometry/shape/shape';
 import { Vector2 } from '../geometry/vector2';
-import { IComponent } from '@/ecs/component';
+import { IComponent } from '@/ecs/Component';
 import { Square } from '../geometry/shape/square';
 
 export class Render implements IComponent {

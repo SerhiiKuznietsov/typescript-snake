@@ -1,6 +1,6 @@
 import { CollisionOpponent } from '../component/CollisionOpponent';
 import { Position } from '../component/Position';
-import { EntityId } from '@/ecs/entity';
+import { EntityId } from '@/ecs/Entity';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { Collider } from '../component/Collider';

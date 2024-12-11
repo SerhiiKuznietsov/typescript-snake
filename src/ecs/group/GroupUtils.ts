@@ -1,4 +1,4 @@
-import { ComponentConstructorList } from '../component';
+import { ComponentConstructorList } from '../Component';
 
 export type GroupKey = string;
 

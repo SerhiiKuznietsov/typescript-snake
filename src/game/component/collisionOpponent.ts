@@ -1,5 +1,5 @@
-import { IComponent } from '@/ecs/component';
-import { EntityId } from '@/ecs/entity';
+import { IComponent } from '@/ecs/Component';
+import { EntityId } from '@/ecs/Entity';
 
 export class CollisionOpponent implements IComponent {
   public entities: EntityId[] = [];

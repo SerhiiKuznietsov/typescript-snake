@@ -1,4 +1,4 @@
-import { IComponent } from '@/ecs/component';
+import { IComponent } from '@/ecs/Component';
 
 export class Position implements IComponent {
   constructor(

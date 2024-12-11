@@ -7,7 +7,7 @@ import { Square } from '../geometry/shape/square';
 import { Velocity } from '../component/Velocity';
 import { Collider } from '../component/Collider';
 import { DebugFlag } from '../component/DebugFlag';
-import { EntityId } from '@/ecs/entity';
+import { EntityId } from '@/ecs/Entity';
 
 export const createSnakeBody = (world: World, config: GameConfig): EntityId => {
   const entityId = world.createEntity();

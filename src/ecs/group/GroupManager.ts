@@ -1,9 +1,9 @@
-import { ComponentConstructorList } from '../component';
+import { ComponentConstructorList } from '../Component';
 import { EntityComponentStorage } from '../EntityComponentStorage';
 import { EventBus } from '../EventBus';
 import { ISystem } from '../SystemRegistry';
 import { EcsEvents } from '../EcsEvents';
-import { EntityId } from '../entity';
+import { EntityId } from '../Entity';
 import { generateKey, GroupKey } from './GroupUtils';
 import { GroupIndex } from './GroupIndex';
 import { Group } from './Group';

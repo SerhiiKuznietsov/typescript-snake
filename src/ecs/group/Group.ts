@@ -1,5 +1,5 @@
-import { ComponentConstructorList } from '../component';
-import { EntityId } from '../entity';
+import { ComponentConstructorList } from '../Component';
+import { EntityId } from '../Entity';
 
 export class Group {
   public entitiesSet: Set<EntityId> = new Set();

@@ -1,4 +1,4 @@
-import { EntityId } from './entity';
+import { EntityId } from './Entity';
 import { SystemRegistry, ISystem } from './SystemRegistry';
 import { EventBus } from './EventBus';
 import {
@@ -10,7 +10,7 @@ import {
   ComponentConstructorList,
   IComponent,
   IComponentConstructor,
-} from './component';
+} from './Component';
 
 export class World {
   private _eventBus: EventBus;
