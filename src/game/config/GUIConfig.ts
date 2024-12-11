@@ -2,12 +2,12 @@ import { Collider } from '../component/Collider';
 import { DebugFlag } from '../component/DebugFlag';
 import { Movement } from '../component/Movement';
 import { Position } from '../component/Position';
-import { Vector2 } from '../geometry/vector2';
 import { Food } from '../component/Food';
 import { PlayerInput } from '../component/PlayerInput';
 import { Poison } from '../component/Poison';
 import { Render } from '../component/Render';
 import { Velocity } from '../component/Velocity';
+import { PrevPosition } from '../component/PrevPosition';
 
 export const guiConfig: Record<string, any> = {
   [Collider.name]: {
@@ -19,6 +19,10 @@ export const guiConfig: Record<string, any> = {
     moveInterval: { type: 'number', min: 0, max: 10000, step: 100 },
   },
   [Position.name]: {
+    x: { type: 'number', min: 0, max: 100, step: 10 },
+    y: { type: 'number', min: 0, max: 100, step: 10 },
+  },
+  [PrevPosition.name]: {
     x: { type: 'number', min: 0, max: 100, step: 10 },
     y: { type: 'number', min: 0, max: 100, step: 10 },
   },

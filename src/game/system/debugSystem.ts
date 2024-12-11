@@ -2,7 +2,7 @@ import * as dat from 'dat.gui';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { DebugFlag } from '../component/DebugFlag';
-import { guiConfig } from '../GUI/config';
+import { guiConfig } from '../config/GUIConfig';
 
 export class DebugSystem implements ISystem {
   private gui: dat.GUI;
