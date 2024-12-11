@@ -1,45 +1,48 @@
 export class Loop {
-  private animateId: any = undefined;
-  private _frameCount: number = 0;
-  private _lastSecond: number = 0;
-  private _then: undefined | number = 0;
-  private _interval: number;
+  private animateId: number | undefined = undefined;
+  private frameCount: number = 0;
+  private lastSecond: number = 0;
+  private then: number = 0;
+  private interval: number | null;
+  private boundAnimate: (timestamp: number) => void;
 
   constructor(
-    private _update: Function,
-    private _updateFPS?: Function,
-    fps: number = 32
+    private update: (delta: number) => void,
+    private updateFPS?: (fps: number) => void,
+    fps?: number
   ) {
-    this._interval = 1000 / fps;
+    this.interval = fps ? 1000 / fps : null;
+    this.boundAnimate = this.animate.bind(this);
   }
 
   private animate(timestamp: number): void {
-    this.animateId = requestAnimationFrame(this.animate.bind(this));
+    this.animateId = requestAnimationFrame(this.boundAnimate);
 
-    if (this._then === undefined) this._then = timestamp;
+    if (this.then === 0) this.then = timestamp;
 
-    const delta = timestamp - this._then;
+    const delta = timestamp - this.then;
 
-    if (delta > this._interval) {
-      this._then = timestamp - (delta % this._interval);
-    } else {
-      return;
-    }
+    if (this.interval === null || delta > this.interval) {
+      this.then = this.interval
+        ? timestamp - (delta % this.interval)
+        : timestamp;
 
-    this._frameCount++;
+      try {
+        this.update(Math.floor(delta));
+      } catch (e) {
+        console.error('Error during update:', e);
+        return;
+      }
 
-    if (timestamp >= this._lastSecond + 1000) {
-      this._updateFPS && this._updateFPS(this._frameCount);
+      this.frameCount++;
 
-      this._frameCount = 0;
-      this._lastSecond = timestamp - (timestamp - this._lastSecond - 1000);
-    }
-
-    try {
-      this._update(Math.floor(delta));
-    } catch (e) {
-      this.stop();
-      console.error('Animate error:', e);
+      if (timestamp >= this.lastSecond + 1000) {
+        if (this.updateFPS) {
+          this.updateFPS(this.frameCount);
+        }
+        this.frameCount = 0;
+        this.lastSecond = timestamp;
+      }
     }
   }
 
@@ -48,12 +51,18 @@ export class Loop {
   }
 
   public stop(): void {
-    cancelAnimationFrame(this.animateId);
-    this.animateId = undefined;
+    if (this.animateId !== undefined) {
+      cancelAnimationFrame(this.animateId);
+      this.animateId = undefined;
+    }
   }
 
   public start(): void {
-    this.animateId = requestAnimationFrame(this.animate.bind(this));
+    if (!this.isActive()) {
+      this.then = 0;
+      this.lastSecond = performance.now();
+      this.animateId = requestAnimationFrame(this.boundAnimate);
+    }
   }
 
   public toggle(): void {
