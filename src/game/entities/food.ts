@@ -20,7 +20,7 @@ export const createFood = (world: World, config: GameConfig): void => {
 
   const render = world.getComponent(entityId, Render);
   render.shape = new Square(config.gridSize);
-  render.color = '#b93232';
+  render.color = '#c04d4d';
   render.zIndex = 1;
 
   world.getComponent(entityId, DebugFlag);
