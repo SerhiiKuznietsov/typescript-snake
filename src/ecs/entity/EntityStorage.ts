@@ -1,26 +1,27 @@
 import { IComponent } from '../Component';
+import { EntityId } from '../Entity';
 import { ComponentMapType } from '../EntityComponentStorage';
 import { IdManager } from '../idManager';
 
 export class EntityStorage {
-  private _components: Map<number, ComponentMapType> = new Map();
+  private _components: Map<EntityId, ComponentMapType> = new Map();
   private _entityId = new IdManager();
 
-  public hasEntity(entityId: number): boolean {
+  public hasEntity(entityId: EntityId): boolean {
     return this._components.has(entityId);
   }
 
-  public createEntity(): number {
+  public createEntity(): EntityId {
     const entityId = this._entityId.generateId();
     this._components.set(entityId, new Map());
     return entityId;
   }
 
-  public deleteEntity(entityId: number): void {
+  public deleteEntity(entityId: EntityId): void {
     this._components.delete(entityId);
   }
 
-  public getComponents(entityId: number): ComponentMapType {
+  public getComponents(entityId: EntityId): ComponentMapType {
     const componentsMap = this._components.get(entityId);
     if (!componentsMap) {
       throw new Error(`Components for entity: ${entityId} not found`);
@@ -28,13 +29,13 @@ export class EntityStorage {
     return componentsMap;
   }
 
-  public hasComponent(entityId: number, componentKey: string): boolean {
+  public hasComponent(entityId: EntityId, componentKey: string): boolean {
     const components = this._components.get(entityId);
     return components?.has(componentKey) || false;
   }
 
   public getComponent<T extends IComponent>(
-    entityId: number,
+    entityId: EntityId,
     componentKey: string
   ): T {
     const components = this._components.get(entityId);
@@ -48,7 +49,7 @@ export class EntityStorage {
   }
 
   public addComponent(
-    entityId: number,
+    entityId: EntityId,
     componentKey: string,
     component: IComponent
   ): void {
@@ -59,7 +60,7 @@ export class EntityStorage {
     entityComponents.set(componentKey, component);
   }
 
-  public removeComponent(entityId: number, componentKey: string): void {
+  public removeComponent(entityId: EntityId, componentKey: string): void {
     const entityComponents = this._components.get(entityId);
     if (!entityComponents) {
       throw new Error(`Entity with ID: "${entityId}" does not exist.`);
@@ -74,7 +75,7 @@ export class EntityStorage {
     entityComponents.delete(componentKey);
   }
 
-  public getAllEntities(): number[] {
+  public getAllEntities(): EntityId[] {
     return Array.from(this._components.keys());
   }
 
