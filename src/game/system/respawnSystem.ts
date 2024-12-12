@@ -15,8 +15,8 @@ export class RespawnSystem implements ISystem {
 
   private getRandomVector(): Vector2 {
     return {
-      x: range(0, this._bounds.x - 1),
-      y: range(0, this._bounds.y - 1),
+      x: range(0, this._bounds.x),
+      y: range(0, this._bounds.y),
     };
   }
 
