@@ -15,7 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/dat.gui": "^0.7.13",
-    "@types/node": "^20.12.11",
+    "@types/node": "^20.17.10",
     "@types/webpack": "^5.28.5",
     "@types/webpack-bundle-analyzer": "^4.7.0",
     "@types/webpack-dev-server": "^4.7.2",
@@ -25,20 +25,20 @@
     "css-loader": "^6.11.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
-    "html-webpack-plugin": "^5.6.0",
-    "mini-css-extract-plugin": "^2.9.0",
-    "sass-loader": "^13.3.3",
-    "style-loader": "^3.3.4",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "sass-loader": "^16.0.4",
+    "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5",
-    "webpack": "^5.91.0",
+    "typescript": "^5.7.2",
+    "webpack": "^5.97.1",
     "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.2"
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
-    "tslib": "^2.6.2"
+    "tslib": "^2.8.1"
   }
 }
