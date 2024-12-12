@@ -1,5 +1,7 @@
 import { IComponent, IComponentConstructor } from './Component';
 import { EcsEvents } from './EcsEvents';
+import { EntityId } from './Entity';
+import { BitMapManager } from './entity/BitMapManager';
 import { ComponentPoolManager } from './entity/ComponentPoolManager';
 import { EntityStorage } from './entity/EntityStorage';
 import { EventBus } from './EventBus';
@@ -15,18 +17,25 @@ export class EntityComponentStorage {
   private _componentId = new IdManager();
   private _componentPoolManager = new ComponentPoolManager();
   private _entityStorage = new EntityStorage();
+  private _entityBitMaps = new BitMapManager();
 
   constructor(private _eventBus: EventBus) {}
 
-  public createEntity(): number {
+  public get bitMap() {
+    return this._entityBitMaps;
+  }
+
+  public createEntity(): EntityId {
     const entityId = this._entityStorage.createEntity();
+
+    this._entityBitMaps.createEntity(entityId);
 
     this._eventBus.emit(EcsEvents.ENTITY_CREATED, { entityId });
 
     return entityId;
   }
 
-  public deleteEntity(entityId: number): void {
+  public deleteEntity(entityId: EntityId): void {
     const entityComponents = this._entityStorage.getComponents(entityId);
     if (!entityComponents) {
       throw new Error(`Entity with id: "${entityId}" not found`);
@@ -37,12 +46,13 @@ export class EntityComponentStorage {
     });
 
     this._entityStorage.deleteEntity(entityId);
+    this._entityBitMaps.deleteEntity(entityId);
 
     this._eventBus.emit(EcsEvents.ENTITY_DELETED, { entityId });
   }
 
   public addComponent<T extends IComponent>(
-    entityId: number,
+    entityId: EntityId,
     componentType: IComponentConstructor<T>,
     args: any[]
   ): T {
@@ -60,13 +70,15 @@ export class EntityComponentStorage {
 
     this._entityStorage.addComponent(entityId, componentKey, component);
 
+    this._entityBitMaps.addComponentBitToEntity(entityId, componentKey);
+
     this._eventBus.emit(EcsEvents.COMPONENT_ADDED, { entityId, componentType });
 
     return component;
   }
 
   public removeComponent<T extends IComponent>(
-    entityId: number,
+    entityId: EntityId,
     componentType: IComponentConstructor<T>
   ): void {
     if (!this._entityStorage.hasEntity(entityId)) {
@@ -79,6 +91,8 @@ export class EntityComponentStorage {
     this._entityStorage.removeComponent(entityId, componentKey);
     this._componentPoolManager.releaseComponent(componentKey, component);
 
+    this._entityBitMaps.removeComponentBitFromEntity(entityId, componentKey);
+
     this._eventBus.emit(EcsEvents.COMPONENT_REMOVED, {
       entityId,
       componentType,
@@ -86,7 +100,7 @@ export class EntityComponentStorage {
   }
 
   public getComponent<T extends IComponent>(
-    entityId: number,
+    entityId: EntityId,
     componentType: IComponentConstructor<T>
   ): T {
     const componentKey = getComponentKey(componentType);
@@ -94,12 +108,12 @@ export class EntityComponentStorage {
     return this._entityStorage.getComponent(entityId, componentKey) as T;
   }
 
-  public getComponents(entityId: number): Map<string, IComponent> {
+  public getComponents(entityId: EntityId): Map<string, IComponent> {
     return this._entityStorage.getComponents(entityId);
   }
 
   public hasComponent<T extends IComponent>(
-    entityId: number,
+    entityId: EntityId,
     componentType: IComponentConstructor<T>
   ): boolean {
     const componentKey = getComponentKey(componentType);
@@ -107,7 +121,7 @@ export class EntityComponentStorage {
     return this._entityStorage.hasComponent(entityId, componentKey);
   }
 
-  public getAllEntities(): number[] {
+  public getAllEntities(): EntityId[] {
     return this._entityStorage.getAllEntities();
   }
 
@@ -115,5 +129,6 @@ export class EntityComponentStorage {
     this._entityStorage.clear();
     this._componentPoolManager.clear();
     this._componentId.clear();
+    this._entityBitMaps.clear();
   }
 }
