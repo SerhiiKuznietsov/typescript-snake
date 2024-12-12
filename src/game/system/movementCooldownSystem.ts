@@ -2,7 +2,6 @@ import { Movement } from '../component/Movement';
 import { CanMove } from '../component/CanMove';
 import { ISystem, UpdateSystemData } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
-import { PrevPosition } from '../component/PrevPosition';
 
 export class MovementCooldownSystem implements ISystem {
   public entities = this.w.newGroup(this, [Movement]);

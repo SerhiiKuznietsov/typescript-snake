@@ -23,6 +23,7 @@ export const guiConfig: Record<string, any> = {
   },
   [DebugFlag.name]: {},
   [Direction.name]: {
+    changed: { type: 'boolean' },
     x: { type: 'number', min: -1, max: 1, step: 1 },
     y: { type: 'number', min: -1, max: 1, step: 1 },
   },

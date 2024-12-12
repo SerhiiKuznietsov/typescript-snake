@@ -1,7 +1,6 @@
 import { EventBus } from './EventBus';
 import { EcsEvents } from './EcsEvents';
 import { World } from './World';
-import { Group } from './group/Group';
 
 export interface UpdateSystemData {
   deltaTime: number;
