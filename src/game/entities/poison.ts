@@ -19,6 +19,4 @@ export const createPoison = (world: World, config: GameConfig): void => {
   render.shape = new Square(config.gridSize);
   render.color = '#6f41c5';
   render.zIndex = 1;
-
-  world.getComponent(entityId, DebugFlag);
 };
