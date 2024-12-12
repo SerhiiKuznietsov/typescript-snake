@@ -12,6 +12,7 @@ export type GroupQuery = [ComponentConstructorList?, ComponentConstructorList?];
 export class GroupManager {
   private _groups: Map<GroupKey, { group: Group; count: number }> = new Map();
   private _groupIndex: GroupIndex = new GroupIndex();
+  // TODO - add bit map "EntityComponentStorage.BitMapManager"
 
   constructor(
     private _eventBus: EventBus,
