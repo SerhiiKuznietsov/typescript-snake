@@ -11,7 +11,7 @@ import { EntityId } from '@/ecs/Entity';
 import { Poison } from '../component/Poison';
 
 export class AttackSnakeSystem implements ISystem {
-  public entities = this.w.newGroup(this, [CollisionOpponent, Snake]);
+  public entities = this.w.newGroup([CollisionOpponent, Snake]);
 
   constructor(public w: World, public config: GameConfig) {}
 

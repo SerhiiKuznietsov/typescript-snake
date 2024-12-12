@@ -18,6 +18,8 @@ import { MovementAreaSystem } from './MovementAreaSystem';
 export const initSystems = (world: World, config: GameConfig, board: Board) => {
   const { x, y } = config.lastVector;
 
+  // TODO - add destroy method for system because need clean groups
+
   world
     .addSystem(new RenderSystem(world, board))
     .addSystem(new PlayerInputSystem(world))

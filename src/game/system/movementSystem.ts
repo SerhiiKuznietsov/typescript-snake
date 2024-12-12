@@ -6,8 +6,8 @@ import { PrevPosition } from '../component/PrevPosition';
 import { MoveTo } from '../component/MoveTo';
 
 export class MovementSystem implements ISystem {
-  public entities = this.w.newGroup(this, [Position, MoveTo]);
-  public positionEntities = this.w.newGroup(this, [Position]);
+  public entities = this.w.newGroup([Position, MoveTo]);
+  public positionEntities = this.w.newGroup([Position]);
 
   constructor(public w: World) {}
 

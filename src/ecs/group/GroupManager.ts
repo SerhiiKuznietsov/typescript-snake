@@ -1,16 +1,16 @@
 import { ComponentConstructorList } from '../Component';
 import { EntityComponentStorage } from '../EntityComponentStorage';
 import { EventBus } from '../EventBus';
-import { ISystem } from '../SystemRegistry';
 import { EcsEvents } from '../EcsEvents';
 import { EntityId } from '../Entity';
 import { generateKey, GroupKey } from './GroupUtils';
 import { GroupIndex } from './GroupIndex';
 import { Group } from './Group';
 
+export type GroupQuery = [ComponentConstructorList?, ComponentConstructorList?];
+
 export class GroupManager {
-  private _groups: Map<GroupKey, Group> = new Map();
-  private _systemGroups: Map<ISystem, Set<GroupKey>> = new Map();
+  private _groups: Map<GroupKey, { group: Group; count: number }> = new Map();
   private _groupIndex: GroupIndex = new GroupIndex();
 
   constructor(
@@ -33,79 +33,60 @@ export class GroupManager {
       EcsEvents.ENTITY_DELETED,
       this.onEntityDeleted.bind(this)
     );
-    this._eventBus.on(
-      EcsEvents.SYSTEM_REMOVED,
-      this.onSystemRemoved.bind(this)
-    );
   }
 
-  public createGroup(
-    system: ISystem,
-    has: ComponentConstructorList,
-    not: ComponentConstructorList = []
-  ): EntityId[] {
-    if (has?.length > 5) {
+  private validGroupQuery(query: GroupQuery) {
+    const [has, not] = query;
+
+    if (has && has.length > 5) {
       throw new Error(
         'Group limit error. There can be no more than 5 search components'
       );
     }
 
-    if (not?.length > 2) {
+    if (not && not.length > 2) {
       throw new Error(
         'Group limit error. There can be no more than 2 search components'
       );
     }
+  }
+
+  public createGroup(query: GroupQuery = []): EntityId[] {
+    this.validGroupQuery(query);
+    const [has, not] = query;
 
     const key = generateKey(has, not);
-    let group: Group;
+    let groupData = this._groups.get(key);
 
-    if (this._groups.has(key)) {
-      group = this._groups.get(key)!;
-    } else {
-      group = new Group(has, not);
-      this._groups.set(key, group);
+    if (!groupData) {
+      const group = new Group(has, not);
+      this._groups.set(key, { group, count: 1 });
       this.updateGroupEntities(group, key);
+      return group.entities;
     }
 
-    this.linkGroupToSystem(system, key);
-
-    return group.entities;
+    groupData.count += 1;
+    return groupData.group.entities;
   }
 
-  private linkGroupToSystem(system: ISystem, key: string): void {
-    if (!this._systemGroups.has(system)) {
-      this._systemGroups.set(system, new Set());
+  public releaseGroup(query: GroupQuery = []): void {
+    const [has, not] = query;
+    const key = generateKey(has, not);
+    const groupData = this._groups.get(key);
+
+    if (!groupData) {
+      throw new Error('Group does not exist.');
     }
-    this._systemGroups.get(system)!.add(key);
-  }
 
-  public deleteGroupsForSystem(system: ISystem): void {
-    const associatedGroups = this._systemGroups.get(system);
+    groupData.count -= 1;
 
-    if (!associatedGroups) return;
-
-    associatedGroups.forEach((key) => {
-      let isShared = false;
-      this._systemGroups.forEach((groupKeys) => {
-        if (groupKeys.has(key) && groupKeys !== associatedGroups) {
-          isShared = true;
-        }
-      });
-
-      if (!isShared) {
-        this._groups.delete(key);
-      }
-    });
-
-    this._systemGroups.delete(system);
-  }
-
-  private onSystemRemoved({ system }: { system: ISystem }): void {
-    this.deleteGroupsForSystem(system);
+    if (groupData.count <= 0) {
+      this._groups.delete(key);
+    }
   }
 
   private onComponentChanged({ entityId }: { entityId: number }): void {
-    this._groups.forEach((group, key) => {
+    this._groups.forEach(({ group }, key) => {
       const isInGroup = group.entitiesSet.has(entityId);
       const matches = this.matchesGroup(entityId, group);
 
@@ -141,7 +122,7 @@ export class GroupManager {
   }
 
   private onEntityCreated({ entityId }: { entityId: number }): void {
-    this._groups.forEach((group, key) => {
+    this._groups.forEach(({ group }, key) => {
       if (this.matchesGroup(entityId, group)) {
         this.addEntityToGroup(group, key, entityId);
       }
@@ -153,9 +134,9 @@ export class GroupManager {
     if (!groupKeys) return;
 
     groupKeys.forEach((key) => {
-      const group = this._groups.get(key);
-      if (group) {
-        this.removeEntityFromGroup(group, key, entityId);
+      const groupData = this._groups.get(key);
+      if (groupData) {
+        this.removeEntityFromGroup(groupData.group, key, entityId);
       }
     });
 
@@ -188,7 +169,6 @@ export class GroupManager {
 
   public destroy() {
     this._groups.clear();
-    this._systemGroups.clear();
     this._groupIndex.clear();
   }
 }

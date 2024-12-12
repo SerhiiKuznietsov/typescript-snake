@@ -8,8 +8,8 @@ import { range } from '../utils/random';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 
 export class RespawnSystem implements ISystem {
-  public entities = this.w.newGroup(this, [Respawn, RespawnReady]);
-  public allEntities = this.w.newGroup(this, [Position]);
+  public entities = this.w.newGroup([Respawn, RespawnReady]);
+  public allEntities = this.w.newGroup([Position]);
 
   constructor(public w: World, private _bounds: Vector2) {}
 

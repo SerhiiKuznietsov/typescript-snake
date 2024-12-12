@@ -9,6 +9,6 @@ const processArr = (arr: ComponentConstructorList): string =>
     .join('|');
 
 export const generateKey = (
-  has: ComponentConstructorList,
-  not: ComponentConstructorList
+  has: ComponentConstructorList = [],
+  not: ComponentConstructorList = []
 ): GroupKey => `${processArr(has)}!${processArr(not)}`;

@@ -6,7 +6,7 @@ import { Position } from '../component/Position';
 import { Snake } from '../component/Snake';
 
 export class SnakeMovementSystem implements ISystem {
-  public entities = this.w.newGroup(this, [Snake, Position, PrevPosition]);
+  public entities = this.w.newGroup([Snake, Position, PrevPosition]);
 
   constructor(public w: World) {}
 

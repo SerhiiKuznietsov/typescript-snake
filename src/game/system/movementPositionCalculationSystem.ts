@@ -8,11 +8,7 @@ import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { MoveTo } from '../component/MoveTo';
 
 export class MovementPositionCalculationSystem implements ISystem {
-  public entities = this.w.newGroup(
-    this,
-    [Position, Direction, CanMove],
-    [MoveTo]
-  );
+  public entities = this.w.newGroup([Position, Direction, CanMove], [MoveTo]);
 
   constructor(public w: World) {}
 

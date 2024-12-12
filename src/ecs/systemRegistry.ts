@@ -1,5 +1,3 @@
-import { EventBus } from './EventBus';
-import { EcsEvents } from './EcsEvents';
 import { World } from './World';
 
 export interface UpdateSystemData {
@@ -16,7 +14,7 @@ export interface ISystem {
 export class SystemRegistry {
   private _systems: ISystem[] = [];
 
-  constructor(private _eventBus: EventBus) {}
+  constructor() {}
 
   public addSystem(system: ISystem): void {
     if (system.init) {
@@ -24,7 +22,6 @@ export class SystemRegistry {
     }
 
     this._systems.push(system);
-    this._eventBus.emit(EcsEvents.SYSTEM_ADDED, { system });
   }
 
   public updateSystems(deltaTime: number): void {
@@ -39,7 +36,6 @@ export class SystemRegistry {
     const index = this._systems.indexOf(system);
     if (index !== -1) {
       this._systems.splice(index, 1);
-      this._eventBus.emit(EcsEvents.SYSTEM_REMOVED, { system });
     } else {
       console.warn(`System not found in registry:`, system);
     }
@@ -48,7 +44,6 @@ export class SystemRegistry {
   public destroy(): void {
     this._systems.forEach((system) => {
       this.removeSystem(system);
-      this._eventBus.emit(EcsEvents.SYSTEM_REMOVED, { system });
     });
     this._systems = [];
   }

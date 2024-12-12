@@ -5,7 +5,7 @@ import { World } from '@/ecs/World';
 import { PlayerInput } from '../component/PlayerInput';
 
 export class PlayerInputSystem implements ISystem {
-  public entities = this.w.newGroup(this, [PlayerInput, Direction]);
+  public entities = this.w.newGroup([PlayerInput, Direction]);
 
   constructor(public w: World) {
     this.initializeListeners();

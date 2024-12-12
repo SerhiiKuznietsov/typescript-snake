@@ -5,7 +5,7 @@ import { RespawnReady } from '../component/RespawnReady';
 import { Position } from '../component/Position';
 
 export class RespawnCooldownSystem implements ISystem {
-  public entities = this.w.newGroup(this, [Respawn], [Position]);
+  public entities = this.w.newGroup([Respawn], [Position]);
 
   constructor(public w: World) {}
 

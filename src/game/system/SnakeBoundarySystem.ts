@@ -4,7 +4,7 @@ import { ISystem } from '@/ecs/SystemRegistry';
 import { Position } from '../component/Position';
 
 export class SnakeBoundarySystem implements ISystem {
-  public entities = this.w.newGroup(this, [Snake, Position]);
+  public entities = this.w.newGroup([Snake, Position]);
 
   constructor(
     public w: World,

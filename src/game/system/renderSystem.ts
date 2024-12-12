@@ -5,7 +5,7 @@ import { Board } from '../board';
 import { World } from '@/ecs/World';
 
 export class RenderSystem implements ISystem {
-  public entities = this.w.newGroup(this, [Render, Position]);
+  public entities = this.w.newGroup([Render, Position]);
 
   constructor(public w: World, private _board: Board) {}
 

@@ -3,7 +3,7 @@ import { World } from '@/ecs/World';
 import { MoveTo } from '../component/MoveTo';
 
 export class MovementAreaSystem implements ISystem {
-  public entities = this.w.newGroup(this, [MoveTo]);
+  public entities = this.w.newGroup([MoveTo]);
 
   constructor(
     public w: World,

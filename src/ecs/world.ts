@@ -5,7 +5,7 @@ import {
   ComponentMapType,
   EntityComponentStorage,
 } from './EntityComponentStorage';
-import { GroupManager } from './group/GroupManager';
+import { GroupManager, GroupQuery } from './group/GroupManager';
 import {
   ComponentConstructorList,
   IComponent,
@@ -21,7 +21,7 @@ export class World {
   constructor() {
     this._eventBus = new EventBus();
     this._storage = new EntityComponentStorage(this._eventBus);
-    this._systemRegistry = new SystemRegistry(this._eventBus);
+    this._systemRegistry = new SystemRegistry();
     this._groupManager = new GroupManager(this._eventBus, this._storage);
   }
 
@@ -66,11 +66,17 @@ export class World {
   }
 
   public newGroup(
-    system: ISystem,
     has: ComponentConstructorList,
     not: ComponentConstructorList = []
   ): EntityId[] {
-    return this._groupManager.createGroup(system, has, not);
+    return this._groupManager.createGroup([has, not]);
+  }
+
+  public releaseGroup(
+    has: ComponentConstructorList,
+    not: ComponentConstructorList = []
+  ): void {
+    this._groupManager.releaseGroup([has, not]);
   }
 
   public addSystem(system: ISystem): this {

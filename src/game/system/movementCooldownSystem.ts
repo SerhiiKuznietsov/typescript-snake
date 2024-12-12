@@ -4,7 +4,7 @@ import { ISystem, UpdateSystemData } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 
 export class MovementCooldownSystem implements ISystem {
-  public entities = this.w.newGroup(this, [Movement]);
+  public entities = this.w.newGroup([Movement]);
 
   constructor(public w: World) {}
 

@@ -8,7 +8,7 @@ export class DebugSystem implements ISystem {
   private gui: dat.GUI;
   private folders: Map<number, dat.GUI> = new Map();
 
-  public entities = this.w.newGroup(this, [DebugFlag]);
+  public entities = this.w.newGroup([DebugFlag]);
 
   constructor(public w: World) {
     this.gui = new dat.GUI();

@@ -7,8 +7,8 @@ import { Collider } from '../component/Collider';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 
 export class CollisionSystem implements ISystem {
-  public entities = this.w.newGroup(this, [Position, Collider]);
-  public collisionEntities = this.w.newGroup(this, [
+  public entities = this.w.newGroup([Position, Collider]);
+  public collisionEntities = this.w.newGroup([
     Position,
     Collider,
     CollisionOpponent,
