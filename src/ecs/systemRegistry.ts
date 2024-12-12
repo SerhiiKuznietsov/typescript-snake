@@ -45,8 +45,9 @@ export class SystemRegistry {
     }
   }
 
-  public clear(): void {
+  public destroy(): void {
     this._systems.forEach((system) => {
+      this.removeSystem(system);
       this._eventBus.emit(EcsEvents.SYSTEM_REMOVED, { system });
     });
     this._systems = [];

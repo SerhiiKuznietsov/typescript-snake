@@ -1,6 +1,7 @@
 import { IComponent, IComponentConstructor } from './Component';
 import { EcsEvents } from './EcsEvents';
 import { EventBus } from './EventBus';
+import { IdManager } from './idManager';
 import { ObjectPool } from './ObjectPool';
 
 export type ComponentMapType = Map<string, IComponent>;
@@ -8,13 +9,13 @@ export type ComponentMapType = Map<string, IComponent>;
 export class EntityComponentStorage {
   private _components: Map<number, ComponentMapType> = new Map();
   private _componentPools: Map<string, ObjectPool<IComponent>> = new Map();
-  private _nextEntityId: number = 1;
-  private _nextComponentId: number = 1;
+  private _entityId = new IdManager();
+  private _componentId = new IdManager();
 
   constructor(private _eventBus: EventBus) {}
 
   public createEntity(): number {
-    const entityId = this._nextEntityId++;
+    const entityId = this._entityId.generateId();
     this._components.set(entityId, new Map());
 
     this._eventBus.emit(EcsEvents.ENTITY_CREATED, { entityId });
@@ -48,7 +49,7 @@ export class EntityComponentStorage {
     }
 
     const component = this.acquireComponent(componentKey, () => {
-      const componentId = this._nextComponentId++;
+      const componentId = this._componentId.generateId();
       return new componentType(componentId, ...args);
     });
     entityComponents.set(componentKey, component);
@@ -150,5 +151,12 @@ export class EntityComponentStorage {
 
   public getAllEntities(): number[] {
     return Array.from(this._components.keys());
+  }
+
+  public destroy() {
+    this._components.clear();
+    this._componentPools.clear();
+    this._entityId.clear();
+    this._componentId.clear();
   }
 }

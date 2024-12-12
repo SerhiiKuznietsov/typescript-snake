@@ -1,21 +1,25 @@
 export class EventBus {
-  private listeners: Map<string, Set<(payload: any) => void>> = new Map();
+  private _listeners: Map<string, Set<(payload: any) => void>> = new Map();
 
   public on(eventType: string, callback: (payload: any) => void): void {
-    if (!this.listeners.has(eventType)) {
-      this.listeners.set(eventType, new Set());
+    if (!this._listeners.has(eventType)) {
+      this._listeners.set(eventType, new Set());
     }
-    this.listeners.get(eventType)!.add(callback);
+    this._listeners.get(eventType)!.add(callback);
   }
 
   public off(eventType: string, callback: (payload: any) => void): void {
-    this.listeners.get(eventType)?.delete(callback);
+    this._listeners.get(eventType)?.delete(callback);
   }
 
   public emit(eventType: string, payload: any): void {
-    const listeners = this.listeners.get(eventType);
+    const listeners = this._listeners.get(eventType);
     if (listeners) {
       listeners.forEach((callback) => callback(payload));
     }
   }
+
+  public clear() {
+    this._listeners.clear();
+  };
 }

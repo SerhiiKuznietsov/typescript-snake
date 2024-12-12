@@ -9,9 +9,9 @@ import { GroupIndex } from './GroupIndex';
 import { Group } from './Group';
 
 export class GroupManager {
-  private groups: Map<GroupKey, Group> = new Map();
-  private systemGroups: Map<ISystem, Set<GroupKey>> = new Map();
-  private groupIndex: GroupIndex = new GroupIndex();
+  private _groups: Map<GroupKey, Group> = new Map();
+  private _systemGroups: Map<ISystem, Set<GroupKey>> = new Map();
+  private _groupIndex: GroupIndex = new GroupIndex();
 
   constructor(
     private _eventBus: EventBus,
@@ -59,11 +59,11 @@ export class GroupManager {
     const key = generateKey(has, not);
     let group: Group;
 
-    if (this.groups.has(key)) {
-      group = this.groups.get(key)!;
+    if (this._groups.has(key)) {
+      group = this._groups.get(key)!;
     } else {
       group = new Group(has, not);
-      this.groups.set(key, group);
+      this._groups.set(key, group);
       this.updateGroupEntities(group, key);
     }
 
@@ -73,31 +73,31 @@ export class GroupManager {
   }
 
   private linkGroupToSystem(system: ISystem, key: string): void {
-    if (!this.systemGroups.has(system)) {
-      this.systemGroups.set(system, new Set());
+    if (!this._systemGroups.has(system)) {
+      this._systemGroups.set(system, new Set());
     }
-    this.systemGroups.get(system)!.add(key);
+    this._systemGroups.get(system)!.add(key);
   }
 
   public deleteGroupsForSystem(system: ISystem): void {
-    const associatedGroups = this.systemGroups.get(system);
+    const associatedGroups = this._systemGroups.get(system);
 
     if (!associatedGroups) return;
 
     associatedGroups.forEach((key) => {
       let isShared = false;
-      this.systemGroups.forEach((groupKeys) => {
+      this._systemGroups.forEach((groupKeys) => {
         if (groupKeys.has(key) && groupKeys !== associatedGroups) {
           isShared = true;
         }
       });
 
       if (!isShared) {
-        this.groups.delete(key);
+        this._groups.delete(key);
       }
     });
 
-    this.systemGroups.delete(system);
+    this._systemGroups.delete(system);
   }
 
   private onSystemRemoved({ system }: { system: ISystem }): void {
@@ -105,7 +105,7 @@ export class GroupManager {
   }
 
   private onComponentChanged({ entityId }: { entityId: number }): void {
-    this.groups.forEach((group, key) => {
+    this._groups.forEach((group, key) => {
       const isInGroup = group.entitiesSet.has(entityId);
       const matches = this.matchesGroup(entityId, group);
 
@@ -124,7 +124,7 @@ export class GroupManager {
   ) {
     group.entitiesSet.add(entityId);
     group.entities.push(entityId);
-    this.groupIndex.add(entityId, groupKey);
+    this._groupIndex.add(entityId, groupKey);
   }
 
   private removeEntityFromGroup(
@@ -137,11 +137,11 @@ export class GroupManager {
     group.entitiesSet.delete(entityId);
     group.entities.splice(index, 1);
 
-    this.groupIndex.remove(entityId, groupKey);
+    this._groupIndex.remove(entityId, groupKey);
   }
 
   private onEntityCreated({ entityId }: { entityId: number }): void {
-    this.groups.forEach((group, key) => {
+    this._groups.forEach((group, key) => {
       if (this.matchesGroup(entityId, group)) {
         this.addEntityToGroup(group, key, entityId);
       }
@@ -149,17 +149,17 @@ export class GroupManager {
   }
 
   private onEntityDeleted({ entityId }: { entityId: number }): void {
-    const groupKeys = this.groupIndex.get(entityId);
+    const groupKeys = this._groupIndex.get(entityId);
     if (!groupKeys) return;
 
     groupKeys.forEach((key) => {
-      const group = this.groups.get(key);
+      const group = this._groups.get(key);
       if (group) {
         this.removeEntityFromGroup(group, key, entityId);
       }
     });
 
-    this.groupIndex.delete(entityId);
+    this._groupIndex.delete(entityId);
   }
 
   private matchesGroup(entityId: number, group: Group): boolean {
@@ -184,5 +184,11 @@ export class GroupManager {
         this.addEntityToGroup(group, key, entityId);
       }
     });
+  }
+
+  public destroy() {
+    this._groups.clear();
+    this._systemGroups.clear();
+    this._groupIndex.clear();
   }
 }

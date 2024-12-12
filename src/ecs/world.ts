@@ -90,4 +90,11 @@ export class World {
 
     return this;
   }
+
+  public destroy() {
+    this._eventBus.clear();
+    this._storage.destroy();
+    this._systemRegistry.destroy();
+    this._groupManager.destroy();
+  }
 }
