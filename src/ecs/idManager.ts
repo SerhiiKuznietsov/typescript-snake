@@ -1,7 +1,7 @@
 export class IdManager {
   private _nextId: number;
 
-  constructor(private _minId = 0) {
+  constructor(private _minId = 1) {
     this._nextId = this._minId;
   }
 

@@ -21,7 +21,7 @@ export class World {
   constructor() {
     this._eventBus = new EventBus();
     this._storage = new EntityComponentStorage(this._eventBus);
-    this._systemRegistry = new SystemRegistry(this._eventBus, this);
+    this._systemRegistry = new SystemRegistry(this._eventBus);
     this._groupManager = new GroupManager(this._eventBus, this._storage);
   }
 

@@ -16,7 +16,7 @@ export interface ISystem {
 export class SystemRegistry {
   private _systems: ISystem[] = [];
 
-  constructor(private _eventBus: EventBus, private _world: World) {}
+  constructor(private _eventBus: EventBus) {}
 
   public addSystem(system: ISystem): void {
     if (system.init) {
