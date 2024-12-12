@@ -12,8 +12,6 @@ export const createPoison = (world: World, config: GameConfig): void => {
   const entityId = world.createEntity();
 
   world.getComponent(entityId, Poison);
-  world.getComponent(entityId, Position).x = 10;
-  world.getComponent(entityId, Position).y = 1;
   world.getComponent(entityId, Respawn).cooldown = 10000;
   world.getComponent(entityId, Collider, config.gridSize, config.gridSize);
 
