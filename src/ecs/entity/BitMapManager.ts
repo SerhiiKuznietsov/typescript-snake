@@ -5,17 +5,6 @@ export class BitMapManager {
   private _componentToBitMap: Map<string, number> = new Map();
   private _entityBitMaps: Map<EntityId, number> = new Map();
 
-  constructor() {
-    // setInterval(
-    //   () => console.log('this._entityBitMaps', this._entityBitMaps),
-    //   1000
-    // );
-    // setInterval(
-    //   () => console.log('this._componentToBitMap', this._componentToBitMap),
-    //   5000
-    // );
-  }
-
   public createEntity(entityId: EntityId): void {
     this._entityBitMaps.set(entityId, 0);
   }
@@ -69,6 +58,10 @@ export class BitMapManager {
     const newBit = BitUtils.clearBit(currentBit, componentBit);
 
     this._entityBitMaps.set(entityId, newBit);
+  }
+
+  public getEntityBitMap(entityId: EntityId): number {
+    return this._entityBitMaps.get(entityId) as number;
   }
 
   public getEntitiesMatchingBitMap(bitMap: number): EntityId[] {

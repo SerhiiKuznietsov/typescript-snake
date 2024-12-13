@@ -12,7 +12,7 @@ export type GroupQuery = [ComponentConstructorList?, ComponentConstructorList?];
 export class GroupManager {
   private _groups: Map<GroupKey, { group: Group; count: number }> = new Map();
   private _groupIndex: GroupIndex = new GroupIndex();
-  // TODO - add bit map "EntityComponentStorage.BitMapManager"
+  private _groupMasks: Map<GroupKey, { hasBitMask: number; notBitMask: number }> = new Map();
 
   constructor(
     private _eventBus: EventBus,
@@ -56,21 +56,18 @@ export class GroupManager {
     this.validGroupQuery(query);
 
     const key = generateKey(query);
-
     let groupData = this._groups.get(key);
-    if (groupData) {
-      groupData.count += 1;
-      return groupData.group.entities;
+
+    if (!groupData) {
+      const group = new Group(query[0] || [], query[1] || []);
+      this._groups.set(key, { group, count: 1 });
+      this._groupMasks.set(key, this.calculateGroupMasks(group));
+      this.updateGroupEntitiesWithMasks(group, key);
+      return group.entities;
     }
 
-    const group = new Group(query);
-    this._groups.set(key, { group, count: 1 });
-    this._storage.getAllEntities().forEach((entityId) => {
-      if (this.matchesGroup(entityId, group)) {
-        this.addEntityToGroup(group, key, entityId);
-      }
-    });
-    return group.entities;
+    groupData.count += 1;
+    return groupData.group.entities;
   }
 
   public releaseGroup(query: GroupQuery = []): void {
@@ -86,12 +83,39 @@ export class GroupManager {
     if (groupData.count > 0) return;
 
     this._groups.delete(key);
+    this._groupMasks.delete(key);
+  }
+
+  private calculateGroupMasks(group: Group): { hasBitMask: number; notBitMask: number } {
+    const hasBitMask = group.has
+      .map((component) => this._storage.bitMap.createComponentBit(component.name))
+      .reduce((mask, bit) => mask | bit, 0);
+
+    const notBitMask = group.not
+      .map((component) => this._storage.bitMap.createComponentBit(component.name))
+      .reduce((mask, bit) => mask | bit, 0);
+
+    return { hasBitMask, notBitMask };
+  }
+
+  private updateGroupEntitiesWithMasks(group: Group, key: GroupKey): void {
+    const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
+
+    this._storage.getAllEntities().forEach((entityId) => {
+      const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
+      if ((entityBits & hasBitMask) === hasBitMask && (entityBits & notBitMask) === 0) {
+        this.addEntityToGroup(group, key, entityId);
+      }
+    });
   }
 
   private onComponentChanged({ entityId }: { entityId: number }): void {
     this._groups.forEach(({ group }, key) => {
       const isInGroup = group.entitiesSet.has(entityId);
-      const matches = this.matchesGroup(entityId, group);
+      const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
+      const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
+
+      const matches = (entityBits & hasBitMask) === hasBitMask && (entityBits & notBitMask) === 0;
 
       if (matches && !isInGroup) {
         this.addEntityToGroup(group, key, entityId);
@@ -126,7 +150,10 @@ export class GroupManager {
 
   private onEntityCreated({ entityId }: { entityId: number }): void {
     this._groups.forEach(({ group }, key) => {
-      if (this.matchesGroup(entityId, group)) {
+      const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
+      const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
+
+      if ((entityBits & hasBitMask) === hasBitMask && (entityBits & notBitMask) === 0) {
         this.addEntityToGroup(group, key, entityId);
       }
     });
@@ -146,24 +173,9 @@ export class GroupManager {
     this._groupIndex.delete(entityId);
   }
 
-  private matchesGroup(entityId: number, group: Group): boolean {
-    for (const component of group.has) {
-      if (!this._storage.hasComponent(entityId, component)) {
-        return false;
-      }
-    }
-
-    for (const component of group.not) {
-      if (this._storage.hasComponent(entityId, component)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   public destroy() {
     this._groups.clear();
     this._groupIndex.clear();
+    this._groupMasks.clear();
   }
 }
