@@ -54,36 +54,38 @@ export class GroupManager {
 
   public createGroup(query: GroupQuery = []): EntityId[] {
     this.validGroupQuery(query);
-    const [has, not] = query;
 
-    const key = generateKey(has, not);
+    const key = generateKey(query);
+
     let groupData = this._groups.get(key);
-
-    if (!groupData) {
-      const group = new Group(has, not);
-      this._groups.set(key, { group, count: 1 });
-      this.updateGroupEntities(group, key);
-      return group.entities;
+    if (groupData) {
+      groupData.count += 1;
+      return groupData.group.entities;
     }
 
-    groupData.count += 1;
-    return groupData.group.entities;
+    const group = new Group(query);
+    this._groups.set(key, { group, count: 1 });
+    this._storage.getAllEntities().forEach((entityId) => {
+      if (this.matchesGroup(entityId, group)) {
+        this.addEntityToGroup(group, key, entityId);
+      }
+    });
+    return group.entities;
   }
 
   public releaseGroup(query: GroupQuery = []): void {
-    const [has, not] = query;
-    const key = generateKey(has, not);
-    const groupData = this._groups.get(key);
+    const key = generateKey(query);
 
+    const groupData = this._groups.get(key);
     if (!groupData) {
       throw new Error('Group does not exist.');
     }
 
     groupData.count -= 1;
 
-    if (groupData.count <= 0) {
-      this._groups.delete(key);
-    }
+    if (groupData.count > 0) return;
+
+    this._groups.delete(key);
   }
 
   private onComponentChanged({ entityId }: { entityId: number }): void {
@@ -136,9 +138,9 @@ export class GroupManager {
 
     groupKeys.forEach((key) => {
       const groupData = this._groups.get(key);
-      if (groupData) {
-        this.removeEntityFromGroup(groupData.group, key, entityId);
-      }
+      if (!groupData) return;
+
+      this.removeEntityFromGroup(groupData.group, key, entityId);
     });
 
     this._groupIndex.delete(entityId);
@@ -158,14 +160,6 @@ export class GroupManager {
     }
 
     return true;
-  }
-
-  private updateGroupEntities(group: Group, key: GroupKey): void {
-    this._storage.getAllEntities().forEach((entityId) => {
-      if (this.matchesGroup(entityId, group)) {
-        this.addEntityToGroup(group, key, entityId);
-      }
-    });
   }
 
   public destroy() {

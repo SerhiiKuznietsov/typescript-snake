@@ -1,4 +1,5 @@
 import { ComponentConstructorList } from '../Component';
+import { GroupQuery } from './GroupManager';
 
 export type GroupKey = string;
 
@@ -8,7 +9,8 @@ const processArr = (arr: ComponentConstructorList): string =>
     .toSorted()
     .join('|');
 
-export const generateKey = (
-  has: ComponentConstructorList = [],
-  not: ComponentConstructorList = []
-): GroupKey => `${processArr(has)}!${processArr(not)}`;
+export const generateKey = (query: GroupQuery = []): GroupKey => {
+  const [has = [], not = []] = query;
+
+  return `${processArr(has)}!${processArr(not)}`;
+};
