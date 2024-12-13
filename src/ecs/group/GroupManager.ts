@@ -6,13 +6,17 @@ import { EntityId } from '../Entity';
 import { generateKey, GroupKey } from './GroupUtils';
 import { GroupIndex } from './GroupIndex';
 import { Group } from './Group';
+import { BitUtils } from '../utils/bit';
 
 export type GroupQuery = [ComponentConstructorList?, ComponentConstructorList?];
 
 export class GroupManager {
   private _groups: Map<GroupKey, { group: Group; count: number }> = new Map();
   private _groupIndex: GroupIndex = new GroupIndex();
-  private _groupMasks: Map<GroupKey, { hasBitMask: number; notBitMask: number }> = new Map();
+  private _groupMasks: Map<
+    GroupKey,
+    { hasBitMask: number; notBitMask: number }
+  > = new Map();
 
   constructor(
     private _eventBus: EventBus,
@@ -86,14 +90,21 @@ export class GroupManager {
     this._groupMasks.delete(key);
   }
 
-  private calculateGroupMasks(group: Group): { hasBitMask: number; notBitMask: number } {
+  private calculateGroupMasks(group: Group): {
+    hasBitMask: number;
+    notBitMask: number;
+  } {
     const hasBitMask = group.has
-      .map((component) => this._storage.bitMap.createComponentBit(component.name))
-      .reduce((mask, bit) => mask | bit, 0);
+      .map((component) =>
+        this._storage.bitMap.createComponentBit(component.name)
+      )
+      .reduce(BitUtils.setBit, 0);
 
     const notBitMask = group.not
-      .map((component) => this._storage.bitMap.createComponentBit(component.name))
-      .reduce((mask, bit) => mask | bit, 0);
+      .map((component) =>
+        this._storage.bitMap.createComponentBit(component.name)
+      )
+      .reduce(BitUtils.setBit, 0);
 
     return { hasBitMask, notBitMask };
   }
@@ -103,7 +114,10 @@ export class GroupManager {
 
     this._storage.getAllEntities().forEach((entityId) => {
       const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
-      if ((entityBits & hasBitMask) === hasBitMask && (entityBits & notBitMask) === 0) {
+      if (
+        BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
+        BitUtils.areAnyBitsSet(entityBits, notBitMask) === false
+      ) {
         this.addEntityToGroup(group, key, entityId);
       }
     });
@@ -115,7 +129,9 @@ export class GroupManager {
       const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
-      const matches = (entityBits & hasBitMask) === hasBitMask && (entityBits & notBitMask) === 0;
+      const matches =
+        BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
+        BitUtils.areAnyBitsSet(entityBits, notBitMask) === false;
 
       if (matches && !isInGroup) {
         this.addEntityToGroup(group, key, entityId);
@@ -153,7 +169,10 @@ export class GroupManager {
       const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
-      if ((entityBits & hasBitMask) === hasBitMask && (entityBits & notBitMask) === 0) {
+      if (
+        BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
+        BitUtils.areAnyBitsSet(entityBits, notBitMask) === false
+      ) {
         this.addEntityToGroup(group, key, entityId);
       }
     });
