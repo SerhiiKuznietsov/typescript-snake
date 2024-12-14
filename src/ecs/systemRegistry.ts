@@ -7,6 +7,7 @@ export interface UpdateSystemData {
 export interface ISystem {
   w: World;
   init?(): void;
+  awake?(): void;
   update(data: UpdateSystemData): void;
   destroy?(): void;
 }
@@ -22,6 +23,12 @@ export class SystemRegistry {
     }
 
     this._systems.push(system);
+  }
+
+  public awake() {
+    this._systems.forEach(
+      (system) => system.awake && system.awake()
+    );
   }
 
   public updateSystems(deltaTime: number): void {

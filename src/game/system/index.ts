@@ -21,7 +21,6 @@ export const initSystems = (world: World, config: GameConfig, board: Board) => {
   // TODO - add destroy method for system because need clean groups
 
   world
-    .addSystem(new RenderSystem(world, board))
     .addSystem(new PlayerInputSystem(world))
     .addSystem(new MovementCooldownSystem(world))
     .addSystem(new MovementPositionCalculationSystem(world))
@@ -33,5 +32,6 @@ export const initSystems = (world: World, config: GameConfig, board: Board) => {
     .addSystem(new AttackSnakeSystem(world, config))
     .addSystem(new RespawnCooldownSystem(world))
     .addSystem(new RespawnSystem(world, { x, y }))
+    .addSystem(new RenderSystem(world, board))
     .addSystem(new DebugSystem(world));
 };
