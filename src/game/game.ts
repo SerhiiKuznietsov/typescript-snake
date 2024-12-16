@@ -14,13 +14,17 @@ import { keyBoard } from './keyBoard';
 import { World } from '../ecs/World';
 import { initEntities } from './entities';
 import { initSystems } from './system';
+import { SystemRegistry } from '../ecs/SystemRegistry';
+import { GridManager } from './GridManager';
 
 export class Game {
   private _config = new GameConfig();
   private _stateController = new GameStateController();
   private _loop = new Loop(this.update.bind(this), this.updateFPS.bind(this));
   private _board = new Board('.game__body', 'gameBoard', this._config);
+  private _gridManager = new GridManager(5);
   private _world = new World();
+  private _systems = new SystemRegistry();
   private _resetBtn = new KeyControl(
     document.querySelector('.reset__btn'),
     'click',
@@ -39,8 +43,9 @@ export class Game {
   }
 
   private update(deltaTime: number): void {
-    this._board.clear();
-    this._world.update(deltaTime);
+    this._world.messageBroker.clearAll();
+
+    this._systems.updateSystems(deltaTime);
   }
 
   private observerHandler(actionName: GameActionNameType) {
@@ -91,7 +96,15 @@ export class Game {
       .notify(GameAction.toReadyToStart);
 
     initEntities(this._world, this._config);
-    initSystems(this._world, this._config, this._board);
+    initSystems(
+      this._systems,
+      this._world,
+      this._config,
+      this._board,
+      this._gridManager
+    );
+
+    this._systems.awakeSystems();
 
     return this;
   }
@@ -104,7 +117,8 @@ export class Game {
   }
 
   public clear(): void {
-    this._board.clear();
+    this._board.clearFull();
     this._loop.stop();
+    this._systems.destroy();
   }
 }
