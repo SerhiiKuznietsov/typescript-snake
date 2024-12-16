@@ -17,6 +17,8 @@ import { MovementAreaSystem } from './MovementAreaSystem';
 import { SystemRegistry } from '@/ecs/SystemRegistry';
 import { GridManager } from '../GridManager';
 import { SnakeInitSystem } from './SnakeInitSystem';
+import { FoodInitSystem } from './FoodInitSystem';
+import { PoisonInitSystem } from './PoisonInitSystem';
 
 export const initSystems = (
   system: SystemRegistry,
@@ -25,12 +27,19 @@ export const initSystems = (
   board: Board,
   gridManager: GridManager
 ) => {
-  const { x, y } = config.lastVector;
+  const {
+    gridSize,
+    lastVector: { x, y },
+  } = config;
 
   // TODO - add destroy method for system because need clean groups
 
   system
-    .addSystem(new SnakeInitSystem(world,  system, config.gridSize))
+    .addSystem(new SnakeInitSystem(world, gridSize))
+    .addSystem(new FoodInitSystem(world, gridSize))
+    .addSystem(new PoisonInitSystem(world, gridSize))
+    // TODO - createHunter();
+    // const hunter = new Entity('hunter');
     .addSystem(new PlayerInputSystem(world))
     .addSystem(new MovementCooldownSystem(world))
     .addSystem(new MovementPositionCalculationSystem(world))

@@ -1,13 +1,13 @@
 import { World } from '@/ecs/World';
 import { ISystem } from '@/ecs/SystemRegistry';
-import { createSnake } from '../entities/snake';
+import { createPoison } from '../entities/poison';
 
-export class SnakeInitSystem implements ISystem {
+export class PoisonInitSystem implements ISystem {
   public oneShot: boolean = true;
 
   constructor(public w: World, private gridSize: number) {}
 
   public update(): void {
-    createSnake(this.w, this.gridSize);
+    createPoison(this.w, this.gridSize);
   }
 }

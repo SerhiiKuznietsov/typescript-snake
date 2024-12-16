@@ -12,7 +12,6 @@ import { Board } from './board';
 import { GameConfig } from './config/game';
 import { keyBoard } from './keyBoard';
 import { World } from '../ecs/World';
-import { initEntities } from './entities';
 import { initSystems } from './system';
 import { SystemRegistry } from '../ecs/SystemRegistry';
 import { GridManager } from './GridManager';
@@ -95,7 +94,6 @@ export class Game {
       .attach(this.observerHandler.bind(this))
       .notify(GameAction.toReadyToStart);
 
-    initEntities(this._world, this._config);
     initSystems(
       this._systems,
       this._world,

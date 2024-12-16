@@ -10,6 +10,7 @@ export interface ISystem {
   awake?(): void;
   update(data: UpdateSystemData): void;
   destroy?(): void;
+  oneShot?: boolean;
 }
 
 export class SystemRegistry {
@@ -23,18 +24,24 @@ export class SystemRegistry {
     return this;
   }
 
-  public awakeSystems() {
+  public awakeSystems(): void {
     this._systems.forEach((system) => system.awake && system.awake());
   }
 
   public updateSystems(deltaTime: number): void {
-    this._systems.forEach((system) => system.update({ deltaTime }));
+    for (let i = 0; i < this._systems.length; i++) {
+      const system = this._systems[i];
+      system.update({ deltaTime });
+
+      if (system.oneShot) {
+        this.removeSystem(system);
+        i--;
+      }
+    }
   }
 
   public removeSystem(system: ISystem): void {
-    if (system.destroy) {
-      system.destroy();
-    }
+    if (system.destroy) system.destroy();
 
     const index = this._systems.indexOf(system);
     if (index !== -1) {
