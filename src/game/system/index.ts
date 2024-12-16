@@ -16,6 +16,7 @@ import { SnakeBoundarySystem } from './SnakeBoundarySystem';
 import { MovementAreaSystem } from './MovementAreaSystem';
 import { SystemRegistry } from '@/ecs/SystemRegistry';
 import { GridManager } from '../GridManager';
+import { SnakeInitSystem } from './SnakeInitSystem';
 
 export const initSystems = (
   system: SystemRegistry,
@@ -29,6 +30,7 @@ export const initSystems = (
   // TODO - add destroy method for system because need clean groups
 
   system
+    .addSystem(new SnakeInitSystem(world,  system, config.gridSize))
     .addSystem(new PlayerInputSystem(world))
     .addSystem(new MovementCooldownSystem(world))
     .addSystem(new MovementPositionCalculationSystem(world))
