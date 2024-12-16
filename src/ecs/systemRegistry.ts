@@ -15,20 +15,16 @@ export interface ISystem {
 export class SystemRegistry {
   private _systems: ISystem[] = [];
 
-  constructor() {}
-
-  public addSystem(system: ISystem): void {
-    if (system.init) {
-      system.init();
-    }
+  public addSystem(system: ISystem): this {
+    if (system.init) system.init();
 
     this._systems.push(system);
+
+    return this;
   }
 
-  public awake() {
-    this._systems.forEach(
-      (system) => system.awake && system.awake()
-    );
+  public awakeSystems() {
+    this._systems.forEach((system) => system.awake && system.awake());
   }
 
   public updateSystems(deltaTime: number): void {
