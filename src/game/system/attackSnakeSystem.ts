@@ -9,11 +9,16 @@ import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { Snake } from '../component/Snake';
 import { EntityId } from '@/ecs/Entity';
 import { Poison } from '../component/Poison';
+import { GridManager } from '../GridManager';
 
 export class AttackSnakeSystem implements ISystem {
   public entities = this.w.newGroup([CollisionOpponent, Snake]);
 
-  constructor(public w: World, public config: GameConfig) {}
+  constructor(
+    public w: World,
+    private _grid: GridManager,
+    public config: GameConfig
+  ) {}
 
   private attackFood(entity: EntityId) {
     const snake = this.w.getComponent(entity, Snake);
@@ -28,6 +33,11 @@ export class AttackSnakeSystem implements ISystem {
       this.w.getComponent(newSnakeBody, Position),
       this.w.getComponent(spawnEntityPosition, Position)
     );
+
+    this._grid.removeEntity(
+      newSnakeBody,
+      this.w.getComponent(newSnakeBody, Position)
+    );
   }
 
   private attackPoison(entity: EntityId) {
@@ -37,6 +47,10 @@ export class AttackSnakeSystem implements ISystem {
 
     if (!lastSegment) return;
 
+    this._grid.removeEntity(
+      lastSegment,
+      this.w.getComponent(lastSegment, Position)
+    );
     this.w.deleteEntity(lastSegment);
   }
 
@@ -55,6 +69,7 @@ export class AttackSnakeSystem implements ISystem {
           this.attackPoison(entity);
         }
 
+        this._grid.removeEntity(target, this.w.getComponent(target, Position));
         this.w.removeComponent(target, Position);
       });
     });

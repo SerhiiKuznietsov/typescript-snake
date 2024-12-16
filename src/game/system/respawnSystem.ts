@@ -6,12 +6,18 @@ import { RespawnReady } from '../component/RespawnReady';
 import { Vector2 } from '../geometry/vector2';
 import { range } from '../utils/random';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
+import { GridManager } from '../GridManager';
+import { RenderEvents } from './events/render';
 
 export class RespawnSystem implements ISystem {
   public entities = this.w.newGroup([Respawn, RespawnReady]);
   public allEntities = this.w.newGroup([Position]);
 
-  constructor(public w: World, private _bounds: Vector2) {}
+  constructor(
+    public w: World,
+    private _grid: GridManager,
+    private _bounds: Vector2
+  ) {}
 
   private getRandomVector(): Vector2 {
     return {
@@ -46,10 +52,13 @@ export class RespawnSystem implements ISystem {
 
   public update(): void {
     this.entities.forEach((entity) => {
-      const vector = this.getEmptyPosition();
+      const emptyPosition = this.getEmptyPosition();
       const position = this.w.getComponent(entity, Position);
 
-      vectorUtils.setVector(position, vector);
+      vectorUtils.setVector(position, emptyPosition);
+
+      this._grid.addEntity(entity, position);
+      this.w.messageBroker.publish(RenderEvents.NEW_RENDER, entity);
 
       this.w.removeComponent(entity, RespawnReady);
     });

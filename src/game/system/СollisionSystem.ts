@@ -5,6 +5,7 @@ import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { Collider } from '../component/Collider';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
+import { GridManager } from '../GridManager';
 
 export class CollisionSystem implements ISystem {
   public entities = this.w.newGroup([Position, Collider]);
@@ -14,7 +15,7 @@ export class CollisionSystem implements ISystem {
     CollisionOpponent,
   ]);
 
-  constructor(public w: World) {}
+  constructor(public w: World, private _grid: GridManager) {}
 
   private clearCollisionOpponentIfExists() {
     this.collisionEntities.forEach((entity) => {
@@ -37,19 +38,19 @@ export class CollisionSystem implements ISystem {
   public update(): void {
     this.clearCollisionOpponentIfExists();
 
-    for (let i = 0; i < this.entities.length; i++) {
-      for (let j = i + 1; j < this.entities.length; j++) {
-        const entityA = this.entities[i];
-        const entityB = this.entities[j];
+    this.collisionEntities.forEach((entity) => {
+      const position = this.w.getComponent(entity, Position);
+      const nearbyEntities = this._grid.getEntitiesNearby(position);
 
-        const locationA = this.w.getComponent(entityA, Position);
-        const locationB = this.w.getComponent(entityB, Position);
+      nearbyEntities.forEach((otherEntity) => {
+        if (entity === otherEntity) return;
 
-        if (!vectorUtils.isEqual(locationA, locationB)) continue;
-
-        this.addToCollisionOpponentIfExists(entityA, entityB);
-        this.addToCollisionOpponentIfExists(entityB, entityA);
-      }
-    }
+        const otherPosition = this.w.getComponent(otherEntity, Position);
+        if (vectorUtils.isEqual(position, otherPosition)) {
+          this.addToCollisionOpponentIfExists(entity, otherEntity);
+          this.addToCollisionOpponentIfExists(otherEntity, entity);
+        }
+      });
+    });
   }
 }
