@@ -8,7 +8,6 @@ import { Position } from '../component/Position';
 import { Movement } from '../component/Movement';
 import { Velocity } from '../component/Velocity';
 import { Direction } from '../component/Direction';
-import { CollisionOpponent } from '../component/CollisionOpponent';
 import { DebugFlag } from '../component/DebugFlag';
 
 export const createSnake = (world: World, gridSize: number): void => {
@@ -21,12 +20,11 @@ export const createSnake = (world: World, gridSize: number): void => {
   world.getComponent(entityId, Velocity, 1);
   world.getComponent(entityId, Direction);
   world.getComponent(entityId, Collider);
-  world.getComponent(entityId, CollisionOpponent);
 
   const render = world.getComponent(entityId, Render);
   render.shape = new Square(gridSize);
   render.color = '#1fa224';
   render.zIndex = 3;
 
-  world.getComponent(entityId, DebugFlag);
+  world.getComponent(entityId, DebugFlag, true);
 };

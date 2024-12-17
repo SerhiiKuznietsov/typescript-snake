@@ -16,6 +16,11 @@ export class DebugSystem implements ISystem {
 
   private createFolderForEntity(entityId: number): dat.GUI {
     const folder = this.gui.addFolder(`Entity ${entityId}`);
+
+    if (this.w.getComponent(entityId, DebugFlag).isOpen) {
+      folder.open();
+    }
+
     this.folders.set(entityId, folder);
 
     return folder;
@@ -33,16 +38,13 @@ export class DebugSystem implements ISystem {
       return;
     }
 
-    const componentFolder = folder.addFolder(componentName);
+    const componentFolder = folder.addFolder(componentName + ` ${componentData.id}`);
 
     Object.keys(componentData).forEach((key) => {
       const value = componentData[key];
       const config = componentConfig[key];
 
-      if (key === 'id') {
-        componentFolder.add({ id: value }, 'id').listen();
-        return;
-      }
+      if (key === 'id') return;
 
       if (!config) {
         console.warn(`No GUI config for property: ${key} in ${componentName}`);
