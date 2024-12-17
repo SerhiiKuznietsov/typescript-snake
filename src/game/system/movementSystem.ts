@@ -9,14 +9,12 @@ import { RenderEvents } from './events/render';
 
 export class MovementSystem implements ISystem {
   public entities = this.w.newGroup([Position, MoveTo]);
-  public positionEntities = this.w.newGroup([Position]);
+  public positionEntities = this.w.newGroup([PrevPosition]);
 
   constructor(public w: World, private _grid: GridManager) {}
 
   public update(): void {
     this.positionEntities.forEach((entity) => {
-      if (!this.w.hasComponent(entity, PrevPosition)) return;
-
       this.w.removeComponent(entity, PrevPosition);
     });
 
