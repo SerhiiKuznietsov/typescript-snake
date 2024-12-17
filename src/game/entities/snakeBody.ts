@@ -1,24 +1,21 @@
 import { World } from '@/ecs/World';
-import { GameConfig } from '../config/game';
 import { Position } from '../component/Position';
 import { Render } from '../component/Render';
-import { Direction } from '../component/Direction';
 import { Square } from '../geometry/shape/square';
-import { Velocity } from '../component/Velocity';
 import { Collider } from '../component/Collider';
-import { DebugFlag } from '../component/DebugFlag';
 import { EntityId } from '@/ecs/Entity';
+import { SnakeBody } from '../component/SnakeBody';
+import { DebugFlag } from '../component/DebugFlag';
 
-export const createSnakeBody = (world: World, config: GameConfig): EntityId => {
+export const createSnakeBody = (world: World, gridSize: number): EntityId => {
   const entityId = world.createEntity();
 
+  world.getComponent(entityId, SnakeBody);
   world.getComponent(entityId, Position);
-  world.getComponent(entityId, Velocity, 1);
-  world.getComponent(entityId, Direction);
   world.getComponent(entityId, Collider);
 
   const render = world.getComponent(entityId, Render);
-  render.shape = new Square(config.gridSize);
+  render.shape = new Square(gridSize);
   render.color = '#176639';
   render.zIndex = 2;
 
