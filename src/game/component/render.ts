@@ -5,7 +5,6 @@ import { Square } from '../geometry/shape/square';
 
 export class Render implements IComponent {
   constructor(
-    readonly id: number,
     public shape: Shape = new Square(20),
     public color: string = '#000',
     public zIndex: number = 0

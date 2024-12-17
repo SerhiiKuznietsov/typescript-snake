@@ -1,10 +1,8 @@
 import { IComponent, IComponentConstructor } from '../Component';
-import { IdManager } from '../idManager';
 import { ObjectPool } from '../ObjectPool';
 
 export class ComponentPoolManager {
   private _componentPools: Map<string, ObjectPool<IComponent>> = new Map();
-  private _componentId = new IdManager();
 
   public hasComponent(componentKey: string): boolean {
     return this._componentPools.has(componentKey);
@@ -16,10 +14,7 @@ export class ComponentPoolManager {
     args: any[]
   ): T {
     if (!this.hasComponent(componentKey)) {
-      const factory = () => {
-        const componentId = this._componentId.generateId();
-        return new componentType(componentId, ...args);
-      };
+      const factory = () => new componentType(...args);
 
       this._componentPools.set(
         componentKey,
@@ -35,6 +30,5 @@ export class ComponentPoolManager {
 
   public clear(): void {
     this._componentPools.clear();
-    this._componentId.clear();
   }
 }

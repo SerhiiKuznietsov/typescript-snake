@@ -38,13 +38,10 @@ export class DebugSystem implements ISystem {
       return;
     }
 
-    const componentFolder = folder.addFolder(componentName + ` ${componentData.id}`);
+    const componentFolder = folder.addFolder(componentName);
 
     Object.keys(componentData).forEach((key) => {
-      const value = componentData[key];
       const config = componentConfig[key];
-
-      if (key === 'id') return;
 
       if (!config) {
         console.warn(`No GUI config for property: ${key} in ${componentName}`);
