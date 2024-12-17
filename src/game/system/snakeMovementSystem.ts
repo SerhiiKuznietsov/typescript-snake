@@ -5,44 +5,61 @@ import { PrevPosition } from '../component/PrevPosition';
 import { Position } from '../component/Position';
 import { Snake } from '../component/Snake';
 import { RenderEvents } from './events/render';
+import { GridManager } from '../GridManager';
+import { createSnakeBody } from '../entities/snakeBody';
+import { Death } from '../component/Death';
+import { EntityId } from '@/ecs/Entity';
 
 export class SnakeMovementSystem implements ISystem {
   public entities = this.w.newGroup([Snake, Position, PrevPosition]);
 
-  constructor(public w: World) {}
+  constructor(
+    public w: World,
+    private _grid: GridManager,
+    private _gridSize: number
+  ) {}
+
+  private addSegments(entity: EntityId) {
+    const prevPosition = this.w.getComponent(entity, PrevPosition);
+    const { segments } = this.w.getComponent(entity, Snake);
+
+    const newSnakeBody = createSnakeBody(this.w, this._gridSize);
+
+    segments.unshift(newSnakeBody);
+
+    vectorUtils.setVector(
+      this.w.getComponent(newSnakeBody, Position),
+      prevPosition
+    );
+
+    this._grid.addEntity(
+      newSnakeBody,
+      this.w.getComponent(newSnakeBody, Position)
+    );
+
+    this.w.messageBroker.publish(RenderEvents.NEW_RENDER, newSnakeBody);
+  }
 
   public update(): void {
     this.entities.forEach((entity) => {
-      const prevPosition = this.w.getComponent(entity, PrevPosition);
-      const segments = this.w.getComponent(entity, Snake).segments;
+      const snake = this.w.getComponent(entity, Snake);
 
-      const lastSegment = segments.at(-1);
+      if (snake.makeSegments === 0 && !snake.segments.length) return;
 
-      if (lastSegment) {
-        const { x, y } = this.w.getComponent(lastSegment, Position);
-
-        this.w.messageBroker.publish(RenderEvents.CLEAN_RENDER, { x, y });
+      if (snake.makeSegments < 1 && snake.segments.length) {
+        this.w.getComponent(snake.segments.pop()!, Death);
       }
 
-      for (let i = segments.length - 1; i >= 0; i--) {
-        const segmentId = segments[i];
-        const nextSegmentId = segments[i - 1];
-
-        const nextPosition = nextSegmentId
-          ? this.w.getComponent(nextSegmentId, Position)
-          : prevPosition;
-
-        vectorUtils.setVector(
-          this.w.getComponent(segmentId, Position),
-          nextPosition
-        );
+      if (snake.makeSegments < 0) {
+        this.w.getComponent(snake.segments.pop()!, Death);
+        snake.makeSegments += 1;
       }
 
-      const firstSegment = segments.at(0);
-
-      if (firstSegment) {
-        this.w.messageBroker.publish(RenderEvents.NEW_RENDER, firstSegment);
+      if (snake.makeSegments > 0) {
+        snake.makeSegments -= 1;
       }
+
+      this.addSegments(entity);
     });
   }
 }
