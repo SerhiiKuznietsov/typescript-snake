@@ -7,4 +7,4 @@ export interface IComponentConstructor<T extends IComponent> {
   new (id: number, ...args: any[]): T;
 }
 
-export type ComponentConstructorList = IComponentConstructor<IComponent>[]
+export type ComponentConstructorList = IComponentConstructor<IComponent>[];

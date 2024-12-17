@@ -42,8 +42,6 @@ export class Game {
   }
 
   private update(deltaTime: number): void {
-    this._world.messageBroker.clearAll();
-
     this._systems.updateSystems(deltaTime);
   }
 

@@ -9,7 +9,7 @@ export class GridManager {
   private getCellKey(x: number, y: number): string {
     const cellX = Math.floor(x / this._cellSize);
     const cellY = Math.floor(y / this._cellSize);
-    return `${cellX},${cellY}`;
+    return `${cellX}-${cellY}`;
   }
 
   public addEntity(entityId: EntityId, position: Vector2): void {
@@ -26,7 +26,13 @@ export class GridManager {
     const key = this.getCellKey(position.x, position.y);
 
     const cell = this._grid.get(key);
-    if (!cell) return;
+    if (!cell) {
+      console.warn(
+        `Entity: "${entityId}" with position = x: ${position.x}, y: ${position.y} not found`
+      );
+
+      return;
+    }
 
     cell.delete(entityId);
     if (cell.size === 0) {
