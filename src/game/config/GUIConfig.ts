@@ -52,7 +52,9 @@ export const guiConfig: Record<string, any> = {
     elapsed: { type: 'number', min: 0, max: 10000, step: 100 },
   },
   [RespawnReady.name]: {},
-  [Snake.name]: {},
+  [Snake.name]: {
+    makeSegments: { type: 'number', min: -100, max: 100, step: 1 },
+  },
   [Velocity.name]: {
     value: { type: 'number', min: 0, max: 10, step: 0.1 },
   },

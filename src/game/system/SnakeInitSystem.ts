@@ -5,9 +5,9 @@ import { createSnake } from '../entities/snake';
 export class SnakeInitSystem implements ISystem {
   public oneShot: boolean = true;
 
-  constructor(public w: World, private gridSize: number) {}
+  constructor(public w: World, private _gridSize: number) {}
 
   public update(): void {
-    createSnake(this.w, this.gridSize);
+    createSnake(this.w, this._gridSize);
   }
 }
