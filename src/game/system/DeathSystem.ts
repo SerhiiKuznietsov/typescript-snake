@@ -19,7 +19,9 @@ export class DeathSystem implements ISystem {
   }
 
   private handleDeath(entity: EntityId): void {
-    this._grid.removeEntity(entity, this.w.getComponent(entity, Position));
+    if (this.w.hasComponent(entity, Position)) {
+      this._grid.removeEntity(entity, this.w.getComponent(entity, Position));
+    }
 
     if (this.w.hasComponent(entity, Respawn)) {
       this.w.removeComponent(entity, Death);

@@ -1,4 +1,3 @@
-import { CollisionOpponent } from '../component/CollisionOpponent';
 import { Position } from '../component/Position';
 import { EntityId } from '@/ecs/Entity';
 import { ISystem } from '@/ecs/SystemRegistry';
@@ -6,39 +5,34 @@ import { World } from '@/ecs/World';
 import { Collider } from '../component/Collider';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
+import { CollisionDetected } from '../component/CollisionDetected';
+import { Snake } from '../component/Snake';
 
 export class CollisionSystem implements ISystem {
-  public entities = this.w.newGroup([Position, Collider]);
-  public collisionEntities = this.w.newGroup([
-    Position,
-    Collider,
-    CollisionOpponent,
-  ]);
+  public entities = this.w.newGroup([Position, Collider, Snake]);
+  public collisionDetectedEntities = this.w.newGroup([CollisionDetected]);
 
   constructor(public w: World, private _grid: GridManager) {}
 
-  private clearCollisionOpponentIfExists() {
-    this.collisionEntities.forEach((entity) => {
-      const collisionOpponent = this.w.getComponent(entity, CollisionOpponent);
-
-      collisionOpponent.entities = [];
-      collisionOpponent.isActive = false;
+  private clearCollisionDetected() {
+    this.collisionDetectedEntities.forEach((entity) => {
+      this.w.getComponent(entity, CollisionDetected).opponents.length = 0;
+      this.w.removeComponent(entity, CollisionDetected);
     });
   }
 
-  private addToCollisionOpponentIfExists(entityA: EntityId, entityB: EntityId) {
-    if (!this.w.hasComponent(entityA, CollisionOpponent)) return;
+  private addToCollisionOpponent(entityA: EntityId, entityB: EntityId) {
+    const collision = this.w.getComponent(entityA, CollisionDetected);
 
-    const collisionOpponent = this.w.getComponent(entityA, CollisionOpponent);
+    if (collision.opponents.includes(entityB) || entityA === entityB) return;
 
-    collisionOpponent.entities.push(entityB);
-    collisionOpponent.isActive = true;
+    collision.opponents.push(entityB);
   }
 
   public update(): void {
-    this.clearCollisionOpponentIfExists();
+    this.clearCollisionDetected();
 
-    this.collisionEntities.forEach((entity) => {
+    this.entities.forEach((entity) => {
       const position = this.w.getComponent(entity, Position);
       const nearbyEntities = this._grid.getEntitiesNearby(position);
 
@@ -47,8 +41,7 @@ export class CollisionSystem implements ISystem {
 
         const otherPosition = this.w.getComponent(otherEntity, Position);
         if (vectorUtils.isEqual(position, otherPosition)) {
-          this.addToCollisionOpponentIfExists(entity, otherEntity);
-          this.addToCollisionOpponentIfExists(otherEntity, entity);
+          this.addToCollisionOpponent(entity, otherEntity);
         }
       });
     });

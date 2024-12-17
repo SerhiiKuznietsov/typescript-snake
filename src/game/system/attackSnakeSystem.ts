@@ -1,18 +1,14 @@
-import { CollisionOpponent } from '../component/CollisionOpponent';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { Food } from '../component/Food';
-import { Position } from '../component/Position';
-import { createSnakeBody } from '../entities/snakeBody';
-import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { Snake } from '../component/Snake';
 import { EntityId } from '@/ecs/Entity';
 import { Poison } from '../component/Poison';
-import { GridManager } from '../GridManager';
 import { Death } from '../component/Death';
+import { CollisionDetected } from '../component/CollisionDetected';
 
 export class AttackSnakeSystem implements ISystem {
-  public entities = this.w.newGroup([CollisionOpponent, Snake]);
+  public entities = this.w.newGroup([CollisionDetected, Snake]);
 
   constructor(public w: World) {}
 
@@ -28,11 +24,9 @@ export class AttackSnakeSystem implements ISystem {
 
   public update(): void {
     this.entities.forEach((entity) => {
-      const collision = this.w.getComponent(entity, CollisionOpponent);
+      const collision = this.w.getComponent(entity, CollisionDetected);
 
-      if (!collision.isActive) return;
-
-      collision.entities.forEach((target) => {
+      collision.opponents.forEach((target) => {
         if (this.w.hasComponent(target, Food)) {
           this.attackFood(entity);
           this.w.getComponent(target, Death);

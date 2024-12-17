@@ -14,6 +14,7 @@ import { MoveTo } from '../component/MoveTo';
 import { Respawn } from '../component/Respawn';
 import { RespawnReady } from '../component/RespawnReady';
 import { Snake } from '../component/Snake';
+import { CollisionDetected } from '../component/CollisionDetected';
 
 export const guiConfig: Record<string, any> = {
   [CanMove.name]: {},
@@ -21,7 +22,10 @@ export const guiConfig: Record<string, any> = {
     width: { type: 'number', min: 0, max: 1000, step: 1 },
     height: { type: 'number', min: 0, max: 1000, step: 1 },
   },
-  [DebugFlag.name]: {},
+  [CollisionDetected.name]: {},
+  [DebugFlag.name]: {
+    isOpen: { type: 'boolean' }
+  },
   [Direction.name]: {
     changed: { type: 'boolean' },
     x: { type: 'number', min: -1, max: 1, step: 1 },
