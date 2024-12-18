@@ -13,7 +13,7 @@ import { Moved } from '../component/Moved';
 
 export class SnakeMovementSystem implements ISystem {
   public entities = this.w.newGroup([Snake, Position, MoveTo]);
-  public needClearEntities = this.w.newGroup([Moved], [MoveTo])
+  public needClearEntities = this.w.newGroup([Moved], [MoveTo]);
 
   constructor(
     public w: World,
@@ -98,11 +98,13 @@ export class SnakeMovementSystem implements ISystem {
       if (snake.makeSegments > 0) {
         this.addNewSegment(snake, prevPosition);
         snake.makeSegments -= 1;
-      } else if (snake.makeSegments < 0) {
-        this.removeLastSegment(snake);
-        snake.makeSegments += 1;
       } else {
         this.moveSegmentToHead(snake, prevPosition);
+      }
+
+      if (snake.makeSegments < 0) {
+        this.removeLastSegment(snake);
+        snake.makeSegments += 1;
       }
     });
   }
