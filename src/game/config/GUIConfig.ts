@@ -7,7 +7,6 @@ import { PlayerInput } from '../component/PlayerInput';
 import { Poison } from '../component/Poison';
 import { Render } from '../component/Render';
 import { Velocity } from '../component/Velocity';
-import { PrevPosition } from '../component/PrevPosition';
 import { CanMove } from '../component/CanMove';
 import { Direction } from '../component/Direction';
 import { MoveTo } from '../component/MoveTo';
@@ -40,10 +39,6 @@ export const guiConfig: Record<string, any> = {
   [PlayerInput.name]: {},
   [Poison.name]: {},
   [Position.name]: {
-    x: { type: 'number', min: 0, max: 100, step: 1 },
-    y: { type: 'number', min: 0, max: 100, step: 1 },
-  },
-  [PrevPosition.name]: {
     x: { type: 'number', min: 0, max: 100, step: 1 },
     y: { type: 'number', min: 0, max: 100, step: 1 },
   },

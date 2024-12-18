@@ -2,7 +2,6 @@ import { World } from '@/ecs/World';
 import { GameConfig } from '../config/game';
 import { Board } from '../board';
 import { PlayerInputSystem } from './PlayerInputSystem';
-import { MovementSystem } from './MovementSystem';
 import { CollisionSystem } from './СollisionSystem';
 import { RenderSystem } from './RenderSystem';
 import { AttackSnakeSystem } from './AttackSnakeSystem';
@@ -52,7 +51,6 @@ export const initSystems = (
     .addSystem(new MovementCooldownSystem(world))
     .addSystem(new MovementPositionCalculationSystem(world))
     .addSystem(new MovementAreaSystem(world, x, y))
-    .addSystem(new MovementSystem(world, gridManager))
     .addSystem(new SnakeMovementSystem(world, gridManager, gridSize))
     .addSystem(new SnakeBoundarySystem(world, x, y))
     .addSystem(new CollisionSystem(world, gridManager))
