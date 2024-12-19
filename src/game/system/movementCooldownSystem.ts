@@ -14,9 +14,7 @@ export class MovementCooldownSystem implements ISystem {
 
       movement.accumulatedTime += deltaTime;
 
-      if (movement.accumulatedTime < movement.moveInterval) {
-        return;
-      }
+      if (movement.accumulatedTime < movement.moveInterval) return;
 
       movement.accumulatedTime = 0;
 

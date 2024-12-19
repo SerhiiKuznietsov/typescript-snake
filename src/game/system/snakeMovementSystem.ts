@@ -13,7 +13,7 @@ import { Moved } from '../component/Moved';
 
 export class SnakeMovementSystem implements ISystem {
   public entities = this.w.newGroup([Snake, Position, MoveTo]);
-  public needClearEntities = this.w.newGroup([Moved], [MoveTo]);
+  public needClearEntities = this.w.newGroup([Snake, Moved], [MoveTo]);
 
   constructor(
     public w: World,
