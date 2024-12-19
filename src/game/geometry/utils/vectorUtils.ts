@@ -24,6 +24,21 @@ export const vectorUtils = {
   isEqual: (v1: Vector2, v2: Vector2): boolean => {
     return v1.x === v2.x && v1.y === v2.y;
   },
+  distance(v1: Vector2, v2: Vector2): number {
+    const dx = v2.x - v1.x;
+    const dy = v2.y - v1.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  },
+  direction(from: Vector2, to: Vector2): Vector2 {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      return { x: Math.sign(dx), y: 0 };
+    } else {
+      return { x: 0, y: Math.sign(dy) };
+    }
+  },
   copy: (vector: Vector2): Vector2 => {
     const copy = { ...vector };
     return { x: copy.x, y: copy.y };

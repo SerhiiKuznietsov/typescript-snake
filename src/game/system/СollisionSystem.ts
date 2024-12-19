@@ -6,10 +6,11 @@ import { Collider } from '../component/Collider';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
 import { CollisionDetected } from '../component/CollisionDetected';
-import { Snake } from '../component/Snake';
+import { Moved } from '../component/Moved';
 
 export class CollisionSystem implements ISystem {
-  public entities = this.w.newGroup([Position, Collider, Snake]);
+  public entities = this.w.newGroup([Position, Collider]);
+  public movementEntities = this.w.newGroup([Position, Moved]);
   public collisionDetectedEntities = this.w.newGroup([CollisionDetected]);
 
   constructor(public w: World, private _grid: GridManager) {}
@@ -32,7 +33,9 @@ export class CollisionSystem implements ISystem {
   public update(): void {
     this.clearCollisionDetected();
 
-    this.entities.forEach((entity) => {
+    this.movementEntities.forEach((entity) => {
+
+
       const position = this.w.getComponent(entity, Position);
       const nearbyEntities = this._grid.getEntitiesNearby(position);
 

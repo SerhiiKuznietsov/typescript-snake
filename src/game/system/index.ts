@@ -19,6 +19,11 @@ import { SnakeInitSystem } from './SnakeInitSystem';
 import { FoodInitSystem } from './FoodInitSystem';
 import { PoisonInitSystem } from './PoisonInitSystem';
 import { DeathSystem } from './DeathSystem';
+import { HunterInitSystem } from './HunterInitSystem';
+import { HunterTargetSystem } from './HunterTargetSystem';
+import { HunterDirectionSystem } from './HunterDirectionSystem';
+import { HunterMovementSystem } from './HunterMovementSystem';
+import { HunterAttackSystem } from './HunterAttackSystem';
 
 export const initSystems = (
   system: SystemRegistry,
@@ -44,17 +49,22 @@ export const initSystems = (
         config.yGridsCount
       )
     )
-    .addSystem(new PoisonInitSystem(world, gridSize))
+    .addSystem(new HunterInitSystem(world, gridSize))
+    // .addSystem(new PoisonInitSystem(world, gridSize))
     // TODO - createHunter();
     // const hunter = new Entity('hunter');
     .addSystem(new PlayerInputSystem(world))
+    .addSystem(new HunterTargetSystem(world))
+    .addSystem(new HunterDirectionSystem(world))
     .addSystem(new MovementCooldownSystem(world))
     .addSystem(new MovementPositionCalculationSystem(world))
     .addSystem(new MovementAreaSystem(world, x, y))
     .addSystem(new SnakeMovementSystem(world, gridManager, gridSize))
+    .addSystem(new HunterMovementSystem(world, gridManager))
     .addSystem(new SnakeBoundarySystem(world, x, y))
     .addSystem(new CollisionSystem(world, gridManager))
     .addSystem(new AttackSnakeSystem(world))
+    .addSystem(new HunterAttackSystem(world))
     .addSystem(new DeathSystem(world, gridManager))
     .addSystem(new RespawnCooldownSystem(world))
     .addSystem(new RespawnSystem(world, gridManager, { x, y }))
