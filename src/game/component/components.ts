@@ -21,9 +21,11 @@ import { SnakeBody } from './SnakeBody';
 import { Target } from './Target';
 import { Velocity } from './Velocity';
 import { Poison } from './Poison';
+import { CollisionHandler } from './CollisionHandler';
 
 // TODO - We need to remove the hardwiring of this interface. It is possible to pass it when creating a world
 export interface ComponentMap {
+  CollisionHandler: CollisionHandler;
   CollisionDetected: CollisionDetected;
   Collider: Collider;
   CanMove: CanMove;
@@ -48,6 +50,10 @@ export interface ComponentMap {
 }
 
 export const registerComponents = (w: World) => {
+  w.registerPool(
+    'CollisionHandler',
+    new ObjectPool(() => new CollisionHandler())
+  );
   w.registerPool(
     'CollisionDetected',
     new ObjectPool(() => new CollisionDetected(), {

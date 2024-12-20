@@ -10,6 +10,7 @@ export const createSnake = (w: World, gridSize: number): void => {
   w.getComponent(entityId, 'Movement', { moveInterval: 100 });
   w.getComponent(entityId, 'Velocity', { value: 1 });
   w.getComponent(entityId, 'Direction');
+  w.getComponent(entityId, 'CollisionHandler');
   w.getComponent(entityId, 'Collider', {
     width: gridSize,
     height: gridSize,

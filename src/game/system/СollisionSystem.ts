@@ -6,14 +6,17 @@ import { GridManager } from '../GridManager';
 
 export class CollisionSystem implements ISystem {
   public entities = this.w.newGroup(['Position', 'Collider']);
-  public movementEntities = this.w.newGroup(['Position', 'Moved']);
+  public movementEntities = this.w.newGroup([
+    'Position',
+    'CollisionHandler',
+    'Moved',
+  ]);
   public collisionDetectedEntities = this.w.newGroup(['CollisionDetected']);
 
   constructor(public w: World, private _grid: GridManager) {}
 
   private clearCollisionDetected() {
     this.collisionDetectedEntities.forEach((entity) => {
-      this.w.getComponent(entity, 'CollisionDetected').opponents.length = 0;
       this.w.removeComponent(entity, 'CollisionDetected');
     });
   }
