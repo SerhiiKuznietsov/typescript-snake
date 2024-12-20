@@ -9,6 +9,10 @@ import { MessageBroker } from './MessageBroker';
 import { IComponentPool } from './entity/ComponentPoolManager';
 import { ComponentMap } from '@/game/component/components';
 
+/*
+  TODO - need create Debugger class
+*/
+
 export class World {
   private _eventBus: EventBus;
   private _storage: EntityComponentStorage;
