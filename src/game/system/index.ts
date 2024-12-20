@@ -40,17 +40,7 @@ export const initSystems = (
   // TODO - add destroy method for system because need clean groups
 
   system
-    .addSystem(new SnakeInitSystem(world, gridSize))
-    .addSystem(
-      new FoodInitSystem(
-        world,
-        gridSize,
-        config.xGridsCount,
-        config.yGridsCount
-      )
-    )
-    .addSystem(new HunterInitSystem(world, gridSize))
-    .addSystem(new PoisonInitSystem(world, gridSize))
+
     // TODO - createHunter();
     // const hunter = new Entity('hunter');
     .addSystem(new PlayerInputSystem(world))
@@ -66,6 +56,17 @@ export const initSystems = (
     .addSystem(new AttackSnakeSystem(world))
     .addSystem(new HunterAttackSystem(world))
     .addSystem(new DeathSystem(world, gridManager))
+    .addSystem(new SnakeInitSystem(world, gridSize))
+    .addSystem(
+      new FoodInitSystem(
+        world,
+        gridSize,
+        config.xGridsCount,
+        config.yGridsCount
+      )
+    )
+    .addSystem(new HunterInitSystem(world, gridSize))
+    .addSystem(new PoisonInitSystem(world, gridSize))
     .addSystem(new RespawnCooldownSystem(world))
     .addSystem(new RespawnSystem(world, gridManager, { x, y }))
     .addSystem(new RenderSystem(world, board))
