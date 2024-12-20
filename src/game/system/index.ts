@@ -50,7 +50,7 @@ export const initSystems = (
       )
     )
     .addSystem(new HunterInitSystem(world, gridSize))
-    // .addSystem(new PoisonInitSystem(world, gridSize))
+    .addSystem(new PoisonInitSystem(world, gridSize))
     // TODO - createHunter();
     // const hunter = new Entity('hunter');
     .addSystem(new PlayerInputSystem(world))

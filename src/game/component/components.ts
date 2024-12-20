@@ -48,7 +48,7 @@ export interface ComponentMap {
 
 export const registerComponents = (w: World) => {
   w.registerPool(
-    CollisionDetected.name,
+    'CollisionDetected',
     new ObjectPool(() => new CollisionDetected(), {
       initialize(item, params) {
         if (params?.opponents?.length) {
@@ -62,7 +62,7 @@ export const registerComponents = (w: World) => {
     })
   )
     .registerPool(
-      Collider.name,
+      'Collider',
       new ObjectPool(() => new Collider(), {
         initialize(item, params) {
           if (params?.width) {
@@ -80,10 +80,10 @@ export const registerComponents = (w: World) => {
         initialSize: 20,
       })
     )
-    .registerPool(CanMove.name, new ObjectPool(() => new CanMove()))
-    .registerPool(Death.name, new ObjectPool(() => new Death()))
+    .registerPool('CanMove', new ObjectPool(() => new CanMove()))
+    .registerPool('Death', new ObjectPool(() => new Death()))
     .registerPool(
-      DebugFlag.name,
+      'DebugFlag',
       new ObjectPool(() => new DebugFlag(), {
         initialize(item, params) {
           if (params?.isOpen) {
@@ -96,7 +96,7 @@ export const registerComponents = (w: World) => {
       })
     )
     .registerPool(
-      Direction.name,
+      'Direction',
       new ObjectPool(() => new Direction(), {
         initialize(item, params) {
           if (params?.x) {
@@ -114,11 +114,11 @@ export const registerComponents = (w: World) => {
         initialSize: 1,
       })
     )
-    .registerPool(Food.name, new ObjectPool(() => new Food()))
-    .registerPool(Hunter.name, new ObjectPool(() => new Hunter()))
-    .registerPool(Moved.name, new ObjectPool(() => new Moved()))
+    .registerPool('Food', new ObjectPool(() => new Food()))
+    .registerPool('Hunter', new ObjectPool(() => new Hunter()))
+    .registerPool('Moved', new ObjectPool(() => new Moved()))
     .registerPool(
-      Movement.name,
+      'Movement',
       new ObjectPool(() => new Movement(), {
         initialize(item, params) {
           if (params?.accumulatedTime) {
@@ -137,7 +137,7 @@ export const registerComponents = (w: World) => {
       })
     )
     .registerPool(
-      MoveTo.name,
+      'MoveTo',
       new ObjectPool(() => new MoveTo(), {
         initialize(item, params) {
           if (params?.x) {
@@ -155,10 +155,10 @@ export const registerComponents = (w: World) => {
         initialSize: 1,
       })
     )
-    .registerPool(PlayerInput.name, new ObjectPool(() => new PlayerInput()))
-    .registerPool(Poison.name, new ObjectPool(() => new Poison()))
+    .registerPool('PlayerInput', new ObjectPool(() => new PlayerInput()))
+    .registerPool('Poison', new ObjectPool(() => new Poison()))
     .registerPool(
-      Position.name,
+      'Position',
       new ObjectPool(() => new Position(), {
         initialize(item, params) {
           if (params?.x) {
@@ -176,9 +176,30 @@ export const registerComponents = (w: World) => {
         initialSize: 10,
       })
     )
-    .registerPool(Render.name, new ObjectPool(() => new Render()))
     .registerPool(
-      Respawn.name,
+      'Render',
+      new ObjectPool(() => new Render(), {
+        initialize(item, params) {
+          if (params?.color) {
+            item.color = params.color;
+          }
+
+          if (params?.shape) {
+            item.shape = params.shape;
+          }
+
+          if (params?.zIndex) {
+            item.zIndex = params.zIndex;
+          }
+        },
+        deactivate(item) {
+          item.color = '#000';
+          item.zIndex = 0;
+        },
+      })
+    )
+    .registerPool(
+      'Respawn',
       new ObjectPool(() => new Respawn(), {
         initialize(item, params) {
           if (params?.cooldown) {
@@ -195,9 +216,9 @@ export const registerComponents = (w: World) => {
         },
       })
     )
-    .registerPool(RespawnReady.name, new ObjectPool(() => new RespawnReady()))
+    .registerPool('RespawnReady', new ObjectPool(() => new RespawnReady()))
     .registerPool(
-      Snake.name,
+      'Snake',
       new ObjectPool(() => new Snake(), {
         initialize(item, params) {
           if (params?.makeSegments) {
@@ -214,9 +235,9 @@ export const registerComponents = (w: World) => {
         },
       })
     )
-    .registerPool(SnakeBody.name, new ObjectPool(() => new SnakeBody()))
+    .registerPool('SnakeBody', new ObjectPool(() => new SnakeBody()))
     .registerPool(
-      Target.name,
+      'Target',
       new ObjectPool(() => new Target(), {
         deactivate(item) {
           item.targetId = null;
@@ -224,7 +245,7 @@ export const registerComponents = (w: World) => {
       })
     )
     .registerPool(
-      Velocity.name,
+      'Velocity',
       new ObjectPool(() => new Velocity(), {
         initialize(item, params) {
           if (params?.value) {

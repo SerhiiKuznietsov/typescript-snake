@@ -1,11 +1,9 @@
-import { Direction } from '../component/Direction';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { keyBoard } from '../keyBoard';
 import { World } from '@/ecs/World';
-import { PlayerInput } from '../component/PlayerInput';
 
 export class PlayerInputSystem implements ISystem {
-  public entities = this.w.newGroup([PlayerInput, Direction]);
+  public entities = this.w.newGroup(['PlayerInput', 'Direction']);
 
   constructor(public w: World) {
     this.initializeListeners();
@@ -13,7 +11,7 @@ export class PlayerInputSystem implements ISystem {
 
   public update(): void {
     this.entities.forEach((entity) => {
-      const control = this.w.getComponent(entity, Direction);
+      const control = this.w.getComponent(entity, 'Direction');
 
       control.changed = false;
     });
@@ -38,7 +36,7 @@ export class PlayerInputSystem implements ISystem {
 
   private setControl = ({ code }: KeyboardEvent): void => {
     this.entities.forEach((entity) => {
-      const direction = this.w.getComponent(entity, Direction);
+      const direction = this.w.getComponent(entity, 'Direction');
 
       if (direction.changed) return;
 

@@ -1,5 +1,3 @@
-import { Position } from '../component/Position';
-import { Render } from '../component/Render';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { Board } from '../board';
 import { World } from '@/ecs/World';
@@ -7,7 +5,7 @@ import { EntityId } from '@/ecs/Entity';
 import { RenderEvents } from './events/render';
 
 export class RenderSystem implements ISystem {
-  public entities = this.w.newGroup([Render, Position]);
+  public entities = this.w.newGroup(['Render', 'Position']);
 
   constructor(public w: World, private _board: Board) {}
 
@@ -29,8 +27,8 @@ export class RenderSystem implements ISystem {
 
     renderEntities.forEach((entity) => {
       if (
-        !this.w.hasComponent(entity, Render) ||
-        !this.w.hasComponent(entity, Position)
+        !this.w.hasComponent(entity, 'Render') ||
+        !this.w.hasComponent(entity, 'Position')
       ) {
         return;
       }
@@ -39,8 +37,8 @@ export class RenderSystem implements ISystem {
     });
 
     sortedEntities.sort((entity1, entity2) => {
-      const a = this.w.getComponent(entity1, Render);
-      const b = this.w.getComponent(entity2, Render);
+      const a = this.w.getComponent(entity1, 'Render');
+      const b = this.w.getComponent(entity2, 'Render');
 
       return a.zIndex - b.zIndex;
     });
@@ -54,8 +52,8 @@ export class RenderSystem implements ISystem {
   }
 
   private draw(entity: EntityId) {
-    const render = this.w.getComponent(entity, Render);
-    const position = this.w.getComponent(entity, Position);
+    const render = this.w.getComponent(entity, 'Render');
+    const position = this.w.getComponent(entity, 'Position');
 
     this._board.render(render, position);
   }

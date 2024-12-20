@@ -1,9 +1,8 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
-import { MoveTo } from '../component/MoveTo';
 
 export class MovementAreaSystem implements ISystem {
-  public entities = this.w.newGroup([MoveTo]);
+  public entities = this.w.newGroup(['MoveTo']);
 
   constructor(
     public w: World,
@@ -13,7 +12,7 @@ export class MovementAreaSystem implements ISystem {
 
   public update(): void {
     this.entities.forEach((entity) => {
-      const moveTo = this.w.getComponent(entity, MoveTo);
+      const moveTo = this.w.getComponent(entity, 'MoveTo');
 
       if (moveTo.x < 0) {
         moveTo.x = this.fieldWidth;

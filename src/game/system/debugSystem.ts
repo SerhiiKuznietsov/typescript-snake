@@ -1,14 +1,13 @@
 import * as dat from 'dat.gui';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
-import { DebugFlag } from '../component/DebugFlag';
 import { guiConfig } from '../config/GUIConfig';
 
 export class DebugSystem implements ISystem {
   private gui: dat.GUI;
   private folders: Map<number, dat.GUI> = new Map();
 
-  public entities = this.w.newGroup([DebugFlag]);
+  public entities = this.w.newGroup(['DebugFlag']);
 
   constructor(public w: World) {
     this.gui = new dat.GUI();
@@ -17,7 +16,7 @@ export class DebugSystem implements ISystem {
   private createFolderForEntity(entityId: number): dat.GUI {
     const folder = this.gui.addFolder(`Entity ${entityId}`);
 
-    if (this.w.getComponent(entityId, DebugFlag).isOpen) {
+    if (this.w.getComponent(entityId, 'DebugFlag').isOpen) {
       folder.open();
     }
 

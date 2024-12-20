@@ -1,5 +1,4 @@
-import { IComponent, IComponentConstructor } from '../Component';
-import { ObjectPool } from '../ObjectPool';
+import { IComponent } from '../Component';
 
 export interface IComponentPool<T> {
   acquire(params?: Partial<T>): T;

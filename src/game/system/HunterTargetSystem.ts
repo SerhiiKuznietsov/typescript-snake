@@ -1,16 +1,12 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { Position } from '../component/Position';
-import { Hunter } from '../component/Hunter';
-import { Target } from '../component/Target';
-import { Food } from '../component/Food';
-import { Death } from '../component/Death';
 import { EntityId } from '@/ecs/Entity';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 
 export class HunterTargetSystem implements ISystem {
-  public entities = this.w.newGroup([Hunter, Position, Target]);
-  public foodEntities = this.w.newGroup([Food, Position], [Death]);
+  public entities = this.w.newGroup(['Hunter', 'Position', 'Target']);
+  public foodEntities = this.w.newGroup(['Food', 'Position'], ['Death']);
 
   constructor(public w: World) {}
 
@@ -19,7 +15,7 @@ export class HunterTargetSystem implements ISystem {
     let minDistance = Infinity;
 
     this.foodEntities.forEach((entityId) => {
-      const foodPosition = this.w.getComponent(entityId, Position);
+      const foodPosition = this.w.getComponent(entityId, 'Position');
       const distance = vectorUtils.distance(hunterPosition, foodPosition);
 
       if (distance < minDistance) {
@@ -33,8 +29,8 @@ export class HunterTargetSystem implements ISystem {
 
   public update(): void {
     this.entities.forEach((entityId) => {
-      const hunterPosition = this.w.getComponent(entityId, Position);
-      const target = this.w.getComponent(entityId, Target);
+      const hunterPosition = this.w.getComponent(entityId, 'Position');
+      const target = this.w.getComponent(entityId, 'Target');
 
       if (!target.targetId) {
         const closestFoodId = this.findClosestFood(hunterPosition);

@@ -1,4 +1,3 @@
-import { ComponentConstructorList } from '../Component';
 import { EntityComponentStorage } from '../EntityComponentStorage';
 import { EventBus } from '../EventBus';
 import { EcsEvents } from '../EcsEvents';
@@ -8,7 +7,7 @@ import { GroupIndex } from './GroupIndex';
 import { Group } from './Group';
 import { BitUtils } from '../utils/bit';
 
-export type GroupQuery = [ComponentConstructorList?, ComponentConstructorList?];
+export type GroupQuery = [string[]?, string[]?];
 
 export class GroupManager {
   private _groups: Map<GroupKey, { group: Group; count: number }> = new Map();
@@ -95,15 +94,11 @@ export class GroupManager {
     notBitMask: number;
   } {
     const hasBitMask = group.has
-      .map((component) =>
-        this._storage.bitMap.createComponentBit(component.name)
-      )
+      .map((component) => this._storage.bitMap.createComponentBit(component))
       .reduce(BitUtils.setBit, 0);
 
     const notBitMask = group.not
-      .map((component) =>
-        this._storage.bitMap.createComponentBit(component.name)
-      )
+      .map((component) => this._storage.bitMap.createComponentBit(component))
       .reduce(BitUtils.setBit, 0);
 
     return { hasBitMask, notBitMask };
@@ -123,7 +118,7 @@ export class GroupManager {
     });
   }
 
-  private onComponentChanged({ entityId }: { entityId: number }): void {
+  private onComponentChanged({ entityId }: { entityId: EntityId }): void {
     this._groups.forEach(({ group }, key) => {
       const isInGroup = group.entitiesSet.has(entityId);
       const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
@@ -164,7 +159,7 @@ export class GroupManager {
     this._groupIndex.remove(entityId, groupKey);
   }
 
-  private onEntityCreated({ entityId }: { entityId: number }): void {
+  private onEntityCreated({ entityId }: { entityId: EntityId }): void {
     this._groups.forEach(({ group }, key) => {
       const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
@@ -178,7 +173,7 @@ export class GroupManager {
     });
   }
 
-  private onEntityDeleted({ entityId }: { entityId: number }): void {
+  private onEntityDeleted({ entityId }: { entityId: EntityId }): void {
     const groupKeys = this._groupIndex.get(entityId);
     if (!groupKeys) return;
 

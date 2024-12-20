@@ -1,10 +1,8 @@
 import { World } from '@/ecs/World';
-import { Snake } from '../component/Snake';
 import { ISystem } from '@/ecs/SystemRegistry';
-import { Position } from '../component/Position';
 
 export class SnakeBoundarySystem implements ISystem {
-  public entities = this.w.newGroup([Snake, Position]);
+  public entities = this.w.newGroup(['Snake', 'Position']);
 
   constructor(
     public w: World,
@@ -14,7 +12,7 @@ export class SnakeBoundarySystem implements ISystem {
 
   public update(): void {
     this.entities.forEach((entity) => {
-      const position = this.w.getComponent(entity, Position);
+      const position = this.w.getComponent(entity, 'Position');
 
       if (
         position.x < 0 ||

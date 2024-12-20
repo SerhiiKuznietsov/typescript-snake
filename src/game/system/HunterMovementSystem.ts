@@ -1,27 +1,23 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
-import { Position } from '../component/Position';
-import { Hunter } from '../component/Hunter';
-import { MoveTo } from '../component/MoveTo';
-import { Moved } from '../component/Moved';
 import { RenderEvents } from './events/render';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
 
 export class HunterMovementSystem implements ISystem {
-  public entities = this.w.newGroup([Hunter, Position, MoveTo]);
-  public needClearEntities = this.w.newGroup([Hunter, Moved], [MoveTo]);
+  public entities = this.w.newGroup(['Hunter', 'Position', 'MoveTo']);
+  public needClearEntities = this.w.newGroup(['Hunter', 'Moved'], ['MoveTo']);
 
   constructor(public w: World, private _grid: GridManager) {}
 
   public update(): void {
     this.needClearEntities.forEach((entity) => {
-      this.w.removeComponent(entity, Moved);
+      this.w.removeComponent(entity, 'Moved');
     });
 
     this.entities.forEach((entity) => {
-      const position = this.w.getComponent(entity, Position);
-      const moveTo = this.w.getComponent(entity, MoveTo);
+      const position = this.w.getComponent(entity, 'Position');
+      const moveTo = this.w.getComponent(entity, 'MoveTo');
 
       this._grid.moveEntity(entity, position, moveTo);
 
@@ -36,7 +32,7 @@ export class HunterMovementSystem implements ISystem {
           y: prevPosition.y,
         });
 
-      this.w.getComponent(entity, Moved);
+      this.w.getComponent(entity, 'Moved');
     });
   }
 }

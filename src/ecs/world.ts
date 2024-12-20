@@ -5,13 +5,9 @@ import {
   EntityComponentStorage,
 } from './EntityComponentStorage';
 import { GroupManager } from './group/GroupManager';
-import {
-  ComponentConstructorList,
-  IComponent,
-  IComponentConstructor,
-} from './Component';
 import { MessageBroker } from './MessageBroker';
 import { IComponentPool } from './entity/ComponentPoolManager';
+import { ComponentMap } from '@/game/component/components';
 
 export class World {
   private _eventBus: EventBus;
@@ -36,57 +32,57 @@ export class World {
     this._storage.deleteEntity(entityId);
   }
 
-  public registerPool<T extends IComponent>(
-    name: string,
-    pool: IComponentPool<T>
+  public registerPool<K extends keyof ComponentMap>(
+    componentName: K,
+    pool: IComponentPool<ComponentMap[K]>
   ): this {
-    this._storage.registerComponent(name, pool);
+    this._storage.registerComponent(componentName, pool);
 
     return this;
   }
 
-  public hasComponent(
+  public hasComponent<K extends keyof ComponentMap>(
     entityId: EntityId,
-    componentType: IComponentConstructor<IComponent>
+    componentName: K
   ): boolean {
-    return this._storage.hasComponent(entityId, componentType);
+    return this._storage.hasComponent(entityId, componentName);
   }
 
-  public getComponent<T extends IComponent>(
+  public getComponent<K extends keyof ComponentMap>(
     entityId: EntityId,
-    componentType: IComponentConstructor<T>,
-    params?: Partial<T>
-  ): T {
-    if (!this.hasComponent(entityId, componentType)) {
-      this._storage.addComponent(entityId, componentType, params);
+    componentName: K,
+    params?: Partial<ComponentMap[K]>
+  ): ComponentMap[K] {
+    if (!this.hasComponent(entityId, componentName)) {
+      this._storage.addComponent(entityId, componentName, params);
     }
 
-    return this._storage.getComponent(entityId, componentType);
+    return this._storage.getComponent(entityId, componentName);
   }
 
   public getComponents(entityId: EntityId): ComponentMapType {
     return this._storage.getComponents(entityId);
   }
 
-  public removeComponent(
+  public removeComponent<K extends keyof ComponentMap>(
     entityId: EntityId,
-    componentType: IComponentConstructor<IComponent>
+    componentName: K
   ): this {
-    this._storage.removeComponent(entityId, componentType);
+    this._storage.removeComponent(entityId, componentName);
 
     return this;
   }
 
-  public newGroup(
-    has: ComponentConstructorList,
-    not: ComponentConstructorList = []
+  public newGroup<K extends keyof ComponentMap>(
+    has: K[] = [],
+    not: K[] = []
   ): EntityId[] {
     return this._groupManager.createGroup([has, not]);
   }
 
-  public releaseGroup(
-    has: ComponentConstructorList,
-    not: ComponentConstructorList = []
+  public releaseGroup<K extends keyof ComponentMap>(
+    has: K[],
+    not: K[] = []
   ): void {
     this._groupManager.releaseGroup([has, not]);
   }

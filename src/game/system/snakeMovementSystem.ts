@@ -1,19 +1,15 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
-import { Position } from '../component/Position';
 import { Snake } from '../component/Snake';
 import { RenderEvents } from './events/render';
 import { GridManager } from '../GridManager';
 import { createSnakeBody } from '../entities/snakeBody';
-import { Death } from '../component/Death';
-import { MoveTo } from '../component/MoveTo';
 import { Vector2 } from '../geometry/vector2';
-import { Moved } from '../component/Moved';
 
 export class SnakeMovementSystem implements ISystem {
-  public entities = this.w.newGroup([Snake, Position, MoveTo]);
-  public needClearEntities = this.w.newGroup([Snake, Moved], [MoveTo]);
+  public entities = this.w.newGroup(['Snake', 'Position', 'MoveTo']);
+  public needClearEntities = this.w.newGroup(['Snake', 'Moved'], ['MoveTo']);
 
   constructor(
     public w: World,
@@ -26,7 +22,7 @@ export class SnakeMovementSystem implements ISystem {
 
     if (!lastSegment) return;
 
-    const lastPosition = this.w.getComponent(lastSegment, Position);
+    const lastPosition = this.w.getComponent(lastSegment, 'Position');
 
     this.w.messageBroker.publish(
       RenderEvents.CLEAN_RENDER,
@@ -46,11 +42,14 @@ export class SnakeMovementSystem implements ISystem {
     snake.segments.unshift(newSegment);
 
     vectorUtils.setVector(
-      this.w.getComponent(newSegment, Position),
+      this.w.getComponent(newSegment, 'Position'),
       prevPosition
     );
 
-    this._grid.addEntity(newSegment, this.w.getComponent(newSegment, Position));
+    this._grid.addEntity(
+      newSegment,
+      this.w.getComponent(newSegment, 'Position')
+    );
 
     this.w.messageBroker.publish(RenderEvents.NEW_RENDER, newSegment);
   }
@@ -59,8 +58,8 @@ export class SnakeMovementSystem implements ISystem {
     const lastSegment = snake.segments.pop();
     if (!lastSegment) return;
 
-    this.w.getComponent(lastSegment, Death);
-    const lastPosition = this.w.getComponent(lastSegment, Position);
+    this.w.getComponent(lastSegment, 'Death');
+    const lastPosition = this.w.getComponent(lastSegment, 'Position');
 
     this.w.messageBroker.publish(
       RenderEvents.CLEAN_RENDER,
@@ -70,13 +69,13 @@ export class SnakeMovementSystem implements ISystem {
 
   public update(): void {
     this.needClearEntities.forEach((entity) => {
-      this.w.removeComponent(entity, Moved);
+      this.w.removeComponent(entity, 'Moved');
     });
 
     this.entities.forEach((entity) => {
-      const snake = this.w.getComponent(entity, Snake);
-      const position = this.w.getComponent(entity, Position);
-      const moveTo = this.w.getComponent(entity, MoveTo);
+      const snake = this.w.getComponent(entity, 'Snake');
+      const position = this.w.getComponent(entity, 'Position');
+      const moveTo = this.w.getComponent(entity, 'MoveTo');
 
       this._grid.moveEntity(entity, position, moveTo);
 
@@ -91,7 +90,7 @@ export class SnakeMovementSystem implements ISystem {
           y: prevPosition.y,
         });
 
-      this.w.getComponent(entity, Moved);
+      this.w.getComponent(entity, 'Moved');
 
       if (snake.makeSegments === 0 && !snake.segments.length) return;
 

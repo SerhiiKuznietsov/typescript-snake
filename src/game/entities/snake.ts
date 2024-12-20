@@ -1,27 +1,22 @@
 import { World } from '@/ecs/World';
-import { Render } from '../component/Render';
 import { Square } from '../geometry/shape/square';
-import { Collider } from '../component/Collider';
-import { PlayerInput } from '../component/PlayerInput';
-import { Snake } from '../component/Snake';
-import { Position } from '../component/Position';
-import { Movement } from '../component/Movement';
-import { Velocity } from '../component/Velocity';
-import { Direction } from '../component/Direction';
 
-export const createSnake = (world: World, gridSize: number): void => {
-  const entityId = world.createEntity();
+export const createSnake = (w: World, gridSize: number): void => {
+  const entityId = w.createEntity();
 
-  world.getComponent(entityId, PlayerInput);
-  world.getComponent(entityId, Snake);
-  world.getComponent(entityId, Position, { x: 0, y: 0 });
-  world.getComponent(entityId, Movement, { moveInterval: 100 });
-  world.getComponent(entityId, Velocity, { value: 1 });
-  world.getComponent(entityId, Direction);
-  world.getComponent(entityId, Collider);
-
-  const render = world.getComponent(entityId, Render);
-  render.shape = new Square(gridSize);
-  render.color = '#1fa224';
-  render.zIndex = 3;
+  w.getComponent(entityId, 'PlayerInput');
+  w.getComponent(entityId, 'Snake');
+  w.getComponent(entityId, 'Position', { x: 0, y: 0 });
+  w.getComponent(entityId, 'Movement', { moveInterval: 100 });
+  w.getComponent(entityId, 'Velocity', { value: 1 });
+  w.getComponent(entityId, 'Direction');
+  w.getComponent(entityId, 'Collider', {
+    width: gridSize,
+    height: gridSize,
+  });
+  w.getComponent(entityId, 'Render', {
+    shape: new Square(gridSize),
+    color: '#1fa224',
+    zIndex: 3,
+  });
 };

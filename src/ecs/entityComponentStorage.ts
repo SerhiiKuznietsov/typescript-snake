@@ -1,4 +1,5 @@
-import { IComponent, IComponentConstructor } from './Component';
+import { ComponentMap } from '@/game/component/components';
+import { IComponent } from './Component';
 import { EcsEvents } from './EcsEvents';
 import { EntityId } from './Entity';
 import { BitMapManager } from './entity/BitMapManager';
@@ -11,10 +12,6 @@ import { EventBus } from './EventBus';
 import { IdManager } from './idManager';
 
 export type ComponentMapType = Map<string, IComponent>;
-
-const getComponentKey = <T extends IComponent>(
-  componentType: IComponentConstructor<T>
-): string => componentType.name;
 
 export class EntityComponentStorage {
   private _componentId = new IdManager();
@@ -54,80 +51,72 @@ export class EntityComponentStorage {
     this._eventBus.emit(EcsEvents.ENTITY_DELETED, { entityId });
   }
 
-  public registerComponent<T extends IComponent>(
-    name: string,
-    pool: IComponentPool<T>
+  public registerComponent<K extends keyof ComponentMap>(
+    componentName: K,
+    pool: IComponentPool<ComponentMap[K]>
   ): void {
-    this._componentPoolManager.register(name, pool);
+    this._componentPoolManager.register(componentName, pool);
   }
 
-  public addComponent<T extends IComponent>(
+  public hasComponent<K extends keyof ComponentMap>(
     entityId: EntityId,
-    componentType: IComponentConstructor<T>,
-    params?: Partial<T>
-  ): T {
+    componentName: K
+  ): boolean {
+    return this._entityStorage.hasComponent(entityId, componentName);
+  }
+
+  public getComponent<K extends keyof ComponentMap>(
+    entityId: EntityId,
+    componentName: K
+  ): ComponentMap[K] {
+    return this._entityStorage.getComponent(entityId, componentName);
+  }
+
+  public addComponent<K extends keyof ComponentMap>(
+    entityId: EntityId,
+    componentName: K,
+    params?: Partial<ComponentMap[K]>
+  ): ComponentMap[K] {
     if (!this._entityStorage.hasEntity(entityId)) {
       throw new Error(`Entity with ID ${entityId} does not exist.`);
     }
 
-    const componentKey = getComponentKey(componentType);
-
     const component = this._componentPoolManager.acquireComponent(
-      componentKey,
+      componentName,
       params
     );
 
-    this._entityStorage.addComponent(entityId, componentKey, component);
+    this._entityStorage.addComponent(entityId, componentName, component);
 
-    this._entityBitMaps.addComponentBitToEntity(entityId, componentKey);
+    this._entityBitMaps.addComponentBitToEntity(entityId, componentName);
 
-    this._eventBus.emit(EcsEvents.COMPONENT_ADDED, { entityId, componentType });
+    this._eventBus.emit(EcsEvents.COMPONENT_ADDED, { entityId, componentName });
 
     return component;
   }
 
-  public removeComponent<T extends IComponent>(
+  public removeComponent<K extends keyof ComponentMap>(
     entityId: EntityId,
-    componentType: IComponentConstructor<T>
+    componentName: K
   ): void {
     if (!this._entityStorage.hasEntity(entityId)) {
       throw new Error(`Entity with ID: "${entityId}" does not exist.`);
     }
 
-    const componentKey = getComponentKey(componentType);
+    const component = this._entityStorage.getComponent(entityId, componentName);
+    this._entityStorage.removeComponent(entityId, componentName);
+    this._componentPoolManager.releaseComponent(componentName, component);
 
-    const component = this._entityStorage.getComponent(entityId, componentKey);
-    this._entityStorage.removeComponent(entityId, componentKey);
-    this._componentPoolManager.releaseComponent(componentKey, component);
-
-    this._entityBitMaps.removeComponentBitFromEntity(entityId, componentKey);
+    this._entityBitMaps.removeComponentBitFromEntity(entityId, componentName);
 
     this._eventBus.emit(EcsEvents.COMPONENT_REMOVED, {
       entityId,
-      componentType,
+      componentName,
     });
-  }
-
-  public getComponent<T extends IComponent>(
-    entityId: EntityId,
-    componentType: IComponentConstructor<T>
-  ): T {
-    const componentKey = getComponentKey(componentType);
-
-    return this._entityStorage.getComponent(entityId, componentKey) as T;
   }
 
   public getComponents(entityId: EntityId): Map<string, IComponent> {
     return this._entityStorage.getComponents(entityId);
-  }
-
-  public hasComponent<T extends IComponent>(
-    entityId: EntityId,
-    componentType: IComponentConstructor<T>
-  ): boolean {
-    const componentKey = getComponentKey(componentType);
-
-    return this._entityStorage.hasComponent(entityId, componentKey);
   }
 
   public getAllEntities(): EntityId[] {

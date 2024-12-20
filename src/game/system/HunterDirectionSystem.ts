@@ -1,30 +1,33 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
-import { Position } from '../component/Position';
-import { Target } from '../component/Target';
-import { Direction } from '../component/Direction';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { RenderEvents } from './events/render';
-import { Hunter } from '../component/Hunter';
 
 export class HunterDirectionSystem implements ISystem {
-  public entities = this.w.newGroup([Hunter, Position, Target, Direction]);
+  public entities = this.w.newGroup([
+    'Hunter',
+    'Position',
+    'Target',
+    'Direction',
+  ]);
 
   constructor(public w: World) {}
 
   public update(): void {
     this.entities.forEach((entityId) => {
-      const hunterPosition = this.w.getComponent(entityId, Position);
-      const target = this.w.getComponent(entityId, Target);
-      const direction = this.w.getComponent(entityId, Direction);
+      const hunterPosition = this.w.getComponent(entityId, 'Position');
+      const target = this.w.getComponent(entityId, 'Target');
+      const direction = this.w.getComponent(entityId, 'Direction');
 
-
-      if (target.targetId && !this.w.hasComponent(target.targetId, Position)) {
-        target.targetId = null
+      if (
+        target.targetId &&
+        !this.w.hasComponent(target.targetId, 'Position')
+      ) {
+        target.targetId = null;
       }
 
       if (target.targetId) {
-        const targetPosition = this.w.getComponent(target.targetId, Position);
+        const targetPosition = this.w.getComponent(target.targetId, 'Position');
         const dir = vectorUtils.direction(hunterPosition, targetPosition);
 
         vectorUtils.setVector(direction, dir);
