@@ -22,6 +22,7 @@ import { Target } from './Target';
 import { Velocity } from './Velocity';
 import { Poison } from './Poison';
 
+// TODO - We need to remove the hardwiring of this interface. It is possible to pass it when creating a world
 export interface ComponentMap {
   CollisionDetected: CollisionDetected;
   Collider: Collider;
