@@ -24,14 +24,21 @@ export class ComponentPoolManager {
     name: string,
     params?: Partial<T>
   ): T {
-    if (!this.hasPool(name)) {
+    const pool = this._componentPools.get(name);
+    if (!pool) {
       throw new Error(`Component pool with name: "${name}" not found`);
     }
-    return this._componentPools.get(name)!.acquire(params) as T;
+
+    return pool.acquire(params) as T;
   }
 
   public releaseComponent(name: string, component: IComponent): void {
-    this._componentPools.get(name)?.release(component);
+    const pool = this._componentPools.get(name);
+    if (!pool) {
+      throw new Error(`Component pool with name: "${name}" not found`);
+    }
+
+    pool.release(component);
   }
 
   public clear(): void {
