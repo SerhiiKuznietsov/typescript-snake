@@ -12,7 +12,7 @@ export const createSnakeBody = (world: World, gridSize: number): EntityId => {
 
   world.getComponent(entityId, SnakeBody);
   world.getComponent(entityId, Position);
-  world.getComponent(entityId, Collider);
+  world.getComponent(entityId, Collider, { width: gridSize, height: gridSize });
 
   const render = world.getComponent(entityId, Render);
   render.shape = new Square(gridSize);

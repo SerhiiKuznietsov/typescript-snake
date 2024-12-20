@@ -11,6 +11,7 @@ import {
   IComponentConstructor,
 } from './Component';
 import { MessageBroker } from './MessageBroker';
+import { IComponentPool } from './entity/ComponentPoolManager';
 
 export class World {
   private _eventBus: EventBus;
@@ -35,6 +36,15 @@ export class World {
     this._storage.deleteEntity(entityId);
   }
 
+  public registerPool<T extends IComponent>(
+    name: string,
+    pool: IComponentPool<T>
+  ): this {
+    this._storage.registerComponent(name, pool);
+
+    return this;
+  }
+
   public hasComponent(
     entityId: EntityId,
     componentType: IComponentConstructor<IComponent>
@@ -45,10 +55,10 @@ export class World {
   public getComponent<T extends IComponent>(
     entityId: EntityId,
     componentType: IComponentConstructor<T>,
-    ...args: any[]
+    params?: Partial<T>
   ): T {
     if (!this.hasComponent(entityId, componentType)) {
-      this._storage.addComponent(entityId, componentType, args);
+      this._storage.addComponent(entityId, componentType, params);
     }
 
     return this._storage.getComponent(entityId, componentType);

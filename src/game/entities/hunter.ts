@@ -14,10 +14,9 @@ export const createHunter = (world: World, gridSize: number): void => {
 
   world.getComponent(entityId, Hunter);
   world.getComponent(entityId, Direction);
-  world.getComponent(entityId, Movement).moveInterval = 100;
-  world.getComponent(entityId, Respawn).cooldown = 1000;
-  world.getComponent(entityId, Respawn).elapsed = 1000;
-  world.getComponent(entityId, Collider, gridSize, gridSize);
+  world.getComponent(entityId, Movement, { moveInterval: 100 });
+  world.getComponent(entityId, Respawn, { cooldown: 1000, elapsed: 1000 });
+  world.getComponent(entityId, Collider, { width: gridSize, height: gridSize });
   world.getComponent(entityId, Target);
 
   const render = world.getComponent(entityId, Render);
@@ -25,5 +24,5 @@ export const createHunter = (world: World, gridSize: number): void => {
   render.color = '#380070';
   render.zIndex = 1;
 
-  world.getComponent(entityId, DebugFlag, true);
+  world.getComponent(entityId, DebugFlag, { isOpen: true });
 };

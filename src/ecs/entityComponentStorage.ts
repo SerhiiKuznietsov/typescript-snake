@@ -2,7 +2,10 @@ import { IComponent, IComponentConstructor } from './Component';
 import { EcsEvents } from './EcsEvents';
 import { EntityId } from './Entity';
 import { BitMapManager } from './entity/BitMapManager';
-import { ComponentPoolManager } from './entity/ComponentPoolManager';
+import {
+  ComponentPoolManager,
+  IComponentPool,
+} from './entity/ComponentPoolManager';
 import { EntityStorage } from './entity/EntityStorage';
 import { EventBus } from './EventBus';
 import { IdManager } from './idManager';
@@ -51,10 +54,17 @@ export class EntityComponentStorage {
     this._eventBus.emit(EcsEvents.ENTITY_DELETED, { entityId });
   }
 
+  public registerComponent<T extends IComponent>(
+    name: string,
+    pool: IComponentPool<T>
+  ): void {
+    this._componentPoolManager.register(name, pool);
+  }
+
   public addComponent<T extends IComponent>(
     entityId: EntityId,
     componentType: IComponentConstructor<T>,
-    args: any[]
+    params?: Partial<T>
   ): T {
     if (!this._entityStorage.hasEntity(entityId)) {
       throw new Error(`Entity with ID ${entityId} does not exist.`);
@@ -64,8 +74,7 @@ export class EntityComponentStorage {
 
     const component = this._componentPoolManager.acquireComponent(
       componentKey,
-      componentType,
-      args
+      params
     );
 
     this._entityStorage.addComponent(entityId, componentKey, component);

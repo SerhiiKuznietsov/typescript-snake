@@ -11,10 +11,11 @@ import {
 import { Board } from './board';
 import { GameConfig } from './config/game';
 import { keyBoard } from './keyBoard';
-import { World } from '../ecs/World';
 import { initSystems } from './system';
+import { World } from '../ecs/World';
 import { SystemRegistry } from '../ecs/SystemRegistry';
 import { GridManager } from './GridManager';
+import { registerComponents } from './component/components';
 
 export class Game {
   private _config = new GameConfig();
@@ -91,6 +92,8 @@ export class Game {
     gameStateObserver
       .attach(this.observerHandler.bind(this))
       .notify(GameAction.toReadyToStart);
+
+    registerComponents(this._world);
 
     initSystems(
       this._systems,
