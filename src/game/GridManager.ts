@@ -58,18 +58,23 @@ export class GridManager {
     const nearbyEntities: Set<EntityId> = new Set();
 
     const offsets = [-1, 0, 1];
-    offsets.forEach((dx) => {
-      offsets.forEach((dy) => {
+
+    for (let i = 0; i < offsets.length; i++) {
+      const dx = offsets[i];
+
+      for (let j = 0; j < offsets.length; j++) {
+        const dy = offsets[j];
+
         const key = this.getCellKey(
           position.x + dx * this._cellSize,
           position.y + dy * this._cellSize
         );
         const entities = this._grid.get(key);
-        if (entities) {
-          entities.forEach((entity) => nearbyEntities.add(entity));
-        }
-      });
-    });
+        if (!entities || !entities.size) continue;
+
+        entities.forEach((entity) => nearbyEntities.add(entity));
+      }
+    }
 
     return nearbyEntities;
   }
