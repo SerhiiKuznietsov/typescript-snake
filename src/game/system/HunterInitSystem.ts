@@ -5,9 +5,15 @@ import { createHunter } from '../entities/hunter';
 export class HunterInitSystem implements ISystem {
   public oneShot: boolean = true;
 
-  constructor(public w: World, private _gridSize: number) {}
+  constructor(
+    public w: World,
+    private _gridSize: number,
+    private _spawnCount: number
+  ) {}
 
   public update(): void {
-    createHunter(this.w, this._gridSize);
+    for (let i = 0; i < this._spawnCount; i++) {
+      createHunter(this.w, this._gridSize);
+    }
   }
 }

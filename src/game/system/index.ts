@@ -55,16 +55,9 @@ export const initSystems = (
     .addSystem(new AttackSystem(world))
     .addSystem(new DeathSystem(world, gridManager))
     .addSystem(new SnakeInitSystem(world, gridSize))
-    .addSystem(
-      new FoodInitSystem(
-        world,
-        gridSize,
-        config.xGridsCount,
-        config.yGridsCount
-      )
-    )
-    .addSystem(new HunterInitSystem(world, gridSize))
-    .addSystem(new PoisonInitSystem(world, gridSize))
+    .addSystem(new FoodInitSystem(world, gridSize, config.foodCount))
+    .addSystem(new HunterInitSystem(world, gridSize, config.hunterCount))
+    .addSystem(new PoisonInitSystem(world, gridSize, config.poisonCount))
     .addSystem(new RespawnCooldownSystem(world))
     .addSystem(new RespawnSystem(world, gridManager, { x, y }))
     .addSystem(new RenderSystem(world, board))
