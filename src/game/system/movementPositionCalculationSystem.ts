@@ -7,15 +7,10 @@ export class MovementPositionCalculationSystem implements ISystem {
     ['Position', 'Direction', 'CanMove'],
     ['MoveTo']
   );
-  public needClearEntities = this.w.newGroup(['MoveTo', 'Moved']);
 
   constructor(public w: World) {}
 
   public update(): void {
-    this.needClearEntities.forEach((entity) => {
-      this.w.removeComponent(entity, 'MoveTo');
-    });
-
     this.entities.forEach((entity) => {
       const position = this.w.getComponent(entity, 'Position');
       const direction = this.w.getComponent(entity, 'Direction');

@@ -9,7 +9,6 @@ import { Vector2 } from '../geometry/vector2';
 
 export class SnakeMovementSystem implements ISystem {
   public entities = this.w.newGroup(['Snake', 'Position', 'MoveTo']);
-  public needClearEntities = this.w.newGroup(['Snake', 'Moved'], ['MoveTo']);
 
   constructor(
     public w: World,
@@ -68,29 +67,11 @@ export class SnakeMovementSystem implements ISystem {
   }
 
   public update(): void {
-    this.needClearEntities.forEach((entity) => {
-      this.w.removeComponent(entity, 'Moved');
-    });
-
     this.entities.forEach((entity) => {
       const snake = this.w.getComponent(entity, 'Snake');
       const position = this.w.getComponent(entity, 'Position');
-      const moveTo = this.w.getComponent(entity, 'MoveTo');
-
-      this._grid.moveEntity(entity, position, moveTo);
 
       const prevPosition = vectorUtils.copy(position);
-
-      vectorUtils.setVector(position, moveTo);
-
-      this.w.messageBroker
-        .publish(RenderEvents.NEW_RENDER, entity)
-        .publish(RenderEvents.CLEAN_RENDER, {
-          x: prevPosition.x,
-          y: prevPosition.y,
-        });
-
-      this.w.getComponent(entity, 'Moved');
 
       if (snake.makeSegments === 0 && !snake.segments.length) return;
 

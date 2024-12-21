@@ -22,8 +22,8 @@ import { DeathSystem } from './DeathSystem';
 import { HunterInitSystem } from './HunterInitSystem';
 import { HunterTargetSystem } from './HunterTargetSystem';
 import { HunterDirectionSystem } from './HunterDirectionSystem';
-import { HunterMovementSystem } from './HunterMovementSystem';
 import { HunterAttackSystem } from './HunterAttackSystem';
+import { MovementSystem } from './MovementSystem';
 
 export const initSystems = (
   system: SystemRegistry,
@@ -50,7 +50,7 @@ export const initSystems = (
     .addSystem(new MovementPositionCalculationSystem(world))
     .addSystem(new MovementAreaSystem(world, x, y))
     .addSystem(new SnakeMovementSystem(world, gridManager, gridSize))
-    .addSystem(new HunterMovementSystem(world, gridManager))
+    .addSystem(new MovementSystem(world, gridManager))
     .addSystem(new SnakeBoundarySystem(world, x, y))
     .addSystem(new CollisionSystem(world, gridManager))
     .addSystem(new AttackSnakeSystem(world))

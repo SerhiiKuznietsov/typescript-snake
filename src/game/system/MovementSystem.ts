@@ -4,9 +4,9 @@ import { RenderEvents } from './events/render';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
 
-export class HunterMovementSystem implements ISystem {
-  public entities = this.w.newGroup(['Hunter', 'Position', 'MoveTo']);
-  public needClearEntities = this.w.newGroup(['Hunter', 'Moved'], ['MoveTo']);
+export class MovementSystem implements ISystem {
+  public entities = this.w.newGroup(['Position', 'MoveTo']);
+  public needClearEntities = this.w.newGroup(['Moved'], ['MoveTo']);
 
   constructor(public w: World, private _grid: GridManager) {}
 
@@ -33,6 +33,7 @@ export class HunterMovementSystem implements ISystem {
         });
 
       this.w.getComponent(entity, 'Moved');
+      this.w.removeComponent(entity, 'MoveTo');
     });
   }
 }
