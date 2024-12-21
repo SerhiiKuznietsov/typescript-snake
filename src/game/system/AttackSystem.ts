@@ -2,17 +2,21 @@ import { ISystem } from '@/ecs/SystemRegistry';
 import { EntityId } from '@/ecs/Entity';
 import { World } from '@/ecs/World';
 
-export class AttackSnakeSystem implements ISystem {
-  public entities = this.w.newGroup(['CollisionDetected', 'Snake']);
+export class AttackSystem implements ISystem {
+  public entities = this.w.newGroup(['Attacker', 'CollisionDetected']);
 
   constructor(public w: World) {}
 
   private attackFood(entity: EntityId) {
+    if (!this.w.hasComponent(entity, 'Snake')) return;
+
     const snake = this.w.getComponent(entity, 'Snake');
     snake.makeSegments += 1;
   }
 
   private attackPoison(entity: EntityId) {
+    if (!this.w.hasComponent(entity, 'Snake')) return;
+
     const snake = this.w.getComponent(entity, 'Snake');
     snake.makeSegments -= 1;
   }

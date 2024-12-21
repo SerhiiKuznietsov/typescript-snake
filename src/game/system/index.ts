@@ -4,7 +4,7 @@ import { Board } from '../board';
 import { PlayerInputSystem } from './PlayerInputSystem';
 import { CollisionSystem } from './СollisionSystem';
 import { RenderSystem } from './RenderSystem';
-import { AttackSnakeSystem } from './AttackSnakeSystem';
+import { AttackSystem } from './AttackSystem';
 import { DebugSystem } from './DebugSystem';
 import { MovementCooldownSystem } from './MovementCooldownSystem';
 import { RespawnCooldownSystem } from './RespawnCooldownSystem';
@@ -22,7 +22,6 @@ import { DeathSystem } from './DeathSystem';
 import { HunterInitSystem } from './HunterInitSystem';
 import { HunterTargetSystem } from './HunterTargetSystem';
 import { HunterDirectionSystem } from './HunterDirectionSystem';
-import { HunterAttackSystem } from './HunterAttackSystem';
 import { MovementSystem } from './MovementSystem';
 
 export const initSystems = (
@@ -53,8 +52,7 @@ export const initSystems = (
     .addSystem(new MovementSystem(world, gridManager))
     .addSystem(new SnakeBoundarySystem(world, x, y))
     .addSystem(new CollisionSystem(world, gridManager))
-    .addSystem(new AttackSnakeSystem(world))
-    .addSystem(new HunterAttackSystem(world))
+    .addSystem(new AttackSystem(world))
     .addSystem(new DeathSystem(world, gridManager))
     .addSystem(new SnakeInitSystem(world, gridSize))
     .addSystem(

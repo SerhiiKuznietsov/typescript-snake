@@ -22,8 +22,10 @@ import { Target } from './Target';
 import { Velocity } from './Velocity';
 import { Poison } from './Poison';
 import { CollisionHandler } from './CollisionHandler';
+import { Attacker } from './Attacker';
 
 // TODO - We need to remove the hardwiring of this interface. It is possible to pass it when creating a world
+
 export interface ComponentMap {
   CollisionHandler: CollisionHandler;
   CollisionDetected: CollisionDetected;
@@ -47,9 +49,12 @@ export interface ComponentMap {
   Target: Target;
   Velocity: Velocity;
   Poison: Poison;
+  Attacker: Attacker;
 }
 
 export const registerComponents = (w: World) => {
+  w.registerPool('Attacker', new ObjectPool(() => new Attacker()));
+
   w.registerPool(
     'CollisionHandler',
     new ObjectPool(() => new CollisionHandler())
