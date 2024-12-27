@@ -54,7 +54,7 @@ export class GridManager {
     return this._grid.get(key) || new Set();
   }
 
-  public getEntitiesNearby(position: Vector2): Set<EntityId> {
+  public getEntitiesNearby(position: Vector2): EntityId[] {
     const nearbyEntities: Set<EntityId> = new Set();
 
     const offsets = [-1, 0, 1];
@@ -76,7 +76,7 @@ export class GridManager {
       }
     }
 
-    return nearbyEntities;
+    return [...nearbyEntities.values()];
   }
 
   public clear(): void {

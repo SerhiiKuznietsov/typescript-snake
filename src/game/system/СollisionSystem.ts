@@ -24,9 +24,7 @@ export class CollisionSystem implements ISystem {
   private addToCollisionOpponent(entityA: EntityId, entityB: EntityId) {
     const collision = this.w.getComponent(entityA, 'CollisionDetected');
 
-    if (collision.opponents.includes(entityB) || entityA === entityB) return;
-
-    collision.opponents.push(entityB);
+    collision.target = entityB;
   }
 
   public update(): void {
@@ -36,14 +34,18 @@ export class CollisionSystem implements ISystem {
       const position = this.w.getComponent(entity, 'Position');
       const nearbyEntities = this._grid.getEntitiesNearby(position);
 
-      nearbyEntities.forEach((otherEntity) => {
-        if (entity === otherEntity) return;
+      for (let i = 0; i < nearbyEntities.length; i++) {
+        const otherEntity = nearbyEntities[i];
+
+        if (entity === otherEntity) continue;
 
         const otherPosition = this.w.getComponent(otherEntity, 'Position');
-        if (vectorUtils.isEqual(position, otherPosition)) {
-          this.addToCollisionOpponent(entity, otherEntity);
-        }
-      });
+        if (!vectorUtils.isEqual(position, otherPosition)) continue;
+
+
+        this.addToCollisionOpponent(entity, otherEntity);
+        break;
+      }
     });
   }
 }

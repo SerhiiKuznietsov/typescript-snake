@@ -63,12 +63,12 @@ export const registerComponents = (w: World) => {
     'CollisionDetected',
     new ObjectPool(() => new CollisionDetected(), {
       initialize(item, params) {
-        if (params?.opponents?.length) {
-          item.opponents.push(...params.opponents);
+        if (params?.target) {
+          item.target = params.target;
         }
       },
       deactivate: (item) => {
-        item.opponents.length = 0;
+        item.target = 0;
       },
       initialSize: 2,
     })

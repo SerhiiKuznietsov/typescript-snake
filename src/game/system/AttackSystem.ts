@@ -23,19 +23,17 @@ export class AttackSystem implements ISystem {
 
   public update(): void {
     this.entities.forEach((entity) => {
-      const collision = this.w.getComponent(entity, 'CollisionDetected');
+      const { target } = this.w.getComponent(entity, 'CollisionDetected');
 
-      collision.opponents.forEach((target) => {
-        if (this.w.hasComponent(target, 'Food')) {
-          this.attackFood(entity);
-          this.w.getComponent(target, 'Death');
-        }
+      if (this.w.hasComponent(target, 'Food')) {
+        this.attackFood(entity);
+        this.w.getComponent(target, 'Death');
+      }
 
-        if (this.w.hasComponent(target, 'Poison')) {
-          this.attackPoison(entity);
-          this.w.getComponent(target, 'Death');
-        }
-      });
+      if (this.w.hasComponent(target, 'Poison')) {
+        this.attackPoison(entity);
+        this.w.getComponent(target, 'Death');
+      }
     });
   }
 }
