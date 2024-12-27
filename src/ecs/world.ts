@@ -81,7 +81,7 @@ export class World {
     has: K[] = [],
     not: K[] = []
   ): EntityId[] {
-    return this._groupManager.createGroup([has, not]);
+    return this._groupManager.getGroup([has, not]);
   }
 
   public releaseGroup<K extends keyof ComponentMap>(

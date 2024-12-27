@@ -55,7 +55,7 @@ export class GroupManager {
     }
   }
 
-  public createGroup(query: GroupQuery = []): EntityId[] {
+  public getGroup(query: GroupQuery = []): EntityId[] {
     this.validGroupQuery(query);
 
     const key = generateKey(query);

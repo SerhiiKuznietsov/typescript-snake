@@ -39,9 +39,6 @@ export const initSystems = (
   // TODO - add destroy method for system because need clean groups
 
   system
-
-    // TODO - createHunter();
-    // const hunter = new Entity('hunter');
     .addSystem(new PlayerInputSystem(world))
     .addSystem(new HunterTargetSystem(world))
     .addSystem(new HunterDirectionSystem(world))
