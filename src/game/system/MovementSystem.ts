@@ -19,7 +19,7 @@ export class MovementSystem implements ISystem {
       const position = this.w.getComponent(entity, 'Position');
       const moveTo = this.w.getComponent(entity, 'MoveTo');
 
-      this._grid.moveEntity(entity, position, moveTo);
+      this._grid.moveEntity(entity, moveTo);
 
       const prevPosition = vectorUtils.copy(position);
 

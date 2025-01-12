@@ -1,35 +1,40 @@
 import { EntityId } from '@/ecs/Entity';
 import { Vector2 } from './geometry/vector2';
 
+type KetType = string;
 export class GridManager {
-  private _grid: Map<string, Set<EntityId>> = new Map();
+  private _grid: Map<KetType, Set<EntityId>> = new Map();
+  private _entitiesGrid: Map<EntityId, KetType> = new Map();
 
   constructor(private _cellSize: number) {}
 
-  private getCellKey(x: number, y: number): string {
+  private getCellKey(x: number, y: number): KetType {
     const cellX = Math.floor(x / this._cellSize);
     const cellY = Math.floor(y / this._cellSize);
     return `${cellX}-${cellY}`;
   }
 
-  public addEntity(entityId: EntityId, position: Vector2): void {
-    const key = this.getCellKey(position.x, position.y);
-
+  public addEntity(entityId: EntityId, { x, y }: Vector2): void {
+    const key = this.getCellKey(x, y);
     if (!this._grid.has(key)) {
       this._grid.set(key, new Set());
+      this._entitiesGrid.set(entityId, key);
     }
 
     this._grid.get(key)!.add(entityId);
   }
 
-  public removeEntity(entityId: EntityId, position: Vector2): void {
-    const key = this.getCellKey(position.x, position.y);
+  public removeEntity(entityId: EntityId): void {
+    const key = this._entitiesGrid.get(entityId);
+    if (!key) {
+      console.warn(`Entity with id: "${entityId}" not found`);
+
+      return;
+    }
 
     const cell = this._grid.get(key);
     if (!cell) {
-      console.warn(
-        `Entity: "${entityId}" with position = x: ${position.x}, y: ${position.y} not found`
-      );
+      console.warn(`Entity: "${entityId}" with key: "${key}" not found`);
 
       return;
     }
@@ -42,10 +47,9 @@ export class GridManager {
 
   public moveEntity(
     entityId: EntityId,
-    oldPosition: Vector2,
     newPosition: Vector2
   ): void {
-    this.removeEntity(entityId, oldPosition);
+    this.removeEntity(entityId);
     this.addEntity(entityId, newPosition);
   }
 

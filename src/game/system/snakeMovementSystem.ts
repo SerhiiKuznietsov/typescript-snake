@@ -28,7 +28,7 @@ export class SnakeMovementSystem implements ISystem {
       vectorUtils.copy(lastPosition)
     );
 
-    this._grid.moveEntity(lastSegment, lastPosition, prevPosition);
+    this._grid.moveEntity(lastSegment, prevPosition);
     vectorUtils.setVector(lastPosition, prevPosition);
 
     snake.segments.unshift(lastSegment);
