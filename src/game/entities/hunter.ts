@@ -14,7 +14,6 @@ export const createHunter = (w: World, gridSize: number): void => {
     width: gridSize,
     height: gridSize,
   });
-  w.getComponent(entityId, 'Target');
   w.getComponent(entityId, 'Render', {
     shape: new Square(gridSize),
     color: '#380070',

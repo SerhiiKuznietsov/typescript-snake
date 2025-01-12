@@ -6,6 +6,10 @@ import { vectorUtils } from '../geometry/utils/vectorUtils';
 
 export class HunterTargetSystem implements ISystem {
   public entities = this.w.newGroup(['Hunter', 'Position', 'Target']);
+  public entitiesWithoutTarget = this.w.newGroup(
+    ['Hunter', 'Position'],
+    ['Target']
+  );
   public foodEntities = this.w.newGroup(['Food', 'Position'], ['Death']);
 
   constructor(public w: World) {}
@@ -28,17 +32,17 @@ export class HunterTargetSystem implements ISystem {
   }
 
   public update(): void {
-    this.entities.forEach((entityId) => {
+    this.entitiesWithoutTarget.forEach((entityId) => {
       const hunterPosition = this.w.getComponent(entityId, 'Position');
-      const target = this.w.getComponent(entityId, 'Target');
+      const closestFoodId = this.findClosestFood(hunterPosition);
 
-      if (!target.targetId) {
-        const closestFoodId = this.findClosestFood(hunterPosition);
+      if (!closestFoodId) return;
 
-        if (closestFoodId) {
-          target.targetId = closestFoodId;
-        }
-      }
+      this.w.getComponent(entityId, 'Target', { targetId: closestFoodId });
+    });
+
+    this.entities.forEach((e) => {
+      // TODO
     });
   }
 }

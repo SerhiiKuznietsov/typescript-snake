@@ -16,13 +16,10 @@ export class MovementPositionCalculationSystem implements ISystem {
       const direction = this.w.getComponent(entity, 'Direction');
       const velocity = this.w.getComponent(entity, 'Velocity', { value: 1 });
 
-      const moveTo = this.w.getComponent(entity, 'MoveTo');
-
-      vectorUtils.set(
-        moveTo,
-        position.x + direction.x * velocity.value,
-        position.y + direction.y * velocity.value
-      );
+      this.w.getComponent(entity, 'MoveTo', {
+        x: position.x + direction.x * velocity.value,
+        y: position.y + direction.y * velocity.value,
+      });
 
       this.w.removeComponent(entity, 'CanMove');
     });

@@ -251,6 +251,11 @@ export const registerComponents = (w: World) => {
     .registerPool(
       'Target',
       new ObjectPool(() => new Target(), {
+        initialize(item, params) {
+          if (params?.targetId) {
+            item.targetId = params.targetId;
+          }
+        },
         deactivate(item) {
           item.targetId = null;
         },
