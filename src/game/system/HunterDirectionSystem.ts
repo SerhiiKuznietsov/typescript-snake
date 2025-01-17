@@ -9,18 +9,19 @@ export class HunterDirectionSystem implements ISystem {
   constructor(public w: World) {}
 
   public update(): void {
-    this.entities.forEach((entityId) => {
-      const hunterPosition = this.w.getComponent(entityId, 'Position');
-      const direction = this.w.getComponent(entityId, 'Direction');
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
+      const hunterPosition = this.w.getComponent(entity, 'Position');
+      const direction = this.w.getComponent(entity, 'Direction');
 
-      if (this.w.hasComponent(entityId, 'Target')) {
-        const target = this.w.getComponent(entityId, 'Target');
+      if (this.w.hasComponent(entity, 'Target')) {
+        const target = this.w.getComponent(entity, 'Target');
 
         if (
           target.targetId &&
           !this.w.hasComponent(target.targetId, 'Position')
         ) {
-          this.w.removeComponent(entityId, 'Target');
+          this.w.removeComponent(entity, 'Target');
         }
 
         if (target.targetId) {
@@ -32,7 +33,7 @@ export class HunterDirectionSystem implements ISystem {
 
           vectorUtils.setVector(direction, dir);
 
-          this.w.messageBroker.publish(RenderEvents.NEW_RENDER, entityId);
+          this.w.messageBroker.publish(RenderEvents.NEW_RENDER, entity);
         } else {
           direction.x = 1;
           direction.y = 0;
@@ -41,6 +42,6 @@ export class HunterDirectionSystem implements ISystem {
         direction.x = 1;
         direction.y = 0;
       }
-    });
+    }
   }
 }

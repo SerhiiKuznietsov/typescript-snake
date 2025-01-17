@@ -11,28 +11,29 @@ export class MovementAreaSystem implements ISystem {
   ) {}
 
   public update(): void {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
       const moveTo = this.w.getComponent(entity, 'MoveTo');
 
       if (moveTo.x < 0) {
         moveTo.x = this.fieldWidth;
-        return;
+        continue;
       }
 
       if (moveTo.x > this.fieldWidth) {
         moveTo.x = 0;
-        return;
+        continue;
       }
 
       if (moveTo.y < 0) {
         moveTo.y = this.fieldHeight;
-        return;
+        continue;
       }
 
       if (moveTo.y > this.fieldHeight) {
         moveTo.y = 0;
-        return;
+        continue;
       }
-    });
+    }
   }
 }

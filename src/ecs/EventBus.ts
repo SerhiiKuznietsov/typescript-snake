@@ -14,9 +14,9 @@ export class EventBus {
 
   public emit(eventType: string, payload: any): void {
     const listeners = this._listeners.get(eventType);
-    if (listeners) {
-      listeners.forEach((callback) => callback(payload));
-    }
+    if (!listeners) return;
+
+    listeners.forEach((callback) => callback(payload));
   }
 
   public clear() {

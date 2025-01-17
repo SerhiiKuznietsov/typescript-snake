@@ -48,7 +48,9 @@ export class RespawnSystem implements ISystem {
   }
 
   public update(): void {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
+
       const emptyPosition = this.getEmptyPosition();
       const position = this.w.getComponent(entity, 'Position');
 
@@ -58,6 +60,6 @@ export class RespawnSystem implements ISystem {
       this.w.messageBroker.publish(RenderEvents.NEW_RENDER, entity);
 
       this.w.removeComponent(entity, 'RespawnReady');
-    });
+    }
   }
 }

@@ -25,7 +25,11 @@ export class SystemRegistry {
   }
 
   public awakeSystems(): void {
-    this._systems.forEach((system) => system.awake && system.awake());
+    for (let i = 0; i < this._systems.length; i++) {
+      const system = this._systems[i];
+
+      system.awake && system.awake();
+    }
   }
 
   public updateSystems(deltaTime: number): void {
@@ -52,9 +56,12 @@ export class SystemRegistry {
   }
 
   public destroy(): void {
-    this._systems.forEach((system) => {
+    for (let i = 0; i < this._systems.length; i++) {
+      const system = this._systems[i];
+
       this.removeSystem(system);
-    });
+    }
+
     this._systems = [];
   }
 }

@@ -11,17 +11,17 @@ export class MovementPositionCalculationSystem implements ISystem {
   constructor(public w: World) {}
 
   public update(): void {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
       const position = this.w.getComponent(entity, 'Position');
       const direction = this.w.getComponent(entity, 'Direction');
       const velocity = this.w.getComponent(entity, 'Velocity', { value: 1 });
 
+      this.w.removeComponent(entity, 'CanMove');
       this.w.getComponent(entity, 'MoveTo', {
         x: position.x + direction.x * velocity.value,
         y: position.y + direction.y * velocity.value,
       });
-
-      this.w.removeComponent(entity, 'CanMove');
-    });
+    }
   }
 }

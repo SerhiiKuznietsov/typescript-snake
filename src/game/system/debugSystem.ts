@@ -69,16 +69,17 @@ export class DebugSystem implements ISystem {
   }
 
   public update(): void {
-    this.entities.forEach((entityId) => {
-      if (this.folders.has(entityId)) return;
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
+      if (this.folders.has(entity)) return;
 
-      const entityFolder = this.createFolderForEntity(entityId);
+      const entityFolder = this.createFolderForEntity(entity);
 
-      const components = this.w.getComponents(entityId);
+      const components = this.w.getComponents(entity);
       components.forEach((component, componentName) => {
         this.addComponentToFolder(entityFolder, componentName, component);
       });
-    });
+    }
 
     this.folders.forEach((folder, entityId) => {
       if (!this.entities.includes(entityId)) {

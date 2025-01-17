@@ -7,16 +7,17 @@ export class MovementCooldownSystem implements ISystem {
   constructor(public w: World) {}
 
   public update({ deltaTime }: UpdateSystemData): void {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
       const movement = this.w.getComponent(entity, 'Movement');
 
       movement.accumulatedTime += deltaTime;
 
-      if (movement.accumulatedTime < movement.moveInterval) return;
+      if (movement.accumulatedTime < movement.moveInterval) continue;
 
       movement.accumulatedTime = 0;
 
       this.w.getComponent(entity, 'CanMove');
-    });
+    }
   }
 }

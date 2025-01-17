@@ -18,7 +18,9 @@ export class HunterTargetSystem implements ISystem {
     let closestFoodId: EntityId | null = null;
     let minDistance = Infinity;
 
-    this.foodEntities.forEach((entityId) => {
+    for (let i = 0; i <  this.foodEntities.length; i++) {
+      const entityId =  this.foodEntities[i];
+
       const foodPosition = this.w.getComponent(entityId, 'Position');
       const distance = vectorUtils.distance(hunterPosition, foodPosition);
 
@@ -26,20 +28,21 @@ export class HunterTargetSystem implements ISystem {
         minDistance = distance;
         closestFoodId = entityId;
       }
-    });
+    }
 
     return closestFoodId;
   }
 
   public update(): void {
-    this.entitiesWithoutTarget.forEach((entityId) => {
-      const hunterPosition = this.w.getComponent(entityId, 'Position');
+    for (let i = 0; i < this.entitiesWithoutTarget.length; i++) {
+      const entity = this.entitiesWithoutTarget[i];
+      const hunterPosition = this.w.getComponent(entity, 'Position');
       const closestFoodId = this.findClosestFood(hunterPosition);
 
       if (!closestFoodId) return;
 
-      this.w.getComponent(entityId, 'Target', { targetId: closestFoodId });
-    });
+      this.w.getComponent(entity, 'Target', { targetId: closestFoodId });
+    }
 
     this.entities.forEach((e) => {
       // TODO

@@ -67,13 +67,14 @@ export class SnakeMovementSystem implements ISystem {
   }
 
   public update(): void {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
       const snake = this.w.getComponent(entity, 'Snake');
       const position = this.w.getComponent(entity, 'Position');
 
       const prevPosition = vectorUtils.copy(position);
 
-      if (snake.makeSegments === 0 && !snake.segments.length) return;
+      if (snake.makeSegments === 0 && !snake.segments.length) continue;
 
       if (snake.makeSegments > 0) {
         this.addNewSegment(snake, prevPosition);
@@ -86,6 +87,6 @@ export class SnakeMovementSystem implements ISystem {
         this.removeLastSegment(snake);
         snake.makeSegments += 1;
       }
-    });
+    }
   }
 }

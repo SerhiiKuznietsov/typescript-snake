@@ -7,7 +7,9 @@ export class RespawnCooldownSystem implements ISystem {
   constructor(public w: World) {}
 
   public update({ deltaTime }: UpdateSystemData): void {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
+
       const respawn = this.w.getComponent(entity, 'Respawn');
 
       if (respawn.elapsed < respawn.cooldown) {
@@ -16,6 +18,6 @@ export class RespawnCooldownSystem implements ISystem {
         this.w.getComponent(entity, 'RespawnReady');
         respawn.elapsed = 0;
       }
-    });
+    }
   }
 }

@@ -11,11 +11,14 @@ export class MovementSystem implements ISystem {
   constructor(public w: World, private _grid: GridManager) {}
 
   public update(): void {
-    this.needClearEntities.forEach((entity) => {
-      this.w.removeComponent(entity, 'Moved');
-    });
+    for (let i = 0; i < this.needClearEntities.length; i++) {
+      const entity = this.needClearEntities[i];
 
-    this.entities.forEach((entity) => {
+      this.w.removeComponent(entity, 'Moved');
+    }
+
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
       const position = this.w.getComponent(entity, 'Position');
       const moveTo = this.w.getComponent(entity, 'MoveTo');
 
@@ -34,6 +37,6 @@ export class MovementSystem implements ISystem {
 
       this.w.getComponent(entity, 'Moved');
       this.w.removeComponent(entity, 'MoveTo');
-    });
+    }
   }
 }

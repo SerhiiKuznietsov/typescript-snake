@@ -16,9 +16,11 @@ export class CollisionSystem implements ISystem {
   constructor(public w: World, private _grid: GridManager) {}
 
   private clearCollisionDetected() {
-    this.collisionDetectedEntities.forEach((entity) => {
+    for (let i = 0; i < this.collisionDetectedEntities.length; i++) {
+      const entity = this.collisionDetectedEntities[i];
+
       this.w.removeComponent(entity, 'CollisionDetected');
-    });
+    }
   }
 
   private addToCollisionOpponent(entityA: EntityId, entityB: EntityId) {
@@ -30,7 +32,8 @@ export class CollisionSystem implements ISystem {
   public update(): void {
     this.clearCollisionDetected();
 
-    this.movementEntities.forEach((entity) => {
+    for (let i = 0; i < this.movementEntities.length; i++) {
+      const entity = this.movementEntities[i];
       const position = this.w.getComponent(entity, 'Position');
       const nearbyEntities = this._grid.getEntitiesNearby(position);
 
@@ -42,10 +45,9 @@ export class CollisionSystem implements ISystem {
         const otherPosition = this.w.getComponent(otherEntity, 'Position');
         if (!vectorUtils.isEqual(position, otherPosition)) continue;
 
-
         this.addToCollisionOpponent(entity, otherEntity);
         break;
       }
-    });
+    }
   }
 }

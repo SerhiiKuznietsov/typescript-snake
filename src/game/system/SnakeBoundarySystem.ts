@@ -11,7 +11,8 @@ export class SnakeBoundarySystem implements ISystem {
   ) {}
 
   public update(): void {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
       const position = this.w.getComponent(entity, 'Position');
 
       if (
@@ -22,7 +23,7 @@ export class SnakeBoundarySystem implements ISystem {
       ) {
         this.handleOutOfBounds(entity);
       }
-    });
+    }
   }
 
   private handleOutOfBounds(entity: any): void {

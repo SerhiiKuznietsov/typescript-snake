@@ -10,11 +10,13 @@ export class PlayerInputSystem implements ISystem {
   }
 
   public update(): void {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
+
       const control = this.w.getComponent(entity, 'Direction');
 
       control.changed = false;
-    });
+    }
   }
 
   private normalizeNum(num: number): number {
@@ -35,36 +37,37 @@ export class PlayerInputSystem implements ISystem {
   }
 
   private setControl = ({ code }: KeyboardEvent): void => {
-    this.entities.forEach((entity) => {
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
       const direction = this.w.getComponent(entity, 'Direction');
 
-      if (direction.changed) return;
+      if (direction.changed) continue;
 
       direction.changed = true;
 
       if (['KeyW', 'ArrowUp'].includes(code) && direction.y !== 1) {
         direction.x = 0;
         direction.y = this.normalizeNum(-1);
-        return;
+        continue;
       }
 
       if (['KeyD', 'ArrowRight'].includes(code) && direction.x !== -1) {
         direction.x = this.normalizeNum(1);
         direction.y = 0;
-        return;
+        continue;
       }
 
       if (['KeyS', 'ArrowDown'].includes(code) && direction.y !== -1) {
         direction.x = 0;
         direction.y = this.normalizeNum(1);
-        return;
+        continue;
       }
 
       if (['KeyA', 'ArrowLeft'].includes(code) && direction.x !== 1) {
         direction.x = this.normalizeNum(-1);
         direction.y = 0;
-        return;
+        continue;
       }
-    });
+    }
   };
 }

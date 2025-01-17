@@ -10,7 +10,11 @@ export class RenderSystem implements ISystem {
   constructor(public w: World, private _board: Board) {}
 
   public awake(): void {
-    this.entities.forEach((entity) => this.draw(entity));
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
+
+      this.draw(entity);
+    }
   }
 
   private handleCleanRender(): void {
