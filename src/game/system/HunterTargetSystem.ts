@@ -43,9 +43,5 @@ export class HunterTargetSystem implements ISystem {
 
       this.w.getComponent(entity, 'Target', { targetId: closestFoodId });
     }
-
-    this.entities.forEach((e) => {
-      // TODO
-    });
   }
 }

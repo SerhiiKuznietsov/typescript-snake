@@ -6,7 +6,7 @@ import { GridManager } from '../GridManager';
 
 export class MovementSystem implements ISystem {
   public entities = this.w.newGroup(['Position', 'MoveTo']);
-  public needClearEntities = this.w.newGroup(['Moved'], ['MoveTo']);
+  public needClearEntities = this.w.newGroup(['Moved']);
 
   constructor(public w: World, private _grid: GridManager) {}
 
@@ -24,16 +24,14 @@ export class MovementSystem implements ISystem {
 
       this._grid.moveEntity(entity, moveTo);
 
-      const prevPosition = vectorUtils.copy(position);
-
-      vectorUtils.setVector(position, moveTo);
-
       this.w.messageBroker
         .publish(RenderEvents.NEW_RENDER, entity)
         .publish(RenderEvents.CLEAN_RENDER, {
-          x: prevPosition.x,
-          y: prevPosition.y,
+          x: position.x,
+          y: position.y,
         });
+
+      vectorUtils.setVector(position, moveTo);
 
       this.w.getComponent(entity, 'Moved');
       this.w.removeComponent(entity, 'MoveTo');

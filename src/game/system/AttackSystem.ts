@@ -33,6 +33,10 @@ export class AttackSystem implements ISystem {
         this.attackPoison(entity);
         this.w.getComponent(target, 'Death');
       }
+
+      if (this.w.hasComponent(target, 'Hunter') && this.w.hasComponent(target, 'Target')) {
+        this.w.removeComponent(entity, 'Target');
+      }
     }
   }
 }
