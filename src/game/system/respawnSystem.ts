@@ -8,7 +8,6 @@ import { RenderEvents } from './events/render';
 
 export class RespawnSystem implements ISystem {
   public entities = this.w.newGroup(['Respawn', 'RespawnReady']);
-  public allEntities = this.w.newGroup(['Position']);
 
   constructor(
     public w: World,
@@ -30,21 +29,13 @@ export class RespawnSystem implements ISystem {
     while (attempts < maxAttempts) {
       const vector = this.getRandomVector();
 
-      if (!this.isPositionOccupied(vector)) {
+      if (!this._grid.getEntitiesInCell(vector.x, vector.y).length) {
         return vector;
       }
       attempts++;
     }
 
     throw new Error('No free positions available');
-  }
-
-  private isPositionOccupied(vector: Vector2): boolean {
-    return this.allEntities.some((entity) => {
-      const position = this.w.getComponent(entity, 'Position');
-
-      return vectorUtils.isEqual(position, vector);
-    });
   }
 
   public update(): void {
