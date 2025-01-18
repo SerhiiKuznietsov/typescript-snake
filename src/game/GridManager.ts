@@ -18,8 +18,9 @@ export class GridManager {
     const key = this.getCellKey(x, y);
     if (!this._grid.has(key)) {
       this._grid.set(key, new Set());
-      this._entitiesGrid.set(entityId, key);
     }
+
+    this._entitiesGrid.set(entityId, key);
 
     this._grid.get(key)!.add(entityId);
   }
@@ -45,10 +46,7 @@ export class GridManager {
     }
   }
 
-  public moveEntity(
-    entityId: EntityId,
-    newPosition: Vector2
-  ): void {
+  public moveEntity(entityId: EntityId, newPosition: Vector2): void {
     this.removeEntity(entityId);
     this.addEntity(entityId, newPosition);
   }
