@@ -1,6 +1,7 @@
+import { IComponent } from '@/ecs/Component';
+import { ObjectPool } from '../../ecs/ObjectPool';
 import { Shape } from '../geometry/shape/shape';
 import { Vector2 } from '../geometry/vector2';
-import { IComponent } from '@/ecs/Component';
 import { Square } from '../geometry/shape/square';
 
 export class Render implements IComponent {
@@ -14,3 +15,23 @@ export class Render implements IComponent {
     this.shape.draw(ctx, position, this.color);
   }
 }
+
+export const RenderPool = new ObjectPool(() => new Render(), {
+  initialize(item, params) {
+    if (params?.color) {
+      item.color = params.color;
+    }
+
+    if (params?.shape) {
+      item.shape = params.shape;
+    }
+
+    if (params?.zIndex) {
+      item.zIndex = params.zIndex;
+    }
+  },
+  deactivate(item) {
+    item.color = '#000';
+    item.zIndex = 0;
+  },
+});
