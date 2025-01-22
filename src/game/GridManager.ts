@@ -51,9 +51,11 @@ export class GridManager {
     this.addEntity(entityId, newPosition);
   }
 
-  public getEntitiesInCell(x: number, y: number): Set<EntityId> {
+  public getEntitiesInCell(x: number, y: number): Array<EntityId> {
     const key = this.getCellKey(x, y);
-    return this._grid.get(key) || new Set();
+    const set = this._grid.get(key) || new Set();
+
+    return [...set];
   }
 
   public getEntitiesNearby(position: Vector2): EntityId[] {

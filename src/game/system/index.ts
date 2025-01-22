@@ -23,6 +23,7 @@ import { HunterInitSystem } from './HunterInitSystem';
 import { HunterTargetSystem } from './HunterTargetSystem';
 import { HunterDirectionSystem } from './HunterDirectionSystem';
 import { MovementSystem } from './MovementSystem';
+import { DirectionSystem } from './DirectionSystem';
 
 export const initSystems = (
   system: SystemRegistry,
@@ -41,8 +42,9 @@ export const initSystems = (
   system
     .addSystem(new PlayerInputSystem(world))
     .addSystem(new HunterTargetSystem(world))
-    .addSystem(new HunterDirectionSystem(world))
     .addSystem(new MovementCooldownSystem(world))
+    .addSystem(new DirectionSystem(world))
+    .addSystem(new HunterDirectionSystem(world, gridManager))
     .addSystem(new MovementPositionCalculationSystem(world))
     .addSystem(new MovementAreaSystem(world, x, y))
     .addSystem(new SnakeMovementSystem(world, gridManager, gridSize))

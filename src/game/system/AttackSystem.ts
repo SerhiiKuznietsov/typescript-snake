@@ -37,6 +37,14 @@ export class AttackSystem implements ISystem {
       if (this.w.hasComponent(target, 'Hunter') && this.w.hasComponent(target, 'Target')) {
         this.w.removeComponent(entity, 'Target');
       }
+
+      if (this.w.hasComponent(target, 'Hunts')) {
+        const hunts = this.w.getComponent(target, 'Hunts');
+
+        if (hunts.target) {
+          this.w.removeComponent(hunts.target, 'Target');
+        }
+      }
     }
   }
 }
