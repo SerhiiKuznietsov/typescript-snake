@@ -23,6 +23,7 @@ import { Velocity } from './Velocity';
 import { Poison } from './Poison';
 import { CollisionHandler } from './CollisionHandler';
 import { Attacker } from './Attacker';
+import { Hunts } from './Hunts';
 
 // TODO - We need to remove the hardwiring of this interface. It is possible to pass it when creating a world
 
@@ -36,6 +37,7 @@ export interface ComponentMap {
   Direction: Direction;
   Food: Food;
   Hunter: Hunter;
+  Hunts: Hunts;
   Moved: Moved;
   Movement: Movement;
   MoveTo: MoveTo;
@@ -128,6 +130,19 @@ export const registerComponents = (w: World) => {
     )
     .registerPool('Food', new ObjectPool(() => new Food()))
     .registerPool('Hunter', new ObjectPool(() => new Hunter()))
+    .registerPool(
+      'Hunts',
+      new ObjectPool(() => new Hunts(), {
+        initialize(item, params) {
+          if (params?.target) {
+            item.target = params.target;
+          }
+        },
+        deactivate(item) {
+          item.target = null;
+        },
+      })
+    )
     .registerPool('Moved', new ObjectPool(() => new Moved()))
     .registerPool(
       'Movement',
@@ -167,7 +182,31 @@ export const registerComponents = (w: World) => {
         initialSize: 1,
       })
     )
-    .registerPool('PlayerInput', new ObjectPool(() => new PlayerInput()))
+    .registerPool(
+      'PlayerInput',
+      new ObjectPool(() => new PlayerInput(), {
+        initialize(item, params) {
+          if (params?.up) {
+            item.up = params.up;
+          }
+
+          if (params?.down) {
+            item.down = params.down;
+          }
+
+          if (params?.left) {
+            item.left = params.left;
+          }
+
+          if (params?.right) {
+            item.right = params.right;
+          }
+        },
+        deactivate(item) {
+          item.up = item.down = item.left = item.right = false;
+        },
+      })
+    )
     .registerPool('Poison', new ObjectPool(() => new Poison()))
     .registerPool(
       'Position',

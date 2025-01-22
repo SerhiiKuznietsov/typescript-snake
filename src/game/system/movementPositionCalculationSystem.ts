@@ -1,6 +1,5 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
-import { vectorUtils } from '../geometry/utils/vectorUtils';
 
 export class MovementPositionCalculationSystem implements ISystem {
   public entities = this.w.newGroup(

@@ -2,28 +2,34 @@ import { ISystem } from '@/ecs/SystemRegistry';
 import { keyBoard } from '../keyBoard';
 import { World } from '@/ecs/World';
 
+interface IInput {
+  up: boolean;
+  down: boolean;
+  left: boolean;
+  right: boolean;
+}
+
+const setUp = (input: IInput) => (input.up = true);
+const setDown = (input: IInput) => (input.down = true);
+const setLeft = (input: IInput) => (input.left = true);
+const setRight = (input: IInput) => (input.right = true);
+
+const storage: Record<KeyboardEvent['code'], Function> = {
+  KeyW: setUp,
+  ArrowUp: setUp,
+  KeyD: setRight,
+  ArrowRight: setRight,
+  KeyS: setDown,
+  ArrowDown: setDown,
+  KeyA: setLeft,
+  ArrowLeft: setLeft,
+};
+
 export class PlayerInputSystem implements ISystem {
-  public entities = this.w.newGroup(['PlayerInput', 'Direction']);
+  public entities = this.w.newGroup(['PlayerInput']);
+  private _code: KeyboardEvent['code'] | null = null;
 
   constructor(public w: World) {
-    this.initializeListeners();
-  }
-
-  public update(): void {
-    for (let i = 0; i < this.entities.length; i++) {
-      const entity = this.entities[i];
-
-      const control = this.w.getComponent(entity, 'Direction');
-
-      control.changed = false;
-    }
-  }
-
-  private normalizeNum(num: number): number {
-    return Math.sign(num);
-  }
-
-  private initializeListeners(): void {
     keyBoard
       .addHandler('KeyW', this.setControl)
       .addHandler('ArrowUp', this.setControl)
@@ -36,38 +42,23 @@ export class PlayerInputSystem implements ISystem {
     // TODO - remove chanes and add the ability to pass an array
   }
 
-  private setControl = ({ code }: KeyboardEvent): void => {
+  public update(): void {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
-      const direction = this.w.getComponent(entity, 'Direction');
+      const input = this.w.getComponent(entity, 'PlayerInput');
+      input.up = input.down = input.left = input.right = false;
 
-      if (direction.changed) continue;
+      if (!this._code) continue;
 
-      direction.changed = true;
+      const handler = storage[this._code];
 
-      if (['KeyW', 'ArrowUp'].includes(code) && direction.y !== 1) {
-        direction.x = 0;
-        direction.y = this.normalizeNum(-1);
-        continue;
-      }
+      if (!handler) continue;
 
-      if (['KeyD', 'ArrowRight'].includes(code) && direction.x !== -1) {
-        direction.x = this.normalizeNum(1);
-        direction.y = 0;
-        continue;
-      }
-
-      if (['KeyS', 'ArrowDown'].includes(code) && direction.y !== -1) {
-        direction.x = 0;
-        direction.y = this.normalizeNum(1);
-        continue;
-      }
-
-      if (['KeyA', 'ArrowLeft'].includes(code) && direction.x !== 1) {
-        direction.x = this.normalizeNum(-1);
-        direction.y = 0;
-        continue;
-      }
+      handler(input);
     }
+  }
+
+  private setControl = ({ code }: KeyboardEvent): void => {
+    this._code = code;
   };
 }
