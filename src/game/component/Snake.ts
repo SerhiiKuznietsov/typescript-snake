@@ -3,7 +3,8 @@ import { ObjectPool } from '../../ecs/ObjectPool';
 import { EntityId } from '@/ecs/Entity';
 
 export class Snake implements IComponent {
-  public segments: EntityId[] = [];
+  public segments: number = 0;
+  public tail: EntityId | null = null;
 
   constructor(public makeSegments: number = 0) {}
 }
@@ -14,12 +15,12 @@ export const SnakePool = new ObjectPool(() => new Snake(), {
       item.makeSegments = params.makeSegments;
     }
 
-    if (params?.segments?.length) {
-      item.segments.push(...params.segments);
+    if (params?.tail) {
+      item.tail = params.tail;
     }
   },
   deactivate(item) {
     item.makeSegments = 0;
-    item.segments.length = 0;
+    item.segments = 0;
   },
 });

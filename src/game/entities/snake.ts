@@ -6,6 +6,7 @@ export const createSnake = (w: World, gridSize: number): void => {
 
   w.getComponent(entityId, 'PlayerInput');
   w.getComponent(entityId, 'Snake');
+  w.getComponent(entityId, 'SnakeBody', { head: entityId });
   w.getComponent(entityId, 'Attacker');
   w.getComponent(entityId, 'Position', { x: 0, y: 0 });
   w.getComponent(entityId, 'Movement', { moveInterval: 100 });
