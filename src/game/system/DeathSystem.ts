@@ -12,9 +12,8 @@ export class DeathSystem implements ISystem {
   public update(): void {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
-      if (this.w.hasComponent(entity, 'Position')) {
-        this._grid.removeEntity(entity);
-      }
+
+      this._grid.removeEntity(entity);
 
       if (this.w.hasComponent(entity, 'Respawn')) {
         this.w.removeComponent(entity, 'Death');

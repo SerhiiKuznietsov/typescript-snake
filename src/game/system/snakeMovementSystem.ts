@@ -28,13 +28,12 @@ export class SnakeMovementSystem implements ISystem {
     const tail = snake.tail;
     const tailPosition = this.w.getComponent(tail, 'Position');
 
-
     if (tail !== snakeBody.prev) {
       const prevSegment = this.w.getComponent(snakeBody.prev!, 'SnakeBody');
       const tailSegment = this.w.getComponent(tail, 'SnakeBody');
       const nextSegment = this.w.getComponent(tailSegment.next!, 'SnakeBody');
-      nextSegment.prev = null;
 
+      nextSegment.prev = null;
       snake.tail = tailSegment.next;
 
       tailSegment.next = snakeBody.head;
@@ -63,7 +62,13 @@ export class SnakeMovementSystem implements ISystem {
   ) {
     const next = snake.tail || entity;
 
-    const newSegment = createSnakeBody(this.w, this._gridSize, prevPosition, entity, next);
+    const newSegment = createSnakeBody(
+      this.w,
+      this._gridSize,
+      prevPosition,
+      entity,
+      next
+    );
 
     if (!snakeBody.prev) {
       snakeBody.prev = newSegment;
@@ -132,23 +137,6 @@ export class SnakeMovementSystem implements ISystem {
         this.removeLastSegment(snake, snakeBody);
         snake.makeSegments += 1;
       }
-
-
-      console.log('Loop start');
-
-      logNode(entity, snakeBody, this.w);
-
-      console.log('Loop end');
     }
   }
 }
-
-const logNode = (current: EntityId, node: SnakeBody | undefined | null, w: World) => {
-  if (!node) return;
-
-  console.log(`Current: ${current}, Next: "${node.next || 'null'}", Prev: "${node.prev}"`);
-
-  if (!node.prev) return;
-
-  logNode(node.prev, w.getComponent(node.prev, 'SnakeBody'), w);
-};
