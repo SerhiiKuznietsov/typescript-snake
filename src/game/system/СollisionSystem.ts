@@ -5,8 +5,7 @@ import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
 
 export class CollisionSystem implements ISystem {
-  public entities = this.w.newGroup(['Position', 'Collider']);
-  public movementEntities = this.w.newGroup([
+  public entities = this.w.newGroup([
     'Position',
     'CollisionHandler',
     'Moved',
@@ -32,8 +31,8 @@ export class CollisionSystem implements ISystem {
   public update(): void {
     this.clearCollisionDetected();
 
-    for (let i = 0; i < this.movementEntities.length; i++) {
-      const entity = this.movementEntities[i];
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
       const position = this.w.getComponent(entity, 'Position');
       const nearbyEntities = this._grid.getEntitiesNearby(position);
 

@@ -1,4 +1,3 @@
-import { Collider } from '../component/Collider';
 import { DebugFlag } from '../component/DebugFlag';
 import { Movement } from '../component/Movement';
 import { Position } from '../component/Position';
@@ -17,10 +16,6 @@ import { CollisionDetected } from '../component/CollisionDetected';
 
 export const guiConfig: Record<string, any> = {
   [CanMove.name]: {},
-  [Collider.name]: {
-    width: { type: 'number', min: 0, max: 1000, step: 1 },
-    height: { type: 'number', min: 0, max: 1000, step: 1 },
-  },
   [CollisionDetected.name]: {},
   [DebugFlag.name]: {
     isOpen: { type: 'boolean' }

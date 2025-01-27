@@ -1,7 +1,5 @@
-import { ObjectPool } from '../../ecs/ObjectPool';
 import { World } from '@/ecs/World';
 import { CollisionDetected, CollisionDetectedPool } from './CollisionDetected';
-import { Collider, ColliderPool } from './Collider';
 import { CanMove, CanMovePool } from './CanMove';
 import { Death, DeathPool } from './Death';
 import { DebugFlag, DebugFlagPool } from './DebugFlag';
@@ -32,7 +30,6 @@ import { PrevPosition, PrevPositionPool } from './PrevPosition';
 export interface ComponentMap {
   CollisionHandler: CollisionHandler;
   CollisionDetected: CollisionDetected;
-  Collider: Collider;
   CanMove: CanMove;
   Death: Death;
   DebugFlag: DebugFlag;
@@ -62,7 +59,6 @@ export const registerComponents = (w: World) => {
   w.registerPool('Attacker', AttackerPool)
     .registerPool('CollisionHandler', CollisionHandlerPool)
     .registerPool('CollisionDetected', CollisionDetectedPool)
-    .registerPool('Collider', ColliderPool)
     .registerPool('CanMove', CanMovePool)
     .registerPool('Death', DeathPool)
     .registerPool('DebugFlag', DebugFlagPool)

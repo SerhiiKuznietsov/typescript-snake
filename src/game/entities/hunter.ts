@@ -10,10 +10,6 @@ export const createHunter = (w: World, gridSize: number): void => {
   w.getComponent(entityId, 'Movement', { moveInterval: 100 });
   w.getComponent(entityId, 'Respawn', { cooldown: 1000, elapsed: 1000 });
   w.getComponent(entityId, 'CollisionHandler');
-  w.getComponent(entityId, 'Collider', {
-    width: gridSize,
-    height: gridSize,
-  });
   w.getComponent(entityId, 'Render', {
     shape: new Square(gridSize),
     color: '#380070',
