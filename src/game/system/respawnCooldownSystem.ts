@@ -9,7 +9,6 @@ export class RespawnCooldownSystem implements ISystem {
   public update({ deltaTime }: UpdateSystemData): void {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
-
       const respawn = this.w.getComponent(entity, 'Respawn');
 
       if (respawn.elapsed < respawn.cooldown) {

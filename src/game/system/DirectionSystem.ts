@@ -34,5 +34,4 @@ export class DirectionSystem implements ISystem {
       }
     }
   }
-
 }

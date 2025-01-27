@@ -1,6 +1,5 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
-import { RenderEvents } from './events/render';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
 

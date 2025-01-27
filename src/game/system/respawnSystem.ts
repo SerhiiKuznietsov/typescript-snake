@@ -4,7 +4,6 @@ import { Vector2 } from '../geometry/vector2';
 import { range } from '../utils/random';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
-import { RenderEvents } from './events/render';
 
 export class RespawnSystem implements ISystem {
   public entities = this.w.newGroup(['Respawn', 'RespawnReady']);
@@ -45,8 +44,6 @@ export class RespawnSystem implements ISystem {
 
       this.w.removeComponent(entity, 'Reborn');
     }
-
-
 
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];

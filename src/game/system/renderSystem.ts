@@ -2,10 +2,8 @@ import { ISystem } from '@/ecs/SystemRegistry';
 import { Board } from '../board';
 import { World } from '@/ecs/World';
 import { EntityId } from '@/ecs/Entity';
-import { RenderEvents } from './events/render';
 
 export class RenderSystem implements ISystem {
-  public entities = this.w.newGroup(['Render', 'Position']);
   public rebornEntities = this.w.newGroup(['Reborn', 'Position', 'Render']);
   public deathEntities = this.w.newGroup(['Death', 'Position', 'Render']);
   public movedEntities = this.w.newGroup(['Moved', 'Position', 'Render']);
