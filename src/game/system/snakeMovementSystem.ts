@@ -26,7 +26,6 @@ export class SnakeMovementSystem implements ISystem {
     if (!snake.tail) return;
 
     const tail = snake.tail;
-    const tailPosition = this.w.getComponent(tail, 'Position');
 
     if (tail !== snakeBody.prev) {
       const prevSegment = this.w.getComponent(snakeBody.prev!, 'SnakeBody');
@@ -42,11 +41,6 @@ export class SnakeMovementSystem implements ISystem {
       snakeBody.prev = tail;
       prevSegment.next = tail;
     }
-
-    this.w.messageBroker.publish(
-      RenderEvents.CLEAN_RENDER,
-      vectorUtils.copy(tailPosition)
-    );
 
     this.w.getComponent(tail, 'MoveTo', prevPosition);
 
@@ -102,12 +96,6 @@ export class SnakeMovementSystem implements ISystem {
     }
 
     this.w.getComponent(snake.tail!, 'Death');
-    const lastPosition = this.w.getComponent(snake.tail!, 'Position');
-
-    this.w.messageBroker.publish(
-      RenderEvents.CLEAN_RENDER,
-      vectorUtils.copy(lastPosition)
-    );
   }
 
   public update(): void {

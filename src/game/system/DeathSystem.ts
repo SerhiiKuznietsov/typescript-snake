@@ -18,10 +18,6 @@ export class DeathSystem implements ISystem {
         this.w.removeComponent(entity, 'Death');
         this.w.removeComponent(entity, 'Position');
       } else {
-        this.w.messageBroker.publish(
-          RenderEvents.CLEAN_RENDER,
-          this.w.getComponent(entity, 'Position')
-        );
         this.w.deleteEntity(entity);
       }
     }
