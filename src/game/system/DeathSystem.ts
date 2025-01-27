@@ -1,6 +1,5 @@
 import { World } from '@/ecs/World';
 import { ISystem } from '@/ecs/SystemRegistry';
-import { EntityId } from '@/ecs/Entity';
 import { GridManager } from '../GridManager';
 import { RenderEvents } from './events/render';
 
