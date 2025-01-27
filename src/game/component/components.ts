@@ -24,6 +24,8 @@ import { Poison, PoisonPool } from './Poison';
 import { CollisionHandler, CollisionHandlerPool } from './CollisionHandler';
 import { Attacker, AttackerPool } from './Attacker';
 import { Hunts, HuntsPool } from './Hunts';
+import { Reborn, RebornPool } from './Reborn';
+import { PrevPosition, PrevPositionPool } from './PrevPosition';
 
 // TODO - We need to remove the hardwiring of this interface. It is possible to pass it when creating a world
 
@@ -52,6 +54,8 @@ export interface ComponentMap {
   Velocity: Velocity;
   Poison: Poison;
   Attacker: Attacker;
+  Reborn: Reborn;
+  PrevPosition: PrevPosition;
 }
 
 export const registerComponents = (w: World) => {
@@ -78,5 +82,7 @@ export const registerComponents = (w: World) => {
     .registerPool('Snake', SnakePool)
     .registerPool('SnakeBody', SnakeBodyPool)
     .registerPool('Target', TargetPool)
-    .registerPool('Velocity', VelocityPool);
+    .registerPool('Velocity', VelocityPool)
+    .registerPool('Reborn', RebornPool)
+    .registerPool('PrevPosition', PrevPositionPool);
 };
