@@ -17,7 +17,7 @@ export class World {
   private _eventBus: EventBus;
   private _storage: EntityComponentStorage;
   private _groupManager: GroupManager;
-
+  private _deletionQueue: EntityId[] = []
   public messageBroker: MessageBroker;
 
   constructor() {
@@ -28,12 +28,19 @@ export class World {
     this.messageBroker = new MessageBroker();
   }
 
+  public onUpdate(): void {
+    for (let i = 0; i < this._deletionQueue.length; i++) {
+      const entityId = this._deletionQueue[i];
+      this._storage.deleteEntity(entityId);
+    }
+  }
+
   public createEntity(): EntityId {
     return this._storage.createEntity();
   }
 
   public deleteEntity(entityId: EntityId): void {
-    this._storage.deleteEntity(entityId);
+    this._deletionQueue.push(entityId);
   }
 
   public registerPool<K extends keyof ComponentMap>(
@@ -96,5 +103,6 @@ export class World {
     this._storage.destroy();
     this._groupManager.destroy();
     this.messageBroker.clearAll();
+    this._deletionQueue = [];
   }
 }

@@ -16,6 +16,8 @@ export interface ISystem {
 export class SystemRegistry {
   private _systems: ISystem[] = [];
 
+  constructor(private _world: World) {}
+
   public addSystem(system: ISystem): this {
     if (system.init) system.init();
 
@@ -42,6 +44,8 @@ export class SystemRegistry {
         i--;
       }
     }
+
+    this._world.onUpdate();
   }
 
   public removeSystem(system: ISystem): void {

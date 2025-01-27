@@ -24,7 +24,7 @@ export class Game {
   private _board = new Board('.game__body', 'gameBoard', this._config);
   private _gridManager = new GridManager(5);
   private _world = new World();
-  private _systems = new SystemRegistry();
+  private _systems = new SystemRegistry(this._world);
   private _resetBtn = new KeyControl(
     document.querySelector('.reset__btn'),
     'click',
