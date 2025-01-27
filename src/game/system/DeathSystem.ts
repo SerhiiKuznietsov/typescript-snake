@@ -1,10 +1,9 @@
 import { World } from '@/ecs/World';
 import { ISystem } from '@/ecs/SystemRegistry';
 import { GridManager } from '../GridManager';
-import { RenderEvents } from './events/render';
 
 export class DeathSystem implements ISystem {
-  private entities = this.w.newGroup(['Death', 'Position']);
+  private entities = this.w.newGroup(['Death']);
 
   constructor(public w: World, private _grid: GridManager) {}
 
@@ -14,11 +13,15 @@ export class DeathSystem implements ISystem {
 
       this._grid.removeEntity(entity);
 
-      if (this.w.hasComponent(entity, 'Respawn')) {
-        this.w.removeComponent(entity, 'Death');
-        this.w.removeComponent(entity, 'Position');
-      } else {
+      if (!this.w.hasComponent(entity, 'Respawn')) {
         this.w.deleteEntity(entity);
+        return;
+      }
+
+      this.w.removeComponent(entity, 'Death');
+
+      if (this.w.hasComponent(entity, 'Position')) {
+        this.w.removeComponent(entity, 'Position');
       }
     }
   }
