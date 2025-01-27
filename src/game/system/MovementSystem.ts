@@ -24,13 +24,9 @@ export class MovementSystem implements ISystem {
 
       this._grid.moveEntity(entity, moveTo);
 
-      this.w.messageBroker
-        .publish(RenderEvents.NEW_RENDER, entity)
-        .publish(RenderEvents.CLEAN_RENDER, {
-          x: position.x,
-          y: position.y,
-        });
+      const prevPosition = this.w.getComponent(entity, 'PrevPosition');
 
+      vectorUtils.setVector(prevPosition, position);
       vectorUtils.setVector(position, moveTo);
 
       this.w.getComponent(entity, 'Moved');

@@ -48,10 +48,9 @@ export class SnakeMovementSystem implements ISystem {
       vectorUtils.copy(tailPosition)
     );
 
-    this._grid.moveEntity(tail, prevPosition);
-    vectorUtils.setVector(tailPosition, prevPosition);
+    this.w.getComponent(tail, 'MoveTo', prevPosition);
 
-    this.w.messageBroker.publish(RenderEvents.NEW_RENDER, tail);
+    this._grid.moveEntity(tail, prevPosition);
   }
 
   private addNewSegment(
@@ -86,8 +85,6 @@ export class SnakeMovementSystem implements ISystem {
       newSegment,
       this.w.getComponent(newSegment, 'Position')
     );
-
-    this.w.messageBroker.publish(RenderEvents.NEW_RENDER, newSegment);
   }
 
   private removeLastSegment(snake: Snake, snakeBody: SnakeBody) {

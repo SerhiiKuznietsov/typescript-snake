@@ -8,6 +8,7 @@ import { RenderEvents } from './events/render';
 
 export class RespawnSystem implements ISystem {
   public entities = this.w.newGroup(['Respawn', 'RespawnReady']);
+  public rebornEntities = this.w.newGroup(['Reborn']);
 
   constructor(
     public w: World,
@@ -39,6 +40,14 @@ export class RespawnSystem implements ISystem {
   }
 
   public update(): void {
+    for (let i = 0; i < this.rebornEntities.length; i++) {
+      const entity = this.rebornEntities[i];
+
+      this.w.removeComponent(entity, 'Reborn');
+    }
+
+
+
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
 
@@ -48,8 +57,8 @@ export class RespawnSystem implements ISystem {
       vectorUtils.setVector(position, emptyPosition);
 
       this._grid.addEntity(entity, position);
-      this.w.messageBroker.publish(RenderEvents.NEW_RENDER, entity);
 
+      this.w.getComponent(entity, 'Reborn');
       this.w.removeComponent(entity, 'RespawnReady');
     }
   }

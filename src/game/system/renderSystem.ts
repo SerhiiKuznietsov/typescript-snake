@@ -6,53 +6,38 @@ import { RenderEvents } from './events/render';
 
 export class RenderSystem implements ISystem {
   public entities = this.w.newGroup(['Render', 'Position']);
+  public rebornEntities = this.w.newGroup(['Reborn', 'Position', 'Render']);
+  public deathEntities = this.w.newGroup(['Death', 'Position', 'Render']);
+  public movedEntities = this.w.newGroup(['Moved', 'Position', 'Render']);
 
   constructor(public w: World, private _board: Board) {}
 
-  public awake(): void {
-    for (let i = 0; i < this.entities.length; i++) {
-      const entity = this.entities[i];
+  public update(): void {
+
+    for (let i = 0; i < this.rebornEntities.length; i++) {
+      const entity = this.rebornEntities[i];
 
       this.draw(entity);
     }
-  }
 
-  private handleCleanRender(): void {
-    const needClean = this.w.messageBroker.consume(RenderEvents.CLEAN_RENDER);
+    for (let i = 0; i < this.deathEntities.length; i++) {
+      const entity = this.deathEntities[i];
+      const position = this.w.getComponent(entity, 'Position');
 
-    needClean.forEach((vector2) => this._board.clear(vector2));
-  }
+      this._board.clear(position);
+    }
 
-  private handleNewRender(): void {
-    const renderEntities = this.w.messageBroker.consume(
-      RenderEvents.NEW_RENDER
-    );
-    const sortedEntities: EntityId[] = [];
+    for (let i = 0; i < this.movedEntities.length; i++) {
+      const entity = this.movedEntities[i];
 
-    renderEntities.forEach((entity) => {
-      if (
-        !this.w.hasComponent(entity, 'Render') ||
-        !this.w.hasComponent(entity, 'Position')
-      ) {
-        return;
+      if (this.w.hasComponent(entity, 'PrevPosition')) {
+        const prevPosition = this.w.getComponent(entity, 'PrevPosition');
+
+        this._board.clear(prevPosition);
       }
 
-      sortedEntities.push(entity);
-    });
-
-    sortedEntities.sort((entity1, entity2) => {
-      const a = this.w.getComponent(entity1, 'Render');
-      const b = this.w.getComponent(entity2, 'Render');
-
-      return a.zIndex - b.zIndex;
-    });
-
-    sortedEntities.forEach((entity) => this.draw(entity));
-  }
-
-  public update(): void {
-    this.handleCleanRender();
-    this.handleNewRender();
+      this.draw(entity);
+    }
   }
 
   private draw(entity: EntityId) {
