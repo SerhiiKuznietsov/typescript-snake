@@ -55,6 +55,7 @@ export class RespawnSystem implements ISystem {
 
       this.w.getComponent(entity, 'Reborn');
       this.w.removeComponent(entity, 'RespawnReady');
+      this.w.removeIfExistComponent(entity, 'Death');
     }
   }
 }

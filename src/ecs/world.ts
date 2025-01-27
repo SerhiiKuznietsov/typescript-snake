@@ -17,7 +17,7 @@ export class World {
   private _eventBus: EventBus;
   private _storage: EntityComponentStorage;
   private _groupManager: GroupManager;
-  private _deletionQueue: EntityId[] = []
+  private _deletionQueue: EntityId[] = [];
   public messageBroker: MessageBroker;
 
   constructor() {
@@ -80,6 +80,17 @@ export class World {
     componentName: K
   ): this {
     this._storage.removeComponent(entityId, componentName);
+
+    return this;
+  }
+
+  public removeIfExistComponent<K extends keyof ComponentMap>(
+    entityId: EntityId,
+    componentName: K
+  ): this {
+    if (this._storage.hasComponent(entityId, componentName)) {
+      this._storage.removeComponent(entityId, componentName);
+    }
 
     return this;
   }
