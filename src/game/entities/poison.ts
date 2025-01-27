@@ -14,6 +14,5 @@ export const createPoison = (w: World, gridSize: number): void => {
   w.getComponent(entityId, 'Render', {
     shape: new Square(gridSize),
     color: '#6f41c5',
-    zIndex: 1,
   });
 };

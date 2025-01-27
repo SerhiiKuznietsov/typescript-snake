@@ -44,7 +44,6 @@ export const guiConfig: Record<string, any> = {
   },
   [Render.name]: {
     color: { type: 'color' },
-    zIndex: { type: 'number', min: -10, max: 10, step: 1 },
   },
   [Respawn.name]: {
     cooldown: { type: 'number', min: 0, max: 10000, step: 100 },

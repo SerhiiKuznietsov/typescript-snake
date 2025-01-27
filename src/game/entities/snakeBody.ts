@@ -13,6 +13,7 @@ export const createSnakeBody = (
   const entityId = w.createEntity();
 
   w.getComponent(entityId, 'SnakeBody', { head, next });
+  w.getComponent(entityId, 'Reborn');
   w.getComponent(entityId, 'Position', { x: position.x, y: position.y });
   w.getComponent(entityId, 'Collider', {
     width: gridSize,
@@ -21,7 +22,6 @@ export const createSnakeBody = (
   w.getComponent(entityId, 'Render', {
     shape: new Square(gridSize),
     color: '#176639',
-    zIndex: 2,
   });
 
   return entityId;

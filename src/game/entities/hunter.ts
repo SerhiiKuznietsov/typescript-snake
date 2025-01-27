@@ -17,7 +17,6 @@ export const createHunter = (w: World, gridSize: number): void => {
   w.getComponent(entityId, 'Render', {
     shape: new Square(gridSize),
     color: '#380070',
-    zIndex: 1,
   });
 
   w.getComponent(entityId, 'DebugFlag', { isOpen: true });

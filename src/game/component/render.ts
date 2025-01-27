@@ -8,7 +8,6 @@ export class Render implements IComponent {
   constructor(
     public shape: Shape = new Square(20),
     public color: string = '#000',
-    public zIndex: number = 0
   ) {}
 
   public draw(ctx: CanvasRenderingContext2D, position: Vector2): void {
@@ -26,12 +25,8 @@ export const RenderPool = new ObjectPool(() => new Render(), {
       item.shape = params.shape;
     }
 
-    if (params?.zIndex) {
-      item.zIndex = params.zIndex;
-    }
   },
   deactivate(item) {
     item.color = '#000';
-    item.zIndex = 0;
   },
 });

@@ -13,6 +13,5 @@ export const createFood = (w: World, gridSize: number): void => {
   w.getComponent(entityId, 'Render', {
     shape: new Square(gridSize),
     color: '#c04d4d',
-    zIndex: 1,
   });
 };
