@@ -12,11 +12,9 @@ export class MovementCooldownSystem implements ISystem {
       const movement = this.w.getComponent(entity, 'Movement');
 
       movement.accumulatedTime += deltaTime;
-
       if (movement.accumulatedTime < movement.moveInterval) continue;
 
       movement.accumulatedTime = 0;
-
       this.w.getComponent(entity, 'CanMove');
     }
   }

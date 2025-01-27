@@ -4,7 +4,6 @@ import { Vector2 } from '../geometry/vector2';
 import { range } from '../utils/random';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
-
 export class RespawnSystem implements ISystem {
   public entities = this.w.newGroup(['Respawn', 'RespawnReady']);
   public rebornEntities = this.w.newGroup(['Reborn']);
@@ -24,7 +23,7 @@ export class RespawnSystem implements ISystem {
 
   private getEmptyPosition(): Vector2 {
     let attempts = 0;
-    const maxAttempts = 1000;
+    const maxAttempts = 100;
 
     while (attempts < maxAttempts) {
       const vector = this.getRandomVector();
@@ -47,7 +46,6 @@ export class RespawnSystem implements ISystem {
 
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
-
       const emptyPosition = this.getEmptyPosition();
       const position = this.w.getComponent(entity, 'Position');
 

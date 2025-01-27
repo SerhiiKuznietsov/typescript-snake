@@ -11,12 +11,11 @@ export class RespawnCooldownSystem implements ISystem {
       const entity = this.entities[i];
       const respawn = this.w.getComponent(entity, 'Respawn');
 
-      if (respawn.elapsed < respawn.cooldown) {
-        respawn.elapsed += deltaTime;
-      } else {
-        this.w.getComponent(entity, 'RespawnReady');
-        respawn.elapsed = 0;
-      }
+      respawn.elapsed += deltaTime;
+      if (respawn.elapsed < respawn.cooldown) return;
+
+      respawn.elapsed = 0;
+      this.w.getComponent(entity, 'RespawnReady');
     }
   }
 }
