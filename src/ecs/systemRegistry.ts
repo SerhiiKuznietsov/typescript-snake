@@ -37,7 +37,11 @@ export class SystemRegistry {
   public updateSystems(deltaTime: number): void {
     for (let i = 0; i < this._systems.length; i++) {
       const system = this._systems[i];
+
+      this._world.task.setSystem(system.constructor.name);
+      this._world.task.processBeforeSystem(system.constructor.name);
       system.update({ deltaTime });
+      this._world.task.setSystem();
 
       if (system.oneShot) {
         this.removeSystem(system);
@@ -45,7 +49,7 @@ export class SystemRegistry {
       }
     }
 
-    this._world.onUpdate();
+    this._world.task.processCycleUpdate();
   }
 
   public removeSystem(system: ISystem): void {

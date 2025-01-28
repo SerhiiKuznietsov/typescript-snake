@@ -5,32 +5,19 @@ import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../GridManager';
 
 export class CollisionSystem implements ISystem {
-  public entities = this.w.newGroup([
-    'Position',
-    'CollisionHandler',
-    'Moved',
-  ]);
-  public collisionDetectedEntities = this.w.newGroup(['CollisionDetected']);
+  public entities = this.w.newGroup(['Position', 'CollisionHandler', 'Moved']);
 
   constructor(public w: World, private _grid: GridManager) {}
 
-  private clearCollisionDetected() {
-    for (let i = 0; i < this.collisionDetectedEntities.length; i++) {
-      const entity = this.collisionDetectedEntities[i];
-
-      this.w.removeComponent(entity, 'CollisionDetected');
-    }
-  }
-
   private addToCollisionOpponent(entityA: EntityId, entityB: EntityId) {
     const collision = this.w.getComponent(entityA, 'CollisionDetected');
+
+    this.w.removeComponent(entityA, 'CollisionDetected', 'BEFORE_SYSTEM');
 
     collision.target = entityB;
   }
 
   public update(): void {
-    this.clearCollisionDetected();
-
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
       const position = this.w.getComponent(entity, 'Position');

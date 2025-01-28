@@ -8,6 +8,7 @@ import { GroupManager } from './group/GroupManager';
 import { MessageBroker } from './MessageBroker';
 import { IComponentPool } from './entity/ComponentPoolManager';
 import { ComponentMap } from '@/game/component/components';
+import { TaskCondition, TaskManager } from './TaskManager';
 
 /*
   TODO - need create Debugger class
@@ -17,8 +18,8 @@ export class World {
   private _eventBus: EventBus;
   private _storage: EntityComponentStorage;
   private _groupManager: GroupManager;
-  private _deletionQueue: EntityId[] = [];
   public messageBroker: MessageBroker;
+  public task: TaskManager;
 
   constructor() {
     this._eventBus = new EventBus();
@@ -26,13 +27,7 @@ export class World {
     this._groupManager = new GroupManager(this._eventBus, this._storage);
 
     this.messageBroker = new MessageBroker();
-  }
-
-  public onUpdate(): void {
-    for (let i = 0; i < this._deletionQueue.length; i++) {
-      const entityId = this._deletionQueue[i];
-      this._storage.deleteEntity(entityId);
-    }
+    this.task = new TaskManager();
   }
 
   public createEntity(): EntityId {
@@ -40,7 +35,7 @@ export class World {
   }
 
   public deleteEntity(entityId: EntityId): void {
-    this._deletionQueue.push(entityId);
+    this.task.addOnCycleUpdate(() => this._storage.deleteEntity(entityId));
   }
 
   public registerPool<K extends keyof ComponentMap>(
@@ -77,9 +72,18 @@ export class World {
 
   public removeComponent<K extends keyof ComponentMap>(
     entityId: EntityId,
-    componentName: K
+    componentName: K,
+    task?: TaskCondition
   ): this {
-    this._storage.removeComponent(entityId, componentName);
+    if (task) {
+      this.task.addTask(task, {
+        callback: () => {
+          this._storage.removeComponent(entityId, componentName);
+        },
+      });
+    } else {
+      this._storage.removeComponent(entityId, componentName);
+    }
 
     return this;
   }
@@ -114,6 +118,6 @@ export class World {
     this._storage.destroy();
     this._groupManager.destroy();
     this.messageBroker.clearAll();
-    this._deletionQueue = [];
+    this.task.clear();
   }
 }

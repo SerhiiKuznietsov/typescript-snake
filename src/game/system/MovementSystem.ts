@@ -5,17 +5,10 @@ import { GridManager } from '../GridManager';
 
 export class MovementSystem implements ISystem {
   public entities = this.w.newGroup(['Position', 'MoveTo']);
-  public needClearEntities = this.w.newGroup(['Moved']);
 
   constructor(public w: World, private _grid: GridManager) {}
 
   public update(): void {
-    for (let i = 0; i < this.needClearEntities.length; i++) {
-      const entity = this.needClearEntities[i];
-
-      this.w.removeComponent(entity, 'Moved');
-    }
-
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
       const prevPosition = this.w.getComponent(entity, 'PrevPosition');
@@ -29,6 +22,7 @@ export class MovementSystem implements ISystem {
 
       this.w.getComponent(entity, 'Moved');
       this.w.removeComponent(entity, 'MoveTo');
+      this.w.removeComponent(entity, 'Moved', 'BEFORE_SYSTEM');
     }
   }
 }

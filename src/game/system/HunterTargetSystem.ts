@@ -9,7 +9,7 @@ export class HunterTargetSystem implements ISystem {
   public foodEntities = this.w.newGroup(
     ['Food', 'Position'],
     ['Death', 'Hunts']
-  );
+  ); // TODO - overhead
 
   constructor(public w: World) {}
 
