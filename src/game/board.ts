@@ -43,10 +43,6 @@ export class Board {
     return this;
   }
 
-  public render(drawable: Drawable, vector2: Vector2): void {
-    drawable.draw(this._context, vector2);
-  }
-
   public draw({ x, y }: Vector2, size: number, color: string): void {
     this._context.fillStyle = color;
     this._context.fillRect(x * size, y * size, size, size);
