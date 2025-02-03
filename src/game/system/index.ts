@@ -24,13 +24,15 @@ import { HunterTargetSystem } from './HunterTargetSystem';
 import { HunterDirectionSystem } from './HunterDirectionSystem';
 import { MovementSystem } from './MovementSystem';
 import { DirectionSystem } from './DirectionSystem';
+import { InputManager } from '../managers/InputManager';
 
 export const initSystems = (
   system: SystemRegistry,
   world: World,
   config: GameConfig,
   board: Board,
-  gridManager: GridManager
+  gridManager: GridManager,
+  inputManager: InputManager
 ) => {
   const {
     gridSize,
@@ -40,7 +42,7 @@ export const initSystems = (
   // TODO - add destroy method for system because need clean groups
 
   system
-    .addSystem(new PlayerInputSystem(world))
+    .addSystem(new PlayerInputSystem(world, inputManager))
     .addSystem(new HunterTargetSystem(world))
     .addSystem(new MovementCooldownSystem(world))
     .addSystem(new DirectionSystem(world))

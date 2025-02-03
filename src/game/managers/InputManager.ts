@@ -1,39 +1,44 @@
-class KeyBoard {
+export class InputManager {
   private _mapCodeHandler = new Map<string, Function[]>();
 
+  constructor() {
+    this.on();
+  }
+
   private rootHandler = (e: KeyboardEvent): void => {
-    // console.log(e.code);
-
-    if (!this._mapCodeHandler.has(e.code)) return;
-
     const handlerArr = this._mapCodeHandler.get(e.code);
 
-    handlerArr?.forEach((handlerItem) => handlerItem(e));
+    if (!handlerArr || !handlerArr.length) return;
+
+    handlerArr.forEach((handlerItem) => handlerItem(e));
   };
 
-  public on(): KeyBoard {
+  public on(): this {
     document.addEventListener('keydown', this.rootHandler);
 
     return this;
   }
 
-  public off(): KeyBoard {
+  public off(): this {
     document.removeEventListener('keydown', this.rootHandler);
 
     return this;
   }
 
-  public addHandler(keyCode: string, handler: Function): KeyBoard {
+  public addHandler(keyCode: KeyboardEvent['code'], handler: Function): this {
     if (!this._mapCodeHandler.has(keyCode)) {
       this._mapCodeHandler.set(keyCode, []);
     }
 
-    this._mapCodeHandler.get(keyCode)?.push(handler);
+    this._mapCodeHandler.get(keyCode)!.push(handler);
 
     return this;
   }
 
-  public removeHandler(keyCode: string, handler: Function): KeyBoard {
+  public removeHandler(
+    keyCode: KeyboardEvent['code'],
+    handler: Function
+  ): this {
     if (!this._mapCodeHandler.has(keyCode)) return this;
 
     const handlerArr = this._mapCodeHandler.get(keyCode) as Function[];
@@ -44,16 +49,14 @@ class KeyBoard {
 
     handlerArr.splice(index, 1);
 
-    if (!handlerArr?.length) this._mapCodeHandler.delete(keyCode);
+    if (!handlerArr.length) this._mapCodeHandler.delete(keyCode);
 
     return this;
   }
 
-  public removeHandlersByCode(keyCode: string): KeyBoard {
+  public removeHandlersByCode(keyCode: string): this {
     this._mapCodeHandler.delete(keyCode);
 
     return this;
   }
 }
-
-export const keyBoard = new KeyBoard().on();

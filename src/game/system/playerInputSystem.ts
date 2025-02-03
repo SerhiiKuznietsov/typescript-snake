@@ -1,6 +1,6 @@
 import { ISystem } from '@/ecs/SystemRegistry';
-import { keyBoard } from '../keyBoard';
 import { World } from '@/ecs/World';
+import { InputManager } from '../managers/InputManager';
 
 interface IInput {
   up: boolean;
@@ -29,8 +29,8 @@ export class PlayerInputSystem implements ISystem {
   public entities = this.w.newGroup(['PlayerInput']);
   private _code: KeyboardEvent['code'] | null = null;
 
-  constructor(public w: World) {
-    keyBoard
+  constructor(public w: World, private _inputManager: InputManager) {
+    this._inputManager
       .addHandler('KeyW', this.setControl)
       .addHandler('ArrowUp', this.setControl)
       .addHandler('KeyD', this.setControl)
@@ -41,6 +41,10 @@ export class PlayerInputSystem implements ISystem {
       .addHandler('ArrowLeft', this.setControl);
     // TODO - remove chanes and add the ability to pass an array
   }
+
+  private setControl = ({ code }: KeyboardEvent): void => {
+    this._code = code;
+  };
 
   public update(): void {
     for (let i = 0; i < this.entities.length; i++) {
@@ -58,7 +62,15 @@ export class PlayerInputSystem implements ISystem {
     }
   }
 
-  private setControl = ({ code }: KeyboardEvent): void => {
-    this._code = code;
-  };
+  public destroy(): void {
+    this._inputManager
+      .removeHandler('KeyW', this.setControl)
+      .removeHandler('ArrowUp', this.setControl)
+      .removeHandler('KeyD', this.setControl)
+      .removeHandler('ArrowRight', this.setControl)
+      .removeHandler('KeyS', this.setControl)
+      .removeHandler('ArrowDown', this.setControl)
+      .removeHandler('KeyA', this.setControl)
+      .removeHandler('ArrowLeft', this.setControl);
+  }
 }

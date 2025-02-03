@@ -10,15 +10,16 @@ import {
 } from './stateControllers/type/type';
 import { Board } from './board';
 import { GameConfig } from './config/game';
-import { keyBoard } from './keyBoard';
 import { initSystems } from './system';
 import { World } from '../ecs/World';
 import { SystemRegistry } from '../ecs/SystemRegistry';
 import { GridManager } from './managers/GridManager';
 import { registerComponents } from './component/components';
+import { InputManager } from './managers/InputManager';
 
 export class Game {
   private _config = new GameConfig();
+  private _inputManager = new InputManager()
   private _stateController = new GameStateController();
   private _loop = new Loop(this.update.bind(this), this.updateFPS.bind(this));
   private _board = new Board('.game__body', 'gameBoard', this._config);
@@ -63,7 +64,7 @@ export class Game {
   }
 
   private over(): void {
-    keyBoard.removeHandler('Space', this._pauseHandler);
+    this._inputManager.removeHandler('Space', this._pauseHandler);
   }
 
   private pause(): void {
@@ -78,7 +79,7 @@ export class Game {
 
   public init(): this {
     this._board.init();
-    keyBoard.addHandler('Space', this._pauseHandler);
+    this._inputManager.addHandler('Space', this._pauseHandler);
     this._resetBtn.on();
 
     gameObserver.attach((stateName) => {
@@ -100,7 +101,8 @@ export class Game {
       this._world,
       this._config,
       this._board,
-      this._gridManager
+      this._gridManager,
+      this._inputManager
     );
 
     this._systems.awakeSystems();
