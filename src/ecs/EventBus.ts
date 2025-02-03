@@ -1,25 +1,47 @@
-export class EventBus {
-  private _listeners: Map<string, Set<(payload: any) => void>> = new Map();
+type SetType<K extends keyof T, T extends Record<string, any>> = Set<
+  (payload: T[K]) => void
+>;
 
-  public on(eventType: string, callback: (payload: any) => void): void {
-    if (!this._listeners.has(eventType)) {
+export class EventBus<T extends Record<string, any>> {
+  private _listeners: Map<keyof T, Set<(payload: T[keyof T]) => void>> =
+    new Map();
+
+  public has<K extends keyof T>(eventType: K): boolean {
+    return this._listeners.has(eventType);
+  }
+
+  public on<K extends keyof T>(
+    eventType: K,
+    callback: (payload: T[K]) => void
+  ): this {
+    if (!this.has(eventType)) {
       this._listeners.set(eventType, new Set());
     }
-    this._listeners.get(eventType)!.add(callback);
+
+    const listeners = this._listeners.get(eventType) as SetType<K, T>;
+    listeners.add(callback);
+
+    return this;
   }
 
-  public off(eventType: string, callback: (payload: any) => void): void {
-    this._listeners.get(eventType)?.delete(callback);
+  public off<K extends keyof T>(
+    eventType: K,
+    callback: (payload: T[K]) => void
+  ): this {
+    const listeners = this._listeners.get(eventType) as SetType<K, T>;
+    listeners?.delete(callback);
+
+    return this;
   }
 
-  public emit(eventType: string, payload: any): void {
-    const listeners = this._listeners.get(eventType);
+  public emit<K extends keyof T>(eventType: K, payload: T[K]): void {
+    const listeners = this._listeners.get(eventType) as SetType<K, T>;
     if (!listeners) return;
 
     listeners.forEach((callback) => callback(payload));
   }
 
-  public clear() {
+  public clear(): void {
     this._listeners.clear();
-  };
+  }
 }

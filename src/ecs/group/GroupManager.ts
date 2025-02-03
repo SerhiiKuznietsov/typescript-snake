@@ -1,6 +1,6 @@
 import { EntityComponentStorage } from '../EntityComponentStorage';
 import { EventBus } from '../EventBus';
-import { EcsEvents } from '../EcsEvents';
+import { EventMap } from '../EcsEvents';
 import { EntityId } from '../Entity';
 import { generateKey, GroupKey } from './GroupUtils';
 import { GroupIndex } from './GroupIndex';
@@ -18,25 +18,13 @@ export class GroupManager {
   > = new Map();
 
   constructor(
-    private _eventBus: EventBus,
+    private _eventBus: EventBus<EventMap>,
     private _storage: EntityComponentStorage
   ) {
-    this._eventBus.on(
-      EcsEvents.COMPONENT_ADDED,
-      this.onComponentChanged.bind(this)
-    );
-    this._eventBus.on(
-      EcsEvents.COMPONENT_REMOVED,
-      this.onComponentChanged.bind(this)
-    );
-    this._eventBus.on(
-      EcsEvents.ENTITY_CREATED,
-      this.onEntityCreated.bind(this)
-    );
-    this._eventBus.on(
-      EcsEvents.ENTITY_DELETED,
-      this.onEntityDeleted.bind(this)
-    );
+    this._eventBus.on('COMPONENT_ADDED', this.onComponentChanged.bind(this));
+    this._eventBus.on('COMPONENT_REMOVED', this.onComponentChanged.bind(this));
+    this._eventBus.on('ENTITY_CREATED', this.onEntityCreated.bind(this));
+    this._eventBus.on('ENTITY_DELETED', this.onEntityDeleted.bind(this));
   }
 
   private validGroupQuery(query: GroupQuery) {
@@ -107,21 +95,21 @@ export class GroupManager {
   private updateGroupEntitiesWithMasks(group: Group, key: GroupKey): void {
     const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
-    this._storage.getAllEntities().forEach((entityId) => {
-      const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
+    this._storage.getAllEntities().forEach((entity) => {
+      const entityBits = this._storage.bitMap.getEntityBitMap(entity);
       if (
         BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
         BitUtils.areAnyBitsSet(entityBits, notBitMask) === false
       ) {
-        this.addEntityToGroup(group, key, entityId);
+        this.addEntityToGroup(group, key, entity);
       }
     });
   }
 
-  private onComponentChanged({ entityId }: { entityId: EntityId }): void {
+  private onComponentChanged({ entity }: { entity: EntityId }): void {
     this._groups.forEach(({ group }, key) => {
-      const isInGroup = group.entitiesSet.has(entityId);
-      const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
+      const isInGroup = group.entitiesSet.has(entity);
+      const entityBits = this._storage.bitMap.getEntityBitMap(entity);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
       const matches =
@@ -129,62 +117,58 @@ export class GroupManager {
         BitUtils.areAnyBitsSet(entityBits, notBitMask) === false;
 
       if (matches && !isInGroup) {
-        this.addEntityToGroup(group, key, entityId);
+        this.addEntityToGroup(group, key, entity);
       } else if (!matches && isInGroup) {
-        this.removeEntityFromGroup(group, key, entityId);
+        this.removeEntityFromGroup(group, key, entity);
       }
     });
   }
 
-  private addEntityToGroup(
-    group: Group,
-    groupKey: GroupKey,
-    entityId: EntityId
-  ) {
-    group.entitiesSet.add(entityId);
-    group.entities.push(entityId);
-    this._groupIndex.add(entityId, groupKey);
+  private addEntityToGroup(group: Group, groupKey: GroupKey, entity: EntityId) {
+    group.entitiesSet.add(entity);
+    group.entities.push(entity);
+    this._groupIndex.add(entity, groupKey);
   }
 
   private removeEntityFromGroup(
     group: Group,
     groupKey: GroupKey,
-    entityId: EntityId
+    entity: EntityId
   ) {
-    const index = group.entities.indexOf(entityId);
+    const index = group.entities.indexOf(entity);
 
-    group.entitiesSet.delete(entityId);
+    group.entitiesSet.delete(entity);
     group.entities.splice(index, 1);
 
-    this._groupIndex.remove(entityId, groupKey);
+    this._groupIndex.remove(entity, groupKey);
   }
 
-  private onEntityCreated({ entityId }: { entityId: EntityId }): void {
+  private onEntityCreated({ entity }: { entity: EntityId }): void {
     this._groups.forEach(({ group }, key) => {
-      const entityBits = this._storage.bitMap.getEntityBitMap(entityId);
+      const entityBits = this._storage.bitMap.getEntityBitMap(entity);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
       if (
         BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
         BitUtils.areAnyBitsSet(entityBits, notBitMask) === false
       ) {
-        this.addEntityToGroup(group, key, entityId);
+        this.addEntityToGroup(group, key, entity);
       }
     });
   }
 
-  private onEntityDeleted({ entityId }: { entityId: EntityId }): void {
-    const groupKeys = this._groupIndex.get(entityId);
+  private onEntityDeleted({ entity }: { entity: EntityId }): void {
+    const groupKeys = this._groupIndex.get(entity);
     if (!groupKeys) return;
 
     groupKeys.forEach((key) => {
       const groupData = this._groups.get(key);
       if (!groupData) return;
 
-      this.removeEntityFromGroup(groupData.group, key, entityId);
+      this.removeEntityFromGroup(groupData.group, key, entity);
     });
 
-    this._groupIndex.delete(entityId);
+    this._groupIndex.delete(entity);
   }
 
   public destroy() {

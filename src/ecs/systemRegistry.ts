@@ -15,13 +15,15 @@ export interface ISystem {
 
 export class SystemRegistry {
   private _systems: ISystem[] = [];
+  private _currentSystem: string | null = null;
 
-  constructor(private _world: World) {}
+  constructor(private _w: World) {}
 
   public addSystem(system: ISystem): this {
     if (system.init) system.init();
 
     this._systems.push(system);
+    this._w.bus.emit('SYSTEM_ADDED', { system: system.constructor.name });
 
     return this;
   }
@@ -38,38 +40,49 @@ export class SystemRegistry {
     for (let i = 0; i < this._systems.length; i++) {
       const system = this._systems[i];
 
-      this._world.task.setSystem(system.constructor.name);
-      this._world.task.processBeforeSystem(system.constructor.name);
+      this._currentSystem = system.constructor.name;
+
+      this._w.bus.emit('SYSTEM_BEFORE_UPDATED', {
+        system: this._currentSystem,
+      });
+
       system.update({ deltaTime });
-      this._world.task.setSystem();
+
+      this._w.bus.emit('SYSTEM_UPDATED', {
+        system: this._currentSystem,
+      });
 
       if (system.oneShot) {
         this.removeSystem(system);
         i--;
       }
+
+      this._currentSystem = null;
     }
 
-    this._world.task.processCycleUpdate();
+    this._w.task.processCycleUpdate();
   }
 
   public removeSystem(system: ISystem): void {
     if (system.destroy) system.destroy();
 
     const index = this._systems.indexOf(system);
-    if (index !== -1) {
-      this._systems.splice(index, 1);
-    } else {
-      console.warn(`System not found in registry:`, system);
+
+    if (index === -1) {
+      console.warn(`System not found in registry:`, system.constructor.name);
     }
+
+    this._systems.splice(index, 1);
+
+    this._w.bus.emit('SYSTEM_DESTROYED', { system: system.constructor.name });
   }
 
   public destroy(): void {
     for (let i = 0; i < this._systems.length; i++) {
-      const system = this._systems[i];
-
-      this.removeSystem(system);
+      this.removeSystem(this._systems[i]);
     }
 
     this._systems = [];
+    this._currentSystem = null;
   }
 }

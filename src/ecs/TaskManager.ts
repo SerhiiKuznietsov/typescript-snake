@@ -1,3 +1,5 @@
+import { World } from './World';
+
 export const TaskName = {
   ON_CYCLE_UPDATE: 'ON_CYCLE_UPDATE',
   END_OF_NEXT_CYCLE: 'END_OF_NEXT_CYCLE',
@@ -18,12 +20,29 @@ export class TaskManager {
   private _currentCycle: number = 0;
   private _currentSystem: SystemType | null = null;
 
-  constructor() {
+  constructor(private _w: World) {
     [
       TaskName.ON_CYCLE_UPDATE,
       TaskName.END_OF_NEXT_CYCLE,
       TaskName.BEFORE_SYSTEM,
     ].forEach((condition) => this._tasks.set(condition as TaskCondition, []));
+
+    this.initEventsListeners();
+  }
+
+  private onSystemBeforeUpdate = ({ system }: { system: string }): void => {
+    this.setSystem(system);
+    this.processBeforeSystem();
+  };
+
+  private onSystemUpdate = (): void => {
+    this.processCycleUpdate();
+    this.setSystem();
+  };
+
+  private initEventsListeners(): void {
+    this._w.bus.on('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
+    this._w.bus.on('SYSTEM_UPDATED', this.onSystemUpdate);
   }
 
   public setSystem(currentSystem: SystemType | null = null): void {
@@ -51,6 +70,15 @@ export class TaskManager {
   }
 
   public addTask(condition: TaskCondition, task: Task): void {
+    if (condition === TaskName.BEFORE_SYSTEM) {
+      const system = this._currentSystem;
+      if (!system) {
+        throw new Error('Current system is null');
+      }
+
+      task.system = system;
+    }
+
     const taskList = this._tasks.get(condition);
     taskList?.push(task);
   }
@@ -91,7 +119,12 @@ export class TaskManager {
     this._currentCycle++;
   }
 
-  public processBeforeSystem(system: SystemType): void {
+  public processBeforeSystem(): void {
+    const system = this._currentSystem;
+    if (!system) {
+      throw new Error('Current system is null');
+    }
+
     this.processCondition(TaskName.BEFORE_SYSTEM, system);
   }
 
@@ -99,6 +132,9 @@ export class TaskManager {
     this._tasks.clear();
     this._currentCycle = 0;
     this._currentSystem = null;
+
+    this._w.bus.off('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
+    this._w.bus.off('SYSTEM_UPDATED', this.onSystemUpdate);
   }
 }
 

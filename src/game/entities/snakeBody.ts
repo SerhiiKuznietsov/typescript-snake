@@ -10,15 +10,15 @@ export const createSnakeBody = (
   head: EntityId,
   next: EntityId
 ): EntityId => {
-  const entityId = w.createEntity();
+  const entity = w.createEntity();
 
-  w.getComponent(entityId, 'SnakeBody', { head, next });
-  w.getComponent(entityId, 'Reborn');
-  w.getComponent(entityId, 'Position', { x: position.x, y: position.y });
-  w.getComponent(entityId, 'Render', {
+  w.getComponent(entity, 'SnakeBody', { head, next });
+  w.getComponent(entity, 'Reborn');
+  w.getComponent(entity, 'Position', { x: position.x, y: position.y });
+  w.getComponent(entity, 'Render', {
     shape: new Square(gridSize),
     color: '#176639',
   });
 
-  return entityId;
+  return entity;
 };

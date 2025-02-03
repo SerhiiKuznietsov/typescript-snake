@@ -12,14 +12,14 @@ export class DebugSystem implements ISystem {
     this.gui = new dat.GUI();
   }
 
-  private createFolderForEntity(entityId: number): dat.GUI {
-    const folder = this.gui.addFolder(`Entity ${entityId}`);
+  private createFolderForEntity(entity: number): dat.GUI {
+    const folder = this.gui.addFolder(`Entity ${entity}`);
 
-    if (this.w.getComponent(entityId, 'DebugFlag').isOpen) {
+    if (this.w.getComponent(entity, 'DebugFlag').isOpen) {
       folder.open();
     }
 
-    this.folders.set(entityId, folder);
+    this.folders.set(entity, folder);
 
     return folder;
   }
@@ -80,10 +80,10 @@ export class DebugSystem implements ISystem {
       });
     }
 
-    this.folders.forEach((folder, entityId) => {
-      if (!this.entities.includes(entityId)) {
+    this.folders.forEach((folder, entity) => {
+      if (!this.entities.includes(entity)) {
         this.gui.removeFolder(folder);
-        this.folders.delete(entityId);
+        this.folders.delete(entity);
       }
     });
   }

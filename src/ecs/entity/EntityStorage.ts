@@ -7,68 +7,68 @@ export class EntityStorage {
   private _components: Map<EntityId, ComponentMapType> = new Map();
   private _entityId = new IdManager();
 
-  public hasEntity(entityId: EntityId): boolean {
-    return this._components.has(entityId);
+  public hasEntity(entity: EntityId): boolean {
+    return this._components.has(entity);
   }
 
   public createEntity(): EntityId {
-    const entityId = this._entityId.generateId();
-    this._components.set(entityId, new Map());
-    return entityId;
+    const entity = this._entityId.generateId();
+    this._components.set(entity, new Map());
+    return entity;
   }
 
-  public deleteEntity(entityId: EntityId): void {
-    this._components.delete(entityId);
+  public deleteEntity(entity: EntityId): void {
+    this._components.delete(entity);
   }
 
-  public getComponents(entityId: EntityId): ComponentMapType {
-    const componentsMap = this._components.get(entityId);
+  public getComponents(entity: EntityId): ComponentMapType {
+    const componentsMap = this._components.get(entity);
     if (!componentsMap) {
-      throw new Error(`Components for entity: ${entityId} not found`);
+      throw new Error(`Components for entity: ${entity} not found`);
     }
     return componentsMap;
   }
 
-  public hasComponent(entityId: EntityId, componentKey: string): boolean {
-    const components = this._components.get(entityId);
+  public hasComponent(entity: EntityId, componentKey: string): boolean {
+    const components = this._components.get(entity);
     return components?.has(componentKey) || false;
   }
 
   public getComponent<T extends IComponent>(
-    entityId: EntityId,
+    entity: EntityId,
     componentKey: string
   ): T {
-    const components = this._components.get(entityId);
+    const components = this._components.get(entity);
     const component = components?.get(componentKey);
     if (!component) {
       throw new Error(
-        `Component with key: "${componentKey}" not found for entity: ${entityId}`
+        `Component with key: "${componentKey}" not found for entity: ${entity}`
       );
     }
     return component as T;
   }
 
   public addComponent(
-    entityId: EntityId,
+    entity: EntityId,
     componentKey: string,
     component: IComponent
   ): void {
-    const entityComponents = this._components.get(entityId);
+    const entityComponents = this._components.get(entity);
     if (!entityComponents) {
-      throw new Error(`Entity with ID ${entityId} does not exist.`);
+      throw new Error(`Entity with ID ${entity} does not exist.`);
     }
     entityComponents.set(componentKey, component);
   }
 
-  public removeComponent(entityId: EntityId, componentKey: string): void {
-    const entityComponents = this._components.get(entityId);
+  public removeComponent(entity: EntityId, componentKey: string): void {
+    const entityComponents = this._components.get(entity);
     if (!entityComponents) {
-      throw new Error(`Entity with ID: "${entityId}" does not exist.`);
+      throw new Error(`Entity with ID: "${entity}" does not exist.`);
     }
 
     if (!entityComponents.has(componentKey)) {
       throw new Error(
-        `Component with key: "${componentKey}" not found for entity: ${entityId}`
+        `Component with key: "${componentKey}" not found for entity: ${entity}`
       );
     }
 

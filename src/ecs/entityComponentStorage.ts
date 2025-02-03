@@ -1,6 +1,6 @@
 import { ComponentMap } from '@/game/component/components';
 import { IComponent } from './Component';
-import { EcsEvents } from './EcsEvents';
+import { EventMap } from './EcsEvents';
 import { EntityId } from './Entity';
 import { BitMapManager } from './entity/BitMapManager';
 import {
@@ -19,36 +19,36 @@ export class EntityComponentStorage {
   private _entityStorage = new EntityStorage();
   private _entityBitMaps = new BitMapManager();
 
-  constructor(private _eventBus: EventBus) {}
+  constructor(private _eventBus: EventBus<EventMap>) {}
 
   public get bitMap() {
     return this._entityBitMaps;
   }
 
   public createEntity(): EntityId {
-    const entityId = this._entityStorage.createEntity();
+    const entity = this._entityStorage.createEntity();
 
-    this._entityBitMaps.createEntity(entityId);
+    this._entityBitMaps.createEntity(entity);
 
-    this._eventBus.emit(EcsEvents.ENTITY_CREATED, { entityId });
+    this._eventBus.emit('ENTITY_CREATED', { entity });
 
-    return entityId;
+    return entity;
   }
 
-  public deleteEntity(entityId: EntityId): void {
-    const entityComponents = this._entityStorage.getComponents(entityId);
+  public deleteEntity(entity: EntityId): void {
+    const entityComponents = this._entityStorage.getComponents(entity);
     if (!entityComponents) {
-      throw new Error(`Entity with id: "${entityId}" not found`);
+      throw new Error(`Entity with id: "${entity}" not found`);
     }
 
     entityComponents.forEach((component, componentKey) => {
       this._componentPoolManager.releaseComponent(componentKey, component);
     });
 
-    this._entityStorage.deleteEntity(entityId);
-    this._entityBitMaps.deleteEntity(entityId);
+    this._entityStorage.deleteEntity(entity);
+    this._entityBitMaps.deleteEntity(entity);
 
-    this._eventBus.emit(EcsEvents.ENTITY_DELETED, { entityId });
+    this._eventBus.emit('ENTITY_DELETED', { entity });
   }
 
   public registerComponent<K extends keyof ComponentMap>(
@@ -59,26 +59,26 @@ export class EntityComponentStorage {
   }
 
   public hasComponent<K extends keyof ComponentMap>(
-    entityId: EntityId,
+    entity: EntityId,
     componentName: K
   ): boolean {
-    return this._entityStorage.hasComponent(entityId, componentName);
+    return this._entityStorage.hasComponent(entity, componentName);
   }
 
   public getComponent<K extends keyof ComponentMap>(
-    entityId: EntityId,
+    entity: EntityId,
     componentName: K
   ): ComponentMap[K] {
-    return this._entityStorage.getComponent(entityId, componentName);
+    return this._entityStorage.getComponent(entity, componentName);
   }
 
   public addComponent<K extends keyof ComponentMap>(
-    entityId: EntityId,
+    entity: EntityId,
     componentName: K,
     params?: Partial<ComponentMap[K]>
   ): ComponentMap[K] {
-    if (!this._entityStorage.hasEntity(entityId)) {
-      throw new Error(`Entity with ID ${entityId} does not exist.`);
+    if (!this._entityStorage.hasEntity(entity)) {
+      throw new Error(`Entity with ID ${entity} does not exist.`);
     }
 
     const component = this._componentPoolManager.acquireComponent(
@@ -86,37 +86,37 @@ export class EntityComponentStorage {
       params
     );
 
-    this._entityStorage.addComponent(entityId, componentName, component);
+    this._entityStorage.addComponent(entity, componentName, component);
 
-    this._entityBitMaps.addComponentBitToEntity(entityId, componentName);
+    this._entityBitMaps.addComponentBitToEntity(entity, componentName);
 
-    this._eventBus.emit(EcsEvents.COMPONENT_ADDED, { entityId, componentName });
+    this._eventBus.emit('COMPONENT_ADDED', { entity, componentName });
 
     return component;
   }
 
   public removeComponent<K extends keyof ComponentMap>(
-    entityId: EntityId,
+    entity: EntityId,
     componentName: K
   ): void {
-    if (!this._entityStorage.hasEntity(entityId)) {
-      throw new Error(`Entity with ID: "${entityId}" does not exist.`);
+    if (!this._entityStorage.hasEntity(entity)) {
+      throw new Error(`Entity with ID: "${entity}" does not exist.`);
     }
 
-    const component = this._entityStorage.getComponent(entityId, componentName);
-    this._entityStorage.removeComponent(entityId, componentName);
+    const component = this._entityStorage.getComponent(entity, componentName);
+    this._entityStorage.removeComponent(entity, componentName);
     this._componentPoolManager.releaseComponent(componentName, component);
 
-    this._entityBitMaps.removeComponentBitFromEntity(entityId, componentName);
+    this._entityBitMaps.removeComponentBitFromEntity(entity, componentName);
 
-    this._eventBus.emit(EcsEvents.COMPONENT_REMOVED, {
-      entityId,
+    this._eventBus.emit('COMPONENT_REMOVED', {
+      entity,
       componentName,
     });
   }
 
-  public getComponents(entityId: EntityId): Map<string, IComponent> {
-    return this._entityStorage.getComponents(entityId);
+  public getComponents(entity: EntityId): Map<string, IComponent> {
+    return this._entityStorage.getComponents(entity);
   }
 
   public getAllEntities(): EntityId[] {

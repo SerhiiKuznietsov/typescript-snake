@@ -18,14 +18,14 @@ export class HunterTargetSystem implements ISystem {
     let minDistance = Infinity;
 
     for (let i = 0; i < this.foodEntities.length; i++) {
-      const entityId = this.foodEntities[i];
+      const entity = this.foodEntities[i];
 
-      const foodPosition = this.w.getComponent(entityId, 'Position');
+      const foodPosition = this.w.getComponent(entity, 'Position');
       const distance = vectorUtils.distance(hunterPosition, foodPosition);
 
       if (distance < minDistance) {
         minDistance = distance;
-        closestFoodId = entityId;
+        closestFoodId = entity;
       }
     }
 

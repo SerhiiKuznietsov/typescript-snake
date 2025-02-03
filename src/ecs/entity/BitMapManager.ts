@@ -5,12 +5,12 @@ export class BitMapManager {
   private _componentToBitMap: Map<string, number> = new Map();
   private _entityBitMaps: Map<EntityId, number> = new Map();
 
-  public createEntity(entityId: EntityId): void {
-    this._entityBitMaps.set(entityId, 0);
+  public createEntity(entity: EntityId): void {
+    this._entityBitMaps.set(entity, 0);
   }
 
-  public deleteEntity(entityId: EntityId): void {
-    this._entityBitMaps.delete(entityId);
+  public deleteEntity(entity: EntityId): void {
+    this._entityBitMaps.delete(entity);
   }
 
   public hasComponentBit(componentKey: string): boolean {
@@ -38,38 +38,35 @@ export class BitMapManager {
     return newBit;
   }
 
-  public addComponentBitToEntity(
-    entityId: EntityId,
-    componentKey: string
-  ): void {
+  public addComponentBitToEntity(entity: EntityId, componentKey: string): void {
     const componentBit = this.createComponentBit(componentKey);
-    const currentBit = this._entityBitMaps.get(entityId) || 0;
+    const currentBit = this._entityBitMaps.get(entity) || 0;
     const newBit = BitUtils.setBit(currentBit, componentBit);
 
-    this._entityBitMaps.set(entityId, newBit);
+    this._entityBitMaps.set(entity, newBit);
   }
 
   public removeComponentBitFromEntity(
-    entityId: EntityId,
+    entity: EntityId,
     componentKey: string
   ): void {
     const componentBit = this.getComponentBit(componentKey);
-    const currentBit = this._entityBitMaps.get(entityId) || 0;
+    const currentBit = this._entityBitMaps.get(entity) || 0;
     const newBit = BitUtils.clearBit(currentBit, componentBit);
 
-    this._entityBitMaps.set(entityId, newBit);
+    this._entityBitMaps.set(entity, newBit);
   }
 
-  public getEntityBitMap(entityId: EntityId): number {
-    return this._entityBitMaps.get(entityId) as number;
+  public getEntityBitMap(entity: EntityId): number {
+    return this._entityBitMaps.get(entity) as number;
   }
 
   public getEntitiesMatchingBitMap(bitMap: number): EntityId[] {
     const matchingEntities: EntityId[] = [];
 
-    this._entityBitMaps.forEach((entityBitMap, entityId) => {
+    this._entityBitMaps.forEach((entityBitMap, entity) => {
       if (BitUtils.areAllBitsSet(entityBitMap, bitMap)) {
-        matchingEntities.push(entityId);
+        matchingEntities.push(entity);
       }
     });
 

@@ -14,41 +14,41 @@ export class GridManager {
     return `${cellX}-${cellY}`;
   }
 
-  public addEntity(entityId: EntityId, { x, y }: Vector2): void {
+  public addEntity(entity: EntityId, { x, y }: Vector2): void {
     const key = this.getCellKey(x, y);
     if (!this._grid.has(key)) {
       this._grid.set(key, new Set());
     }
 
-    this._entitiesGrid.set(entityId, key);
+    this._entitiesGrid.set(entity, key);
 
-    this._grid.get(key)!.add(entityId);
+    this._grid.get(key)!.add(entity);
   }
 
-  public removeEntity(entityId: EntityId): void {
-    const key = this._entitiesGrid.get(entityId);
+  public removeEntity(entity: EntityId): void {
+    const key = this._entitiesGrid.get(entity);
     if (!key) {
-      console.warn(`Entity with id: "${entityId}" not found`);
+      console.warn(`Entity with id: "${entity}" not found`);
 
       return;
     }
 
     const cell = this._grid.get(key);
     if (!cell) {
-      console.warn(`Entity: "${entityId}" with key: "${key}" not found`);
+      console.warn(`Entity: "${entity}" with key: "${key}" not found`);
 
       return;
     }
 
-    cell.delete(entityId);
+    cell.delete(entity);
     if (cell.size === 0) {
       this._grid.delete(key);
     }
   }
 
-  public moveEntity(entityId: EntityId, newPosition: Vector2): void {
-    this.removeEntity(entityId);
-    this.addEntity(entityId, newPosition);
+  public moveEntity(entity: EntityId, newPosition: Vector2): void {
+    this.removeEntity(entity);
+    this.addEntity(entity, newPosition);
   }
 
   public getEntitiesInCell(x: number, y: number): Array<EntityId> {

@@ -1,10 +1,13 @@
-export const EcsEvents = {
-  ENTITY_CREATED: 'EntityCreated',
-  ENTITY_DELETED: 'EntityDeleted',
-  COMPONENT_ADDED: 'ComponentAdded',
-  COMPONENT_REMOVED: 'ComponentRemoved',
-  SYSTEM_ADDED: 'SystemAdded',
-  SYSTEM_REMOVED: 'SystemRemoved',
-} as const;
+import { ComponentMap } from '@/game/component/components';
+import { EntityId } from './Entity';
 
-export type EcsEventName = keyof typeof EcsEvents;
+export interface EventMap {
+  ENTITY_CREATED: { entity: EntityId };
+  ENTITY_DELETED: { entity: EntityId };
+  COMPONENT_ADDED: { entity: EntityId; componentName: keyof ComponentMap };
+  COMPONENT_REMOVED: { entity: EntityId; componentName: keyof ComponentMap };
+  SYSTEM_ADDED: { system: string };
+  SYSTEM_DESTROYED: { system: string };
+  SYSTEM_BEFORE_UPDATED: { system: string };
+  SYSTEM_UPDATED: { system: string };
+}
