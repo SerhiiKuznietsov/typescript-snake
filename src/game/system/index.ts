@@ -14,7 +14,7 @@ import { SnakeMovementSystem } from './SnakeMovementSystem';
 import { SnakeBoundarySystem } from './SnakeBoundarySystem';
 import { MovementAreaSystem } from './MovementAreaSystem';
 import { SystemRegistry } from '@/ecs/SystemRegistry';
-import { GridManager } from '../GridManager';
+import { GridManager } from '../managers/GridManager';
 import { SnakeInitSystem } from './SnakeInitSystem';
 import { FoodInitSystem } from './FoodInitSystem';
 import { PoisonInitSystem } from './PoisonInitSystem';

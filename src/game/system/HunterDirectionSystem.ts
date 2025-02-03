@@ -1,7 +1,7 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
-import { GridManager } from '../GridManager';
+import { GridManager } from '../managers/GridManager';
 import { Vector2 } from '../geometry/vector2';
 import { EntityId } from '@/ecs/Entity';
 

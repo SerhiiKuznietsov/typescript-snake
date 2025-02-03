@@ -1,5 +1,5 @@
 import { EntityId } from '@/ecs/Entity';
-import { Vector2 } from './geometry/vector2';
+import { Vector2 } from '../geometry/vector2';
 
 type KetType = string;
 export class GridManager {

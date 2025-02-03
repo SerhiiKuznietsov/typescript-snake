@@ -1,6 +1,6 @@
 import { World } from '@/ecs/World';
 import { ISystem } from '@/ecs/SystemRegistry';
-import { GridManager } from '../GridManager';
+import { GridManager } from '../managers/GridManager';
 
 export class DeathSystem implements ISystem {
   private entities = this.w.newGroup(['Death']);

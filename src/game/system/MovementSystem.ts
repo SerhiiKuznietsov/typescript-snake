@@ -1,7 +1,7 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
-import { GridManager } from '../GridManager';
+import { GridManager } from '../managers/GridManager';
 
 export class MovementSystem implements ISystem {
   public entities = this.w.newGroup(['Position', 'MoveTo']);

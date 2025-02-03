@@ -3,7 +3,7 @@ import { World } from '@/ecs/World';
 import { Vector2 } from '../geometry/vector2';
 import { range } from '../utils/random';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
-import { GridManager } from '../GridManager';
+import { GridManager } from '../managers/GridManager';
 export class RespawnSystem implements ISystem {
   public entities = this.w.newGroup(['Respawn', 'RespawnReady']);
 

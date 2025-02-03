@@ -14,7 +14,7 @@ import { keyBoard } from './keyBoard';
 import { initSystems } from './system';
 import { World } from '../ecs/World';
 import { SystemRegistry } from '../ecs/SystemRegistry';
-import { GridManager } from './GridManager';
+import { GridManager } from './managers/GridManager';
 import { registerComponents } from './component/components';
 
 export class Game {
