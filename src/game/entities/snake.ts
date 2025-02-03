@@ -1,7 +1,6 @@
 import { World } from '@/ecs/World';
-import { Square } from '../geometry/shape/square';
 
-export const createSnake = (w: World, gridSize: number): void => {
+export const createSnake = (w: World, size: number): void => {
   const entity = w.createEntity();
 
   w.getComponent(entity, 'PlayerInput');
@@ -15,7 +14,7 @@ export const createSnake = (w: World, gridSize: number): void => {
   w.getComponent(entity, 'Direction');
   w.getComponent(entity, 'CollisionHandler');
   w.getComponent(entity, 'Render', {
-    shape: new Square(gridSize),
     color: '#1fa224',
+    size,
   });
 };

@@ -47,6 +47,11 @@ export class Board {
     drawable.draw(this._context, vector2);
   }
 
+  public draw({ x, y }: Vector2, size: number, color: string): void {
+    this._context.fillStyle = color;
+    this._context.fillRect(x * size, y * size, size, size);
+  }
+
   public clear({ x, y }: Vector2, gridSize: number = 20) {
     this._context.clearRect(x * gridSize, y * gridSize, gridSize, gridSize);
   }

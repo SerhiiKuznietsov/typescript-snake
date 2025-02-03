@@ -11,7 +11,6 @@ export class RenderSystem implements ISystem {
   constructor(public w: World, private _board: Board) {}
 
   public update(): void {
-
     for (let i = 0; i < this.rebornEntities.length; i++) {
       const entity = this.rebornEntities[i];
 
@@ -39,9 +38,9 @@ export class RenderSystem implements ISystem {
   }
 
   private draw(entity: EntityId) {
-    const render = this.w.getComponent(entity, 'Render');
+    const { color, size } = this.w.getComponent(entity, 'Render');
     const position = this.w.getComponent(entity, 'Position');
 
-    this._board.render(render, position);
+    this._board.draw(position, size, color);
   }
 }

@@ -1,18 +1,8 @@
 import { IComponent } from '@/ecs/Component';
 import { ObjectPool } from '../../ecs/ObjectPool';
-import { Shape } from '../geometry/shape/shape';
-import { Vector2 } from '../geometry/vector2';
-import { Square } from '../geometry/shape/square';
 
 export class Render implements IComponent {
-  constructor(
-    public shape: Shape = new Square(20),
-    public color: string = '#000',
-  ) {}
-
-  public draw(ctx: CanvasRenderingContext2D, position: Vector2): void {
-    this.shape.draw(ctx, position, this.color);
-  }
+  constructor(public color: string = '#000', public size: number = 20) {}
 }
 
 export const RenderPool = new ObjectPool(() => new Render(), {
@@ -21,12 +11,12 @@ export const RenderPool = new ObjectPool(() => new Render(), {
       item.color = params.color;
     }
 
-    if (params?.shape) {
-      item.shape = params.shape;
+    if (params?.size) {
+      item.size = params.size;
     }
-
   },
   deactivate(item) {
     item.color = '#000';
+    item.size = 20;
   },
 });
