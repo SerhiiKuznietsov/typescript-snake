@@ -2,7 +2,6 @@ import { World } from '@/ecs/World';
 import { CollisionDetected, CollisionDetectedPool } from './CollisionDetected';
 import { CanMove, CanMovePool } from './CanMove';
 import { Death, DeathPool } from './Death';
-import { DebugFlag, DebugFlagPool } from './DebugFlag';
 import { Direction, DirectionPool } from './Direction';
 import { Food, FoodPool } from './Food';
 import { Hunter, HunterPool } from './Hunter';
@@ -32,7 +31,6 @@ export interface ComponentMap {
   CollisionDetected: CollisionDetected;
   CanMove: CanMove;
   Death: Death;
-  DebugFlag: DebugFlag;
   Direction: Direction;
   Food: Food;
   Hunter: Hunter;
@@ -61,7 +59,6 @@ export const registerComponents = (w: World) => {
     .registerPool('CollisionDetected', CollisionDetectedPool)
     .registerPool('CanMove', CanMovePool)
     .registerPool('Death', DeathPool)
-    .registerPool('DebugFlag', DebugFlagPool)
     .registerPool('Direction', DirectionPool)
     .registerPool('Food', FoodPool)
     .registerPool('Hunter', HunterPool)

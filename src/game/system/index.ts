@@ -5,7 +5,6 @@ import { PlayerInputSystem } from './PlayerInputSystem';
 import { CollisionSystem } from './СollisionSystem';
 import { RenderSystem } from './RenderSystem';
 import { AttackSystem } from './AttackSystem';
-import { DebugSystem } from './DebugSystem';
 import { MovementCooldownSystem } from './MovementCooldownSystem';
 import { RespawnCooldownSystem } from './RespawnCooldownSystem';
 import { RespawnSystem } from './RespawnSystem';
@@ -62,5 +61,4 @@ export const initSystems = (
     .addSystem(new RespawnCooldownSystem(world))
     .addSystem(new RespawnSystem(world, gridManager, { x, y }))
     .addSystem(new RenderSystem(world, board))
-    .addSystem(new DebugSystem(world));
 };

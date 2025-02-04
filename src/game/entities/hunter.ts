@@ -13,6 +13,4 @@ export const createHunter = (w: World, size: number): void => {
     color: '#380070',
     size,
   });
-
-  w.getComponent(entity, 'DebugFlag', { isOpen: true });
 };
