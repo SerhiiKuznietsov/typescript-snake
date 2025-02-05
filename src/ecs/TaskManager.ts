@@ -1,4 +1,5 @@
-import { World } from './World';
+import { EventMap } from './EcsEvents';
+import { EventBus } from './EventBus';
 
 export const TaskName = {
   ON_CYCLE_UPDATE: 'ON_CYCLE_UPDATE',
@@ -20,7 +21,7 @@ export class TaskManager {
   private _currentCycle: number = 0;
   private _currentSystem: SystemType | null = null;
 
-  constructor(private _w: World) {
+  constructor(private _eventBus: EventBus<EventMap>) {
     [
       TaskName.ON_CYCLE_UPDATE,
       TaskName.END_OF_NEXT_CYCLE,
@@ -41,8 +42,8 @@ export class TaskManager {
   };
 
   private initEventsListeners(): void {
-    this._w.bus.on('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
-    this._w.bus.on('SYSTEM_UPDATED', this.onSystemUpdate);
+    this._eventBus.on('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
+    this._eventBus.on('SYSTEM_UPDATED', this.onSystemUpdate);
   }
 
   public setSystem(currentSystem: SystemType | null = null): void {
@@ -133,8 +134,8 @@ export class TaskManager {
     this._currentCycle = 0;
     this._currentSystem = null;
 
-    this._w.bus.off('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
-    this._w.bus.off('SYSTEM_UPDATED', this.onSystemUpdate);
+    this._eventBus.off('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
+    this._eventBus.off('SYSTEM_UPDATED', this.onSystemUpdate);
   }
 }
 

@@ -14,7 +14,6 @@ import { IdManager } from './idManager';
 export type ComponentMapType = Map<string, IComponent>;
 
 export class EntityComponentStorage {
-  private _componentId = new IdManager();
   private _componentPoolManager = new ComponentPoolManager();
   private _entityStorage = new EntityStorage();
   private _entityBitMaps = new BitMapManager();
@@ -23,6 +22,10 @@ export class EntityComponentStorage {
 
   public get bitMap() {
     return this._entityBitMaps;
+  }
+
+  public hasEntity(entity: EntityId): boolean {
+    return this._entityStorage.hasEntity(entity);
   }
 
   public createEntity(): EntityId {
@@ -126,7 +129,6 @@ export class EntityComponentStorage {
   public destroy() {
     this._entityStorage.clear();
     this._componentPoolManager.clear();
-    this._componentId.clear();
     this._entityBitMaps.clear();
   }
 }

@@ -29,8 +29,11 @@ export class World {
     this._groupManager = new GroupManager(this.bus, this._storage);
 
     this.messageBroker = new MessageBroker();
+    this.task = new TaskManager(this.bus);
+  }
 
-    this.task = new TaskManager(this);
+  public hasEntity(entity: EntityId): boolean {
+    return this._storage.hasEntity(entity);
   }
 
   public createEntity(): EntityId {
@@ -116,7 +119,7 @@ export class World {
     this._groupManager.releaseGroup([has, not]);
   }
 
-  public destroy() {
+  public destroy(): void {
     this.bus.clear();
     this._storage.destroy();
     this._groupManager.destroy();

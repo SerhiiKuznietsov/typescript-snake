@@ -1,5 +1,5 @@
 import { ISystem } from '@/ecs/SystemRegistry';
-import { World } from '@/ecs/World';
+import { World } from '../../ecs/World';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 
 export class DirectionSystem implements ISystem {

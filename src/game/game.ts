@@ -19,7 +19,7 @@ import { InputManager } from './managers/InputManager';
 
 export class Game {
   private _config = new GameConfig();
-  private _inputManager = new InputManager()
+  private _inputManager = new InputManager();
   private _stateController = new GameStateController();
   private _loop = new Loop(this.update.bind(this), this.updateFPS.bind(this));
   private _board = new Board('.game__body', 'gameBoard', this._config);
