@@ -23,10 +23,10 @@ export class GroupManager {
     private _storage: EntityComponentStorage,
     private _bitMap: BitMapManager
   ) {
-    this._eventBus.on('COMPONENT_ADDED', this.onComponentChanged.bind(this));
-    this._eventBus.on('COMPONENT_REMOVED', this.onComponentChanged.bind(this));
-    this._eventBus.on('ENTITY_CREATED', this.onEntityCreated.bind(this));
-    this._eventBus.on('ENTITY_DELETED', this.onEntityDeleted.bind(this));
+    this._eventBus.on('COMPONENT_ADDED', this.onComponentChanged);
+    this._eventBus.on('COMPONENT_REMOVED', this.onComponentChanged);
+    this._eventBus.on('ENTITY_CREATED', this.onEntityCreated);
+    this._eventBus.on('ENTITY_DELETED', this.onEntityDeleted);
   }
 
   private validGroupQuery(query: GroupQuery) {
@@ -108,7 +108,9 @@ export class GroupManager {
     });
   }
 
-  private onComponentChanged({ entity }: { entity: EntityId }): void {
+  private onComponentChanged = ({
+    entity,
+  }: EventMap['COMPONENT_ADDED'] | EventMap['COMPONENT_REMOVED']): void => {
     this._groups.forEach(({ group }, key) => {
       const isInGroup = group.entitiesSet.has(entity);
       const entityBits = this._bitMap.getEntityBitMap(entity);
@@ -124,7 +126,7 @@ export class GroupManager {
         this.removeEntityFromGroup(group, key, entity);
       }
     });
-  }
+  };
 
   private addEntityToGroup(group: Group, groupKey: GroupKey, entity: EntityId) {
     group.entitiesSet.add(entity);
@@ -145,7 +147,7 @@ export class GroupManager {
     this._groupIndex.remove(entity, groupKey);
   }
 
-  private onEntityCreated({ entity }: { entity: EntityId }): void {
+  private onEntityCreated = ({ entity }: EventMap['ENTITY_CREATED']): void => {
     this._groups.forEach(({ group }, key) => {
       const entityBits = this._bitMap.getEntityBitMap(entity);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
@@ -157,9 +159,9 @@ export class GroupManager {
         this.addEntityToGroup(group, key, entity);
       }
     });
-  }
+  };
 
-  private onEntityDeleted({ entity }: { entity: EntityId }): void {
+  private onEntityDeleted = ({ entity }: EventMap['ENTITY_DELETED']): void => {
     const groupKeys = this._groupIndex.get(entity);
     if (!groupKeys) return;
 
@@ -171,11 +173,16 @@ export class GroupManager {
     });
 
     this._groupIndex.delete(entity);
-  }
+  };
 
   public destroy() {
     this._groups.clear();
     this._groupIndex.clear();
     this._groupMasks.clear();
+
+    this._eventBus.off('COMPONENT_ADDED', this.onComponentChanged);
+    this._eventBus.off('COMPONENT_REMOVED', this.onComponentChanged);
+    this._eventBus.off('ENTITY_CREATED', this.onEntityCreated);
+    this._eventBus.off('ENTITY_DELETED', this.onEntityDeleted);
   }
 }

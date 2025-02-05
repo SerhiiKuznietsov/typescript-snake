@@ -107,5 +107,10 @@ export class BitMapManager {
   public clear(): void {
     this._componentToBitMap.clear();
     this._entityBitMaps.clear();
+
+    this._eventBus.off('COMPONENT_ADDED', this.onEntityComponentCreated);
+    this._eventBus.off('COMPONENT_REMOVED', this.onEntityComponentDeleted);
+    this._eventBus.off('ENTITY_CREATED', this.onEntityCreated);
+    this._eventBus.off('ENTITY_DELETED', this.onEntityDeleted);
   }
 }
