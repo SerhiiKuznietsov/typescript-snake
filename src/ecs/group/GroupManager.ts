@@ -6,6 +6,7 @@ import { generateKey, GroupKey } from './GroupUtils';
 import { GroupIndex } from './GroupIndex';
 import { Group } from './Group';
 import { BitUtils } from '../utils/bit';
+import { BitMapManager } from '../entity/BitMapManager';
 
 export type GroupQuery = [string[]?, string[]?];
 
@@ -19,7 +20,8 @@ export class GroupManager {
 
   constructor(
     private _eventBus: EventBus<EventMap>,
-    private _storage: EntityComponentStorage
+    private _storage: EntityComponentStorage,
+    private _bitMap: BitMapManager
   ) {
     this._eventBus.on('COMPONENT_ADDED', this.onComponentChanged.bind(this));
     this._eventBus.on('COMPONENT_REMOVED', this.onComponentChanged.bind(this));
@@ -82,11 +84,11 @@ export class GroupManager {
     notBitMask: number;
   } {
     const hasBitMask = group.has
-      .map((component) => this._storage.bitMap.createComponentBit(component))
+      .map((component) => this._bitMap.createComponentBit(component))
       .reduce(BitUtils.setBit, 0);
 
     const notBitMask = group.not
-      .map((component) => this._storage.bitMap.createComponentBit(component))
+      .map((component) => this._bitMap.createComponentBit(component))
       .reduce(BitUtils.setBit, 0);
 
     return { hasBitMask, notBitMask };
@@ -96,7 +98,7 @@ export class GroupManager {
     const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
     this._storage.getAllEntities().forEach((entity) => {
-      const entityBits = this._storage.bitMap.getEntityBitMap(entity);
+      const entityBits = this._bitMap.getEntityBitMap(entity);
       if (
         BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
         BitUtils.areAnyBitsSet(entityBits, notBitMask) === false
@@ -109,7 +111,7 @@ export class GroupManager {
   private onComponentChanged({ entity }: { entity: EntityId }): void {
     this._groups.forEach(({ group }, key) => {
       const isInGroup = group.entitiesSet.has(entity);
-      const entityBits = this._storage.bitMap.getEntityBitMap(entity);
+      const entityBits = this._bitMap.getEntityBitMap(entity);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
       const matches =
@@ -145,7 +147,7 @@ export class GroupManager {
 
   private onEntityCreated({ entity }: { entity: EntityId }): void {
     this._groups.forEach(({ group }, key) => {
-      const entityBits = this._storage.bitMap.getEntityBitMap(entity);
+      const entityBits = this._bitMap.getEntityBitMap(entity);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
       if (

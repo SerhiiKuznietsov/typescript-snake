@@ -7,7 +7,6 @@ import {
   ComponentPoolManager,
   IComponentPool,
 } from './entity/ComponentPoolManager';
-import { EntityStorage } from './entity/EntityStorage';
 import { EventBus } from './EventBus';
 import { IdManager } from './idManager';
 
@@ -15,23 +14,18 @@ export type ComponentMapType = Map<string, IComponent>;
 
 export class EntityComponentStorage {
   private _componentPoolManager = new ComponentPoolManager();
-  private _entityStorage = new EntityStorage();
-  private _entityBitMaps = new BitMapManager();
+  private _components: Map<EntityId, ComponentMapType> = new Map();
+  private _entityId = new IdManager();
 
   constructor(private _eventBus: EventBus<EventMap>) {}
 
-  public get bitMap() {
-    return this._entityBitMaps;
-  }
-
   public hasEntity(entity: EntityId): boolean {
-    return this._entityStorage.hasEntity(entity);
+    return this._components.has(entity);
   }
 
   public createEntity(): EntityId {
-    const entity = this._entityStorage.createEntity();
-
-    this._entityBitMaps.createEntity(entity);
+    const entity = this._entityId.generateId();
+    this._components.set(entity, new Map());
 
     this._eventBus.emit('ENTITY_CREATED', { entity });
 
@@ -39,17 +33,16 @@ export class EntityComponentStorage {
   }
 
   public deleteEntity(entity: EntityId): void {
-    const entityComponents = this._entityStorage.getComponents(entity);
-    if (!entityComponents) {
+    if (!this.hasEntity(entity)) {
       throw new Error(`Entity with id: "${entity}" not found`);
     }
 
-    entityComponents.forEach((component, componentKey) => {
+    const components = this._components.get(entity);
+    components!.forEach((component, componentKey) => {
       this._componentPoolManager.releaseComponent(componentKey, component);
     });
 
-    this._entityStorage.deleteEntity(entity);
-    this._entityBitMaps.deleteEntity(entity);
+    this._components.delete(entity);
 
     this._eventBus.emit('ENTITY_DELETED', { entity });
   }
@@ -65,14 +58,22 @@ export class EntityComponentStorage {
     entity: EntityId,
     componentName: K
   ): boolean {
-    return this._entityStorage.hasComponent(entity, componentName);
+    const components = this._components.get(entity);
+    return components?.has(componentName) || false;
   }
 
   public getComponent<K extends keyof ComponentMap>(
     entity: EntityId,
     componentName: K
   ): ComponentMap[K] {
-    return this._entityStorage.getComponent(entity, componentName);
+    const components = this._components.get(entity);
+    const component = components?.get(componentName);
+    if (!component) {
+      throw new Error(
+        `Component with key: "${componentName}" not found for entity: ${entity}`
+      );
+    }
+    return component as ComponentMap[K];
   }
 
   public addComponent<K extends keyof ComponentMap>(
@@ -80,7 +81,7 @@ export class EntityComponentStorage {
     componentName: K,
     params?: Partial<ComponentMap[K]>
   ): ComponentMap[K] {
-    if (!this._entityStorage.hasEntity(entity)) {
+    if (!this.hasEntity(entity)) {
       throw new Error(`Entity with ID ${entity} does not exist.`);
     }
 
@@ -89,9 +90,11 @@ export class EntityComponentStorage {
       params
     );
 
-    this._entityStorage.addComponent(entity, componentName, component);
-
-    this._entityBitMaps.addComponentBitToEntity(entity, componentName);
+    const entityComponents = this._components.get(entity);
+    if (!entityComponents) {
+      throw new Error(`Entity with ID ${entity} does not exist.`);
+    }
+    entityComponents.set(componentName, component);
 
     this._eventBus.emit('COMPONENT_ADDED', { entity, componentName });
 
@@ -102,15 +105,25 @@ export class EntityComponentStorage {
     entity: EntityId,
     componentName: K
   ): void {
-    if (!this._entityStorage.hasEntity(entity)) {
+    if (!this.hasEntity(entity)) {
       throw new Error(`Entity with ID: "${entity}" does not exist.`);
     }
 
-    const component = this._entityStorage.getComponent(entity, componentName);
-    this._entityStorage.removeComponent(entity, componentName);
-    this._componentPoolManager.releaseComponent(componentName, component);
+    const entityComponents = this._components.get(entity);
+    if (!entityComponents) {
+      throw new Error(`Entity with ID: "${entity}" does not exist.`);
+    }
 
-    this._entityBitMaps.removeComponentBitFromEntity(entity, componentName);
+    const component = entityComponents.get(componentName);
+    if (!component) {
+      throw new Error(
+        `Component with key: "${componentName}" not found for entity: ${entity}`
+      );
+    }
+
+    entityComponents.delete(componentName);
+
+    this._componentPoolManager.releaseComponent(componentName, component);
 
     this._eventBus.emit('COMPONENT_REMOVED', {
       entity,
@@ -118,17 +131,21 @@ export class EntityComponentStorage {
     });
   }
 
-  public getComponents(entity: EntityId): Map<string, IComponent> {
-    return this._entityStorage.getComponents(entity);
+  public getComponents(entity: EntityId): ComponentMapType {
+    const componentsMap = this._components.get(entity);
+    if (!componentsMap) {
+      throw new Error(`Components for entity: ${entity} not found`);
+    }
+    return componentsMap;
   }
 
   public getAllEntities(): EntityId[] {
-    return this._entityStorage.getAllEntities();
+    return Array.from(this._components.keys());
   }
 
   public destroy() {
-    this._entityStorage.clear();
     this._componentPoolManager.clear();
-    this._entityBitMaps.clear();
+    this._components.clear();
+    this._entityId.clear();
   }
 }

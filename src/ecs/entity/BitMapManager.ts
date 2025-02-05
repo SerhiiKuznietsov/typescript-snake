@@ -1,19 +1,50 @@
+import { EventMap } from '../EcsEvents';
 import { EntityId } from '../Entity';
+import { EventBus } from '../EventBus';
 import { BitUtils } from '../utils/bit';
 
 export class BitMapManager {
   private _componentToBitMap: Map<string, number> = new Map();
   private _entityBitMaps: Map<EntityId, number> = new Map();
 
-  public createEntity(entity: EntityId): void {
+  constructor(private _eventBus: EventBus<EventMap>) {
+    this._eventBus.on('COMPONENT_ADDED', this.onEntityComponentCreated);
+    this._eventBus.on('COMPONENT_REMOVED', this.onEntityComponentDeleted);
+    this._eventBus.on('ENTITY_CREATED', this.onEntityCreated);
+    this._eventBus.on('ENTITY_DELETED', this.onEntityDeleted);
+  }
+
+  private onEntityCreated = ({ entity }: EventMap['ENTITY_CREATED']) => {
+    this.createEntity(entity);
+  };
+
+  private onEntityDeleted = ({ entity }: EventMap['ENTITY_DELETED']) => {
+    this.deleteEntity(entity);
+  };
+
+  private onEntityComponentCreated = ({
+    entity,
+    componentName,
+  }: EventMap['COMPONENT_ADDED']) => {
+    this.addComponentBitToEntity(entity, componentName);
+  };
+
+  private onEntityComponentDeleted = ({
+    entity,
+    componentName,
+  }: EventMap['COMPONENT_REMOVED']) => {
+    this.removeComponentBitFromEntity(entity, componentName);
+  };
+
+  private createEntity(entity: EntityId): void {
     this._entityBitMaps.set(entity, 0);
   }
 
-  public deleteEntity(entity: EntityId): void {
+  private deleteEntity(entity: EntityId): void {
     this._entityBitMaps.delete(entity);
   }
 
-  public hasComponentBit(componentKey: string): boolean {
+  private hasComponentBit(componentKey: string): boolean {
     return this._componentToBitMap.has(componentKey);
   }
 
@@ -28,7 +59,7 @@ export class BitMapManager {
   }
 
   public createComponentBit(componentKey: string): number {
-    if (this._componentToBitMap.has(componentKey)) {
+    if (this.hasComponentBit(componentKey)) {
       return this._componentToBitMap.get(componentKey)!;
     }
 

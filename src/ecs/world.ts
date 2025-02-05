@@ -10,12 +10,14 @@ import { IComponentPool } from './entity/ComponentPoolManager';
 import { ComponentMap } from '@/game/component/components';
 import { TaskCondition, TaskManager } from './TaskManager';
 import { EventMap } from './EcsEvents';
+import { BitMapManager } from './entity/BitMapManager';
 
 /*
   TODO - need create Debugger class
 */
 
 export class World {
+  private _entityBitMaps: BitMapManager;
   private _storage: EntityComponentStorage;
   private _groupManager: GroupManager;
   public messageBroker: MessageBroker;
@@ -24,12 +26,16 @@ export class World {
 
   constructor() {
     this.bus = new EventBus();
-
-    this._storage = new EntityComponentStorage(this.bus);
-    this._groupManager = new GroupManager(this.bus, this._storage);
-
     this.messageBroker = new MessageBroker();
     this.task = new TaskManager(this.bus);
+
+    this._storage = new EntityComponentStorage(this.bus);
+    this._entityBitMaps = new BitMapManager(this.bus);
+    this._groupManager = new GroupManager(
+      this.bus,
+      this._storage,
+      this._entityBitMaps
+    );
   }
 
   public hasEntity(entity: EntityId): boolean {
@@ -123,6 +129,7 @@ export class World {
     this.bus.clear();
     this._storage.destroy();
     this._groupManager.destroy();
+    this._entityBitMaps.clear();
     this.messageBroker.clearAll();
     this.task.clear();
   }
