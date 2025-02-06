@@ -19,11 +19,11 @@ import { InputManager } from './managers/InputManager';
 
 export class Game {
   private _config = new GameConfig();
-  private _inputManager = new InputManager();
   private _stateController = new GameStateController();
   private _loop = new Loop(this.update.bind(this), this.updateFPS.bind(this));
   private _board = new Board('.game__body', 'gameBoard', this._config);
-  private _gridManager = new GridManager(5);
+  private _gridManager = new GridManager();
+  private _inputManager = new InputManager();
   private _world = new World();
   private _systems = new SystemRegistry(this._world);
   private _resetBtn = new KeyControl(
@@ -81,6 +81,7 @@ export class Game {
     this._board.init();
     this._inputManager.addHandler('Space', this._pauseHandler);
     this._resetBtn.on();
+    this._gridManager.init(this._config.lastVector);
 
     gameObserver.attach((stateName) => {
       if (stateName === this._stateController.getActive().name) return;
@@ -121,5 +122,6 @@ export class Game {
     this._board.clearFull();
     this._loop.stop();
     this._systems.destroy();
+    this._gridManager.clear();
   }
 }

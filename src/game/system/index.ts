@@ -59,6 +59,6 @@ export const initSystems = (
     // .addSystem(new HunterInitSystem(world, gridSize, config.hunterCount))
     .addSystem(new PoisonInitSystem(world, gridSize, config.poisonCount))
     .addSystem(new RespawnCooldownSystem(world))
-    .addSystem(new RespawnSystem(world, gridManager, { x, y }))
+    .addSystem(new RespawnSystem(world, gridManager))
     .addSystem(new RenderSystem(world, board))
 };

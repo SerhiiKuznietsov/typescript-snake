@@ -1,28 +1,34 @@
 import { EntityId } from '@/ecs/Entity';
 import { Vector2 } from '../geometry/vector2';
+import { createKey, parseKey } from '../utils/id';
+import { range } from '../utils/random';
 
 type KetType = string;
 export class GridManager {
   private _grid: Map<KetType, Set<EntityId>> = new Map();
+  private _emptyGrid: Set<KetType> = new Set();
   private _entitiesGrid: Map<EntityId, KetType> = new Map();
 
-  constructor(private _cellSize: number) {}
+  public init({ x, y }: Vector2): void {
+    for (let i = 0; i < y; i++) {
+      for (let j = 0; j < x; j++) {
+        const key = createKey(j, i);
 
-  private getCellKey(x: number, y: number): KetType {
-    const cellX = Math.floor(x / this._cellSize);
-    const cellY = Math.floor(y / this._cellSize);
-    return `${cellX}-${cellY}`;
+        this._emptyGrid.add(key);
+      }
+    }
   }
 
   public addEntity(entity: EntityId, { x, y }: Vector2): void {
-    const key = this.getCellKey(x, y);
+    const key = createKey(x, y);
     if (!this._grid.has(key)) {
       this._grid.set(key, new Set());
     }
 
-    this._entitiesGrid.set(entity, key);
-
     this._grid.get(key)!.add(entity);
+
+    this._entitiesGrid.set(entity, key);
+    this._emptyGrid.delete(key);
   }
 
   public removeEntity(entity: EntityId): void {
@@ -41,9 +47,10 @@ export class GridManager {
     }
 
     cell.delete(entity);
-    if (cell.size === 0) {
-      this._grid.delete(key);
-    }
+    if (cell.size !== 0) return;
+
+    this._emptyGrid.add(key);
+    this._grid.delete(key);
   }
 
   public moveEntity(entity: EntityId, newPosition: Vector2): void {
@@ -51,39 +58,28 @@ export class GridManager {
     this.addEntity(entity, newPosition);
   }
 
-  public getEntitiesInCell(x: number, y: number): Array<EntityId> {
-    const key = this.getCellKey(x, y);
+  public getEmptyCell(): Vector2 | undefined {
+    if (this._emptyGrid.size === 0) return;
+
+    const randomNum = range(0, this._emptyGrid.size - 1);
+
+    const key = [...this._emptyGrid.keys()][randomNum];
+
+    this._emptyGrid.delete(key);
+
+    return parseKey(key);
+  }
+
+  public getEntitiesInCell({ x, y }: Vector2): Array<EntityId> {
+    const key = createKey(x, y);
     const set = this._grid.get(key) || new Set();
 
     return [...set];
   }
 
-  public getEntitiesNearby(position: Vector2): EntityId[] {
-    const nearbyEntities: Set<EntityId> = new Set();
-
-    const offsets = [-1, 0, 1];
-
-    for (let i = 0; i < offsets.length; i++) {
-      const dx = offsets[i];
-
-      for (let j = 0; j < offsets.length; j++) {
-        const dy = offsets[j];
-
-        const key = this.getCellKey(
-          position.x + dx * this._cellSize,
-          position.y + dy * this._cellSize
-        );
-        const entities = this._grid.get(key);
-        if (!entities || !entities.size) continue;
-
-        entities.forEach((entity) => nearbyEntities.add(entity));
-      }
-    }
-
-    return [...nearbyEntities.values()];
-  }
-
   public clear(): void {
     this._grid.clear();
+    this._emptyGrid.clear();
+    this._entitiesGrid.clear();
   }
 }

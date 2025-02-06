@@ -21,12 +21,17 @@ export class CollisionSystem implements ISystem {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
       const position = this.w.getComponent(entity, 'Position');
-      const nearbyEntities = this._grid.getEntitiesNearby(position);
+      const nearbyEntities = this._grid.getEntitiesInCell(position);
 
       for (let i = 0; i < nearbyEntities.length; i++) {
         const otherEntity = nearbyEntities[i];
 
-        if (entity === otherEntity) continue;
+        if (
+          entity === otherEntity ||
+          !this.w.hasComponent(otherEntity, 'Position')
+        ) {
+          continue;
+        }
 
         const otherPosition = this.w.getComponent(otherEntity, 'Position');
         if (!vectorUtils.isEqual(position, otherPosition)) continue;

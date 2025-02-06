@@ -68,10 +68,7 @@ export class HunterDirectionSystem implements ISystem {
   }
 
   private isPositionFree(entity: EntityId, position: Vector2): boolean {
-    const entitiesAtPosition = this._grid.getEntitiesInCell(
-      position.x,
-      position.y
-    );
+    const entitiesAtPosition = this._grid.getEntitiesInCell(position);
 
     let len = entitiesAtPosition.length;
 
