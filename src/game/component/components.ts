@@ -23,6 +23,7 @@ import { Attacker, AttackerPool } from './Attacker';
 import { Hunts, HuntsPool } from './Hunts';
 import { Reborn, RebornPool } from './Reborn';
 import { PrevPosition, PrevPositionPool } from './PrevPosition';
+import { RespawnPosition, RespawnPositionPool } from './RespawnPosition';
 
 // TODO - We need to remove the hardwiring of this interface. It is possible to pass it when creating a world
 
@@ -51,6 +52,7 @@ export interface ComponentMap {
   Attacker: Attacker;
   Reborn: Reborn;
   PrevPosition: PrevPosition;
+  RespawnPosition: RespawnPosition;
 }
 
 export const registerComponents = (w: World) => {
@@ -77,5 +79,6 @@ export const registerComponents = (w: World) => {
     .registerPool('Target', TargetPool)
     .registerPool('Velocity', VelocityPool)
     .registerPool('Reborn', RebornPool)
-    .registerPool('PrevPosition', PrevPositionPool);
+    .registerPool('PrevPosition', PrevPositionPool)
+    .registerPool('RespawnPosition', RespawnPositionPool);
 };

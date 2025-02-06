@@ -22,8 +22,9 @@ import { HunterInitSystem } from './HunterInitSystem';
 import { HunterTargetSystem } from './HunterTargetSystem';
 import { HunterDirectionSystem } from './HunterDirectionSystem';
 import { MovementSystem } from './MovementSystem';
-import { DirectionSystem } from './DirectionSystem';
+import { MovementDirectionSystem } from './MovementDirectionSystem';
 import { InputManager } from '../managers/InputManager';
+import { RespawnPositionSystem } from './RespawnPositionSystem';
 
 export const initSystems = (
   system: SystemRegistry,
@@ -44,7 +45,7 @@ export const initSystems = (
     .addSystem(new PlayerInputSystem(world, inputManager))
     .addSystem(new HunterTargetSystem(world))
     .addSystem(new MovementCooldownSystem(world))
-    .addSystem(new DirectionSystem(world))
+    .addSystem(new MovementDirectionSystem(world))
     .addSystem(new HunterDirectionSystem(world, gridManager))
     .addSystem(new MovementPositionCalculationSystem(world))
     .addSystem(new MovementAreaSystem(world, x, y))
@@ -59,6 +60,7 @@ export const initSystems = (
     // .addSystem(new HunterInitSystem(world, gridSize, config.hunterCount))
     .addSystem(new PoisonInitSystem(world, gridSize, config.poisonCount))
     .addSystem(new RespawnCooldownSystem(world))
+    .addSystem(new RespawnPositionSystem(world, gridManager))
     .addSystem(new RespawnSystem(world, gridManager))
-    .addSystem(new RenderSystem(world, board))
+    .addSystem(new RenderSystem(world, board));
 };
