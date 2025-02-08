@@ -2,7 +2,7 @@ import { ISystem, UpdateSystemData } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 
 export class RespawnCooldownSystem implements ISystem {
-  public entities = this.w.newGroup(['Respawn'], ['Position']);
+  public entities = this.w.newGroup(['Respawn', 'Death'], ['Position']);
 
   constructor(public w: World) {}
 
