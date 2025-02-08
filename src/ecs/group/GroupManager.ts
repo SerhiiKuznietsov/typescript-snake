@@ -10,23 +10,26 @@ import { BitMapManager } from '../entity/BitMapManager';
 
 export type GroupQuery = [string[]?, string[]?];
 
+interface BitMaskData {
+  hasBitMask: number;
+  notBitMask: number;
+}
+
 export class GroupManager {
   private _groups: Map<GroupKey, { group: Group; count: number }> = new Map();
   private _groupIndex: GroupIndex = new GroupIndex();
-  private _groupMasks: Map<
-    GroupKey,
-    { hasBitMask: number; notBitMask: number }
-  > = new Map();
+  private _groupMasks: Map<GroupKey, BitMaskData> = new Map();
 
   constructor(
     private _eventBus: EventBus<EventMap>,
     private _storage: EntityComponentStorage,
     private _bitMap: BitMapManager
   ) {
-    this._eventBus.on('COMPONENT_ADDED', this.onComponentChanged);
-    this._eventBus.on('COMPONENT_REMOVED', this.onComponentChanged);
-    this._eventBus.on('ENTITY_CREATED', this.onEntityCreated);
-    this._eventBus.on('ENTITY_DELETED', this.onEntityDeleted);
+    this._eventBus
+      .on('COMPONENT_ADDED', this.onComponentChanged)
+      .on('COMPONENT_REMOVED', this.onComponentChanged)
+      .on('ENTITY_CREATED', this.onEntityCreated)
+      .on('ENTITY_DELETED', this.onEntityDeleted);
   }
 
   private validGroupQuery(query: GroupQuery) {
@@ -79,19 +82,24 @@ export class GroupManager {
     this._groupMasks.delete(key);
   }
 
-  private calculateGroupMasks(group: Group): {
-    hasBitMask: number;
-    notBitMask: number;
-  } {
-    const hasBitMask = group.has
-      .map((component) => this._bitMap.createComponentBit(component))
-      .reduce(BitUtils.setBit, 0);
+  private getBitMaskForComponentArr(arr: string[]) {
+    let result = 0;
 
-    const notBitMask = group.not
-      .map((component) => this._bitMap.createComponentBit(component))
-      .reduce(BitUtils.setBit, 0);
+    for (let i = 0; i < arr.length; i++) {
+      const component = arr[i];
+      const bit = this._bitMap.createComponentBit(component);
 
-    return { hasBitMask, notBitMask };
+      result = BitUtils.setBit(result, bit);
+    }
+
+    return result;
+  }
+
+  private calculateGroupMasks(group: Group): BitMaskData {
+    return {
+      hasBitMask: this.getBitMaskForComponentArr(group.has),
+      notBitMask: this.getBitMaskForComponentArr(group.not),
+    };
   }
 
   private updateGroupEntitiesWithMasks(group: Group, key: GroupKey): void {
@@ -180,9 +188,10 @@ export class GroupManager {
     this._groupIndex.clear();
     this._groupMasks.clear();
 
-    this._eventBus.off('COMPONENT_ADDED', this.onComponentChanged);
-    this._eventBus.off('COMPONENT_REMOVED', this.onComponentChanged);
-    this._eventBus.off('ENTITY_CREATED', this.onEntityCreated);
-    this._eventBus.off('ENTITY_DELETED', this.onEntityDeleted);
+    this._eventBus
+      .off('COMPONENT_ADDED', this.onComponentChanged)
+      .off('COMPONENT_REMOVED', this.onComponentChanged)
+      .off('ENTITY_CREATED', this.onEntityCreated)
+      .off('ENTITY_DELETED', this.onEntityDeleted);
   }
 }
