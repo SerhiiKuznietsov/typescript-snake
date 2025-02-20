@@ -1,5 +1,12 @@
+const controller = new AbortController();
+controller.signal;
+
+type KeyCodeType = KeyboardEvent['code'];
+
 export class InputManager {
-  private _mapCodeHandler = new Map<string, Function[]>();
+  private _mapCodeHandler = new Map<KeyCodeType, Function[]>();
+  private _controller = new AbortController();
+  private _active: boolean = false;
 
   constructor() {
     this.on();
@@ -8,24 +15,41 @@ export class InputManager {
   private rootHandler = (e: KeyboardEvent): void => {
     const handlerArr = this._mapCodeHandler.get(e.code);
 
-    if (!handlerArr || !handlerArr.length) return;
+    if (!handlerArr?.length) return;
 
     handlerArr.forEach((handlerItem) => handlerItem(e));
   };
 
+  public isActive(): boolean {
+    return this._active;
+  }
+
+  public toggle(): void {
+    this._active ? this.off() : this.on();
+  }
+
   public on(): this {
-    document.addEventListener('keydown', this.rootHandler);
+    if (this._active) return this;
+
+    this._active = true;
+    this._controller = new AbortController();
+    const signal = this._controller.signal;
+
+    document.addEventListener('keydown', this.rootHandler, { signal });
 
     return this;
   }
 
   public off(): this {
-    document.removeEventListener('keydown', this.rootHandler);
+    if (!this._active) return this;
+
+    this._active = false;
+    this._controller.abort();
 
     return this;
   }
 
-  public addHandler(keyCode: KeyboardEvent['code'], handler: Function): this {
+  public addHandler(keyCode: KeyCodeType, handler: Function): this {
     if (!this._mapCodeHandler.has(keyCode)) {
       this._mapCodeHandler.set(keyCode, []);
     }
@@ -35,10 +59,7 @@ export class InputManager {
     return this;
   }
 
-  public removeHandler(
-    keyCode: KeyboardEvent['code'],
-    handler: Function
-  ): this {
+  public removeHandler(keyCode: KeyCodeType, handler: Function): this {
     if (!this._mapCodeHandler.has(keyCode)) return this;
 
     const handlerArr = this._mapCodeHandler.get(keyCode) as Function[];
@@ -54,7 +75,7 @@ export class InputManager {
     return this;
   }
 
-  public removeHandlersByCode(keyCode: string): this {
+  public removeHandlersByCode(keyCode: KeyCodeType): this {
     this._mapCodeHandler.delete(keyCode);
 
     return this;
