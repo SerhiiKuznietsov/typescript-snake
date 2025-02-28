@@ -13,7 +13,7 @@ export const createSnakeBody = (
 
   w.getComponent(entity, 'SnakeBody', { head, next });
   w.getComponent(entity, 'Reborn');
-  w.getComponent(entity, 'Position', { x: position.x, y: position.y });
+  w.getComponent(entity, 'RespawnPosition', { x: position.x, y: position.y });
   w.getComponent(entity, 'Render', {
     color: '#176639',
     size,

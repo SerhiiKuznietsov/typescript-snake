@@ -1,6 +1,6 @@
 export const createKey = (x: number, y: number): string => `${x}-${y}`;
 export const parseKey = (id: string): { x: number; y: number } => {
-  const arr = id.split('-');
+  const [x, y] = id.split('-');
 
-  return { x: +arr[0], y: +arr[1] };
+  return { x: +x, y: +y };
 };

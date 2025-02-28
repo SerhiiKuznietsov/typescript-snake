@@ -8,7 +8,7 @@ export const createSnake = (w: World, size: number): void => {
   w.getComponent(entity, 'Reborn');
   w.getComponent(entity, 'SnakeBody', { head: entity });
   w.getComponent(entity, 'Attacker');
-  w.getComponent(entity, 'Position', { x: 0, y: 0 });
+  w.getComponent(entity, 'RespawnPosition', { x: 0, y: 0 });
   w.getComponent(entity, 'Movement', { moveInterval: 100 });
   w.getComponent(entity, 'Velocity', { value: 1 });
   w.getComponent(entity, 'Direction');
