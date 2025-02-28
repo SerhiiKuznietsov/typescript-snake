@@ -2,7 +2,6 @@ import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { Snake } from '../component/Snake';
-import { GridManager } from '../managers/GridManager';
 import { createSnakeBody } from '../entities/snakeBody';
 import { Vector2 } from '../geometry/vector2';
 import { EntityId } from '@/ecs/Entity';
@@ -13,7 +12,6 @@ export class SnakeMovementSystem implements ISystem {
 
   constructor(
     public w: World,
-    private _grid: GridManager,
     private _gridSize: number
   ) {}
 
@@ -42,8 +40,6 @@ export class SnakeMovementSystem implements ISystem {
     }
 
     this.w.getComponent(tail, 'MoveTo', prevPosition);
-
-    this._grid.moveEntity(tail, prevPosition);
   }
 
   private addNewSegment(
@@ -57,7 +53,7 @@ export class SnakeMovementSystem implements ISystem {
       this._gridSize,
       prevPosition,
       entity,
-      entity,
+      entity
     );
 
     if (snake.tail && snakeBody.prev) {
@@ -72,7 +68,7 @@ export class SnakeMovementSystem implements ISystem {
       snake.tail = newSegment;
     }
 
-    this.w.getComponent(newSegment, 'RespawnPosition', prevPosition)
+    this.w.getComponent(newSegment, 'RespawnPosition', prevPosition);
   }
 
   private removeLastSegment(snake: Snake, snakeBody: SnakeBody) {
@@ -96,12 +92,13 @@ export class SnakeMovementSystem implements ISystem {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
       const snake = this.w.getComponent(entity, 'Snake');
-      const snakeBody = this.w.getComponent(entity, 'SnakeBody');
-      const position = this.w.getComponent(entity, 'Position');
-
-      const prevPosition = vectorUtils.copy(position);
 
       if (snake.makeSegments === 0 && !snake.segments) continue;
+
+      const snakeBody = this.w.getComponent(entity, 'SnakeBody');
+      const prevPosition = vectorUtils.copy(
+        this.w.getComponent(entity, 'Position')
+      );
 
       if (snake.makeSegments > 0) {
         snake.segments++;

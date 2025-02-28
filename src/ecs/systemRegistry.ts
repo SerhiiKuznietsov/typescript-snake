@@ -15,7 +15,6 @@ export interface ISystem {
 
 export class SystemRegistry {
   private _systems: ISystem[] = [];
-  private _currentSystem: string | null = null;
 
   constructor(private _w: World) {}
 
@@ -40,24 +39,20 @@ export class SystemRegistry {
     for (let i = 0; i < this._systems.length; i++) {
       const system = this._systems[i];
 
-      this._currentSystem = system.constructor.name;
-
       this._w.bus.emit('SYSTEM_BEFORE_UPDATED', {
-        system: this._currentSystem,
+        system: system.constructor.name,
       });
 
       system.update({ deltaTime });
 
       this._w.bus.emit('SYSTEM_UPDATED', {
-        system: this._currentSystem,
+        system: system.constructor.name,
       });
 
       if (system.oneShot) {
         this.removeSystem(system);
         i--;
       }
-
-      this._currentSystem = null;
     }
 
     this._w.task.processCycleUpdate();
@@ -83,6 +78,5 @@ export class SystemRegistry {
     }
 
     this._systems = [];
-    this._currentSystem = null;
   }
 }
