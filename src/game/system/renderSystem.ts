@@ -12,12 +12,6 @@ export class RenderSystem implements ISystem {
   constructor(public w: World, private _board: Board) {}
 
   public update(): void {
-    for (let i = 0; i < this.rebornEntities.length; i++) {
-      const entity = this.rebornEntities[i];
-
-      this.draw(entity);
-    }
-
     for (let i = 0; i < this.deathEntities.length; i++) {
       const entity = this.deathEntities[i];
       const position = this.w.getComponent(entity, 'Position');
@@ -28,11 +22,20 @@ export class RenderSystem implements ISystem {
     for (let i = 0; i < this.movedEntities.length; i++) {
       const entity = this.movedEntities[i];
 
-      if (this.w.hasComponent(entity, 'PrevPosition')) {
-        const prevPosition = this.w.getComponent(entity, 'PrevPosition');
+      if (!this.w.hasComponent(entity, 'PrevPosition')) continue;
+      const prevPosition = this.w.getComponent(entity, 'PrevPosition');
 
-        this.clear(prevPosition);
-      }
+      this.clear(prevPosition);
+    }
+
+    for (let i = 0; i < this.movedEntities.length; i++) {
+      const entity = this.movedEntities[i];
+
+      this.draw(entity);
+    }
+
+    for (let i = 0; i < this.rebornEntities.length; i++) {
+      const entity = this.rebornEntities[i];
 
       this.draw(entity);
     }

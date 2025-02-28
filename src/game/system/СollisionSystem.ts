@@ -28,6 +28,7 @@ export class CollisionSystem implements ISystem {
 
         if (
           entity === otherEntity ||
+          this.w.hasComponent(otherEntity, 'Death') ||
           !this.w.hasComponent(otherEntity, 'Position')
         ) {
           continue;

@@ -52,49 +52,44 @@ export class SnakeMovementSystem implements ISystem {
     snakeBody: SnakeBody,
     prevPosition: Vector2
   ) {
-    const next = snake.tail || entity;
-
     const newSegment = createSnakeBody(
       this.w,
       this._gridSize,
       prevPosition,
       entity,
-      next
+      entity,
     );
 
-    if (!snakeBody.prev) {
+    if (snake.tail && snakeBody.prev) {
+      const prevSegment = this.w.getComponent(snakeBody.prev, 'SnakeBody');
+
+      prevSegment.next = newSegment;
       snakeBody.prev = newSegment;
     }
 
-    if (snake.tail) {
-      const tailSegment = this.w.getComponent(snake.tail, 'SnakeBody');
-
-      tailSegment.prev = newSegment;
+    if (!snake.tail && !snakeBody.prev) {
+      snakeBody.prev = newSegment;
+      snake.tail = newSegment;
     }
 
-    snake.tail = newSegment;
-
-    this._grid.addEntity(
-      newSegment,
-      this.w.getComponent(newSegment, 'Position')
-    );
+    this.w.getComponent(newSegment, 'RespawnPosition', prevPosition)
   }
 
   private removeLastSegment(snake: Snake, snakeBody: SnakeBody) {
     if (!snake.tail) return;
 
-    if (snake.tail === snakeBody.prev) {
-      snake.tail = null;
-      snakeBody.prev = null;
-    } else {
-      const tailSegment = this.w.getComponent(snake.tail, 'SnakeBody');
-      const nextSegment = this.w.getComponent(tailSegment.next!, 'SnakeBody');
+    this.w.getComponent(snake.tail, 'Death');
 
-      nextSegment.prev = null;
-      snake.tail = nextSegment.next;
+    if (snake.tail === snakeBody.prev) {
+      snakeBody.prev = snake.tail = null;
+      return;
     }
 
-    this.w.getComponent(snake.tail!, 'Death');
+    const tailSegment = this.w.getComponent(snake.tail, 'SnakeBody');
+    const nextTailSegment = this.w.getComponent(tailSegment.next!, 'SnakeBody');
+
+    nextTailSegment.prev = null;
+    snake.tail = tailSegment.next;
   }
 
   public update(): void {

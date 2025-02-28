@@ -3,7 +3,7 @@ import { ISystem } from '@/ecs/SystemRegistry';
 import { GridManager } from '../managers/GridManager';
 
 export class DeathSystem implements ISystem {
-  private entities = this.w.newGroup(['Death']);
+  private entities = this.w.newGroup(['Death', 'Position']);
 
   constructor(public w: World, private _grid: GridManager) {}
 
