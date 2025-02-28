@@ -19,6 +19,10 @@ export class GridManager {
     }
   }
 
+  public hasEntity(entity: EntityId): boolean {
+    return this._entitiesGrid.has(entity);
+  }
+
   public addEntity(entity: EntityId, { x, y }: Vector2): void {
     const key = createKey(x, y);
     if (!this._grid.has(key)) {
@@ -34,20 +38,18 @@ export class GridManager {
   public removeEntity(entity: EntityId): void {
     const key = this._entitiesGrid.get(entity);
     if (!key) {
-      console.warn(`Entity with id: "${entity}" not found`);
-
-      return;
+      throw new Error(`Entity with id: "${entity}" not found`);
     }
 
-    const cell = this._grid.get(key);
-    if (!cell) {
-      console.warn(`Entity: "${entity}" with key: "${key}" not found`);
+    this._entitiesGrid.delete(entity);
 
-      return;
+    const cellEntities = this._grid.get(key);
+    if (!cellEntities) {
+      throw new Error(`Entity: "${entity}" with key: "${key}" not found`);
     }
 
-    cell.delete(entity);
-    if (cell.size !== 0) return;
+    cellEntities.delete(entity);
+    if (cellEntities.size !== 0) return;
 
     this._emptyGrid.add(key);
     this._grid.delete(key);
