@@ -8,7 +8,7 @@ import { Hunter, HunterPool } from './Hunter';
 import { Moved, MovedPool } from './Moved';
 import { Movement, MovementPool } from './Movement';
 import { MoveTo, MoveToPool } from './MoveTo';
-import { PlayerInput, PlayerInputPool as PlayerInputPool } from './PlayerInput';
+import { KeyboardInput, KeyboardInputPool } from './KeyboardInput';
 import { Position, PositionPool } from './Position';
 import { Render, RenderPool } from './Render';
 import { Respawn, RespawnPool } from './Respawn';
@@ -24,6 +24,7 @@ import { Hunts, HuntsPool } from './Hunts';
 import { Reborn, RebornPool } from './Reborn';
 import { PrevPosition, PrevPositionPool } from './PrevPosition';
 import { RespawnPosition, RespawnPositionPool } from './RespawnPosition';
+import { Player, PlayerPool } from './Player';
 
 // TODO - We need to remove the hardwiring of this interface. It is possible to pass it when creating a world
 
@@ -39,7 +40,7 @@ export interface ComponentMap {
   Moved: Moved;
   Movement: Movement;
   MoveTo: MoveTo;
-  PlayerInput: PlayerInput;
+  KeyboardInput: KeyboardInput;
   Position: Position;
   Render: Render;
   Respawn: Respawn;
@@ -53,9 +54,10 @@ export interface ComponentMap {
   Reborn: Reborn;
   PrevPosition: PrevPosition;
   RespawnPosition: RespawnPosition;
+  Player: Player;
 }
 
-export const registerComponents = (w: World) => {
+export const registerComponents = (w: World): void => {
   w.registerPool('Attacker', AttackerPool)
     .registerPool('CollisionHandler', CollisionHandlerPool)
     .registerPool('CollisionDetected', CollisionDetectedPool)
@@ -68,7 +70,7 @@ export const registerComponents = (w: World) => {
     .registerPool('Moved', MovedPool)
     .registerPool('Movement', MovementPool)
     .registerPool('MoveTo', MoveToPool)
-    .registerPool('PlayerInput', PlayerInputPool)
+    .registerPool('KeyboardInput', KeyboardInputPool)
     .registerPool('Poison', PoisonPool)
     .registerPool('Position', PositionPool)
     .registerPool('Render', RenderPool)
@@ -80,5 +82,6 @@ export const registerComponents = (w: World) => {
     .registerPool('Velocity', VelocityPool)
     .registerPool('Reborn', RebornPool)
     .registerPool('PrevPosition', PrevPositionPool)
-    .registerPool('RespawnPosition', RespawnPositionPool);
+    .registerPool('RespawnPosition', RespawnPositionPool)
+    .registerPool('Player', PlayerPool);
 };

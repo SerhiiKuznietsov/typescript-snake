@@ -26,7 +26,7 @@ const storage: Record<KeyboardEvent['code'], Function> = {
 };
 
 export class PlayerInputSystem implements ISystem {
-  public entities = this.w.newGroup(['PlayerInput']);
+  public entities = this.w.newGroup(['KeyboardInput']);
   private _code: KeyboardEvent['code'] | null = null;
 
   constructor(public w: World, private _inputManager: InputManager) {
@@ -49,7 +49,7 @@ export class PlayerInputSystem implements ISystem {
   public update(): void {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
-      const input = this.w.getComponent(entity, 'PlayerInput');
+      const input = this.w.getComponent(entity, 'KeyboardInput');
       input.up = input.down = input.left = input.right = false;
 
       if (!this._code) continue;

@@ -3,14 +3,14 @@ import { World } from '../../ecs/World';
 import { vectorUtils } from '../geometry/utils/vectorUtils';
 
 export class MovementDirectionSystem implements ISystem {
-  public entities = this.w.newGroup(['PlayerInput', 'Direction', 'CanMove']);
+  public entities = this.w.newGroup(['KeyboardInput', 'Direction', 'CanMove']);
 
   constructor(public w: World) {}
 
   public update(): void {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
-      const input = this.w.getComponent(entity, 'PlayerInput');
+      const input = this.w.getComponent(entity, 'KeyboardInput');
       const direction = this.w.getComponent(entity, 'Direction');
 
       if (input.up && direction.y !== 1) {

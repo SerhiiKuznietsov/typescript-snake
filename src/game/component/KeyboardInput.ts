@@ -1,14 +1,14 @@
 import { IComponent } from '@/ecs/Component';
 import { ObjectPool } from '../../ecs/ObjectPool';
 
-export class PlayerInput implements IComponent {
+export class KeyboardInput implements IComponent {
   public up = false;
   public down = false;
   public left = false;
   public right = false;
 }
 
-export const PlayerInputPool = new ObjectPool(() => new PlayerInput(), {
+export const KeyboardInputPool = new ObjectPool(() => new KeyboardInput(), {
   initialize(item, params) {
     if (params?.up) {
       item.up = params.up;
