@@ -9,7 +9,7 @@ export class IdManager {
     return this._nextId++;
   }
 
-  public clear() {
+  public clear(): void {
     this._nextId = this._minId;
   }
 }

@@ -48,11 +48,33 @@ export class Board {
     this._context.fillRect(x * size, y * size, size, size);
   }
 
+  public drawText(
+    text: string,
+    fontSize: number = 30,
+    color: string = 'white',
+    fontFamily: string = 'Arial'
+  ): void {
+    const ctx = this._context;
+    ctx.fillStyle = color;
+    ctx.font = `${fontSize}px ${fontFamily}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const x = this._width / 2;
+    const y = this._height / 2;
+
+    ctx.fillText(text, x, y);
+  }
+
   public clear({ x, y }: Vector2, gridSize: number = 20) {
     this._context.clearRect(x * gridSize, y * gridSize, gridSize, gridSize);
   }
 
-  public clearFull(): void {
+  public clearBoard() {
     this._context.clearRect(0, 0, this._width, this._height);
+  }
+
+  public destroy(): void {
+    this._parentElement.removeChild(this._element);
   }
 }
