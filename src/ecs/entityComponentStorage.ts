@@ -2,7 +2,6 @@ import { ComponentMap } from '@/game/component/components';
 import { IComponent } from './Component';
 import { EventMap } from './EcsEvents';
 import { EntityId } from './Entity';
-import { BitMapManager } from './entity/BitMapManager';
 import {
   ComponentPoolManager,
   IComponentPool,

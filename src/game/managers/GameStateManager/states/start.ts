@@ -1,8 +1,8 @@
 import { Game } from '@/game/game';
 import { GameState } from '../GameStateManager';
 import { PlayState } from './play';
-import { registerComponents } from '../../../component/components';
 import { initSystems } from '../../../system/index';
+import { registerComponents } from '../../../component/components';
 
 export class StartState implements GameState {
   allowedTransitions = [PlayState.name];
@@ -10,7 +10,7 @@ export class StartState implements GameState {
   constructor(private _g: Game) {}
 
   public enter(): void {
-    this._g.board.init();
+    this._g.world.init();
     this._g.inputManager.addHandler('Space', this._g.pauseHandler);
     this._g.gridManager.init(this._g.config.lastVector);
 

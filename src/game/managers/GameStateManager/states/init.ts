@@ -2,16 +2,14 @@ import { Game } from '@/game/game';
 import { GameState } from '../GameStateManager';
 import { StartState } from './start';
 
-export class ClearState implements GameState {
+export class InitState implements GameState {
   allowedTransitions = [StartState.name];
 
   constructor(private _g: Game) {}
 
   public enter(): void {
-    this._g.board.clearBoard();
-    this._g.loop.stop();
-    this._g.systems.destroy();
-    this._g.gridManager.clear();
-    this._g.world.destroy();
+    this._g.board.init();
+
+    this._g.gameStateManager.changeState(StartState.name);
   }
 }

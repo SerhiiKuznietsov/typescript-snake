@@ -8,6 +8,7 @@ export class WinState implements GameState {
   constructor(private _g: Game) {}
 
   public enter(): void {
+    this._g.inputManager.removeHandler('Space', this._g.pauseHandler);
     this._g.board.drawText('You win');
   }
 }

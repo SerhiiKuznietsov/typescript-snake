@@ -1,12 +1,9 @@
-import { KeyControl } from './key-control';
 import { Loop } from './loop/loop';
 import { Board } from './board';
 import { GameConfig } from './config/game';
-import { initSystems } from './system';
 import { World } from '../ecs/World';
 import { SystemRegistry } from '../ecs/SystemRegistry';
 import { GridManager } from './managers/GridManager';
-import { registerComponents } from './component/components';
 import { InputManager } from './managers/InputManager';
 import { GameStateManager } from './managers/GameStateManager/GameStateManager';
 import { StartState } from './managers/GameStateManager/states/start';
@@ -15,6 +12,7 @@ import { PauseState } from './managers/GameStateManager/states/pause';
 import { LoseState } from './managers/GameStateManager/states/lose';
 import { WinState } from './managers/GameStateManager/states/win';
 import { ClearState } from './managers/GameStateManager/states/clear';
+import { InitState } from './managers/GameStateManager/states/init';
 
 export class Game {
   public config = new GameConfig();
@@ -29,6 +27,7 @@ export class Game {
 
   constructor() {
     this.gameStateManager = new GameStateManager([
+      new InitState(this),
       new StartState(this),
       new PlayState(this),
       new PauseState(),
@@ -47,27 +46,30 @@ export class Game {
         case 'Enter':
           this.gameStateManager.changeState(PlayState.name);
           break;
-        case 'P':
-          this.gameStateManager.changeState(PauseState.name);
-          break;
-        case 'X':
+        case 'L':
           this.gameStateManager.changeState(LoseState.name);
           break;
         case 'W':
           this.gameStateManager.changeState(WinState.name);
           break;
-        case 'R':
+        case 'S':
           this.gameStateManager.changeState(StartState.name);
           break;
         case 'C':
           this.gameStateManager.changeState(ClearState.name);
+          break;
+        case 'R':
+          this.gameStateManager.changeState(WinState.name);
+          this.gameStateManager.changeState(ClearState.name);
+          this.gameStateManager.changeState(StartState.name);
+
           break;
       }
     });
   }
 
   public init(): void {
-    this.gameStateManager.init(StartState.name);
+    this.gameStateManager.init(InitState.name);
   }
 
   public pauseHandler = () => {

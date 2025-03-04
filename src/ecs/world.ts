@@ -38,6 +38,16 @@ export class World {
     );
   }
 
+  public init() {
+    this.task = new TaskManager(this.bus);
+    this._entityBitMaps = new BitMapManager(this.bus);
+    this._groupManager = new GroupManager(
+      this.bus,
+      this._storage,
+      this._entityBitMaps
+    );
+  }
+
   public hasEntity(entity: EntityId): boolean {
     return this._storage.hasEntity(entity);
   }
