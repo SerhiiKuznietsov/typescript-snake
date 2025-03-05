@@ -25,6 +25,7 @@ import { MovementSystem } from './MovementSystem';
 import { MovementDirectionSystem } from './MovementDirectionSystem';
 import { InputManager } from '../managers/InputManager';
 import { RespawnPositionSystem } from './RespawnPositionSystem';
+import { RespawnTriggerSystem } from './RespawnTriggerSystem';
 
 export const initSystems = (
   system: SystemRegistry,
@@ -59,6 +60,7 @@ export const initSystems = (
     .addSystem(new FoodInitSystem(world, gridSize, config.foodCount))
     // .addSystem(new HunterInitSystem(world, gridSize, config.hunterCount))
     .addSystem(new PoisonInitSystem(world, gridSize, config.poisonCount))
+    .addSystem(new RespawnTriggerSystem(world))
     .addSystem(new RespawnCooldownSystem(world))
     .addSystem(new RespawnPositionSystem(world, gridManager))
     .addSystem(new RespawnSystem(world, gridManager))

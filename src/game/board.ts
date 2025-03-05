@@ -1,9 +1,5 @@
 import { Vector2 } from './geometry/vector2';
 
-interface Drawable {
-  draw(ctx: CanvasRenderingContext2D, vector2: Vector2): void;
-}
-
 export class Board {
   private _parentElement: Element;
   private _element: HTMLCanvasElement;

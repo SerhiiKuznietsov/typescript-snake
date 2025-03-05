@@ -25,6 +25,7 @@ import { Reborn, RebornPool } from './Reborn';
 import { PrevPosition, PrevPositionPool } from './PrevPosition';
 import { RespawnPosition, RespawnPositionPool } from './RespawnPosition';
 import { Player, PlayerPool } from './Player';
+import { RespawnСooldown, RespawnСooldownPool } from './RespawnСooldown';
 
 // TODO - We need to remove the hardwiring of this interface. It is possible to pass it when creating a world
 
@@ -55,6 +56,7 @@ export interface ComponentMap {
   PrevPosition: PrevPosition;
   RespawnPosition: RespawnPosition;
   Player: Player;
+  RespawnСooldown: RespawnСooldown;
 }
 
 export const registerComponents = (w: World): void => {
@@ -63,25 +65,26 @@ export const registerComponents = (w: World): void => {
     .registerPool('CollisionDetected', CollisionDetectedPool)
     .registerPool('CanMove', CanMovePool)
     .registerPool('Death', DeathPool)
-    .registerPool('Direction', DirectionPool)
     .registerPool('Food', FoodPool)
     .registerPool('Hunter', HunterPool)
     .registerPool('Hunts', HuntsPool)
-    .registerPool('Moved', MovedPool)
-    .registerPool('Movement', MovementPool)
-    .registerPool('MoveTo', MoveToPool)
     .registerPool('KeyboardInput', KeyboardInputPool)
+    .registerPool('Direction', DirectionPool)
+    .registerPool('Velocity', VelocityPool)
+    .registerPool('Movement', MovementPool)
+    .registerPool('Moved', MovedPool)
+    .registerPool('MoveTo', MoveToPool)
+    .registerPool('PrevPosition', PrevPositionPool)
     .registerPool('Poison', PoisonPool)
     .registerPool('Position', PositionPool)
     .registerPool('Render', RenderPool)
-    .registerPool('Respawn', RespawnPool)
-    .registerPool('RespawnReady', RespawnReadyPool)
     .registerPool('Snake', SnakePool)
     .registerPool('SnakeBody', SnakeBodyPool)
     .registerPool('Target', TargetPool)
-    .registerPool('Velocity', VelocityPool)
-    .registerPool('Reborn', RebornPool)
-    .registerPool('PrevPosition', PrevPositionPool)
+    .registerPool('Respawn', RespawnPool)
+    .registerPool('RespawnReady', RespawnReadyPool)
     .registerPool('RespawnPosition', RespawnPositionPool)
+    .registerPool('RespawnСooldown', RespawnСooldownPool)
+    .registerPool('Reborn', RebornPool)
     .registerPool('Player', PlayerPool);
 };

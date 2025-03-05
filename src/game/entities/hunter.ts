@@ -7,7 +7,7 @@ export const createHunter = (w: World, size: number): void => {
   w.getComponent(entity, 'Attacker');
   w.getComponent(entity, 'Direction');
   w.getComponent(entity, 'Movement', { moveInterval: 100 });
-  w.getComponent(entity, 'Respawn', { cooldown: 1000, elapsed: 1000 });
+  w.getComponent(entity, 'Respawn', { cooldown: 1000 });
   w.getComponent(entity, 'CollisionHandler');
   w.getComponent(entity, 'Render', {
     color: '#380070',

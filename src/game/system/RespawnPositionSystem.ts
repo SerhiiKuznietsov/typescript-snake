@@ -10,8 +10,8 @@ export class RespawnPositionSystem implements ISystem {
   public update(): void {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
-      const emptyPosition = this._grid.getEmptyCell();
 
+      const emptyPosition = this._grid.getEmptyCell();
       if (!emptyPosition) {
         throw new Error('Win');
       }
