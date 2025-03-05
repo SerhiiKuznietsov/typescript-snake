@@ -1,4 +1,3 @@
-import { GameConfig } from './config/game';
 import { Vector2 } from './geometry/vector2';
 
 interface Drawable {
@@ -8,14 +7,13 @@ interface Drawable {
 export class Board {
   private _parentElement: Element;
   private _element: HTMLCanvasElement;
-  private _width: number;
-  private _height: number;
   public readonly _context: CanvasRenderingContext2D;
 
   constructor(
     parentElementSelector: string,
-    selector: string,
-    config: GameConfig
+    private _width: number,
+    private _height: number,
+    selector: string = 'gameBoard',
   ) {
     this._parentElement = document.querySelector(
       parentElementSelector
@@ -25,9 +23,6 @@ export class Board {
       throw new Error(
         `Board error. Parent element with selector "${parentElementSelector}" not found.`
       );
-
-    this._width = config.boardWidth;
-    this._height = config.boardHeight;
 
     this._element = <HTMLCanvasElement>document.createElement('canvas');
     this._element.id = selector;

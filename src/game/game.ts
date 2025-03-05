@@ -13,10 +13,13 @@ import { LoseState } from './managers/GameStateManager/states/lose';
 import { WinState } from './managers/GameStateManager/states/win';
 import { ClearState } from './managers/GameStateManager/states/clear';
 import { InitState } from './managers/GameStateManager/states/init';
-
 export class Game {
   public config = new GameConfig();
-  public board = new Board('.game__body', 'gameBoard', this.config);
+  public board = new Board(
+    '.game__body',
+    this.config.boardWidth,
+    this.config.boardHeight
+  );
   public gridManager = new GridManager();
   public inputManager = new InputManager();
   public world = new World();
