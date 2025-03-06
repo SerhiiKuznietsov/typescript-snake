@@ -1,75 +1,62 @@
 export class Loop {
-  private animateId: number | undefined = undefined;
-  private frameCount: number = 0;
-  private lastSecond: number = 0;
-  private then: number = 0;
-  private interval: number | null;
-  private boundAnimate: (timestamp: number) => void;
+  private _running = false;
+  private _frameCount = 0;
+  private _lastSecond = 0;
+  private _then = 0;
+  private _interval: number | null;
+  private _boundAnimate: (timestamp: number) => void = this.animate.bind(this);
 
   constructor(
     private update: (delta: number) => void,
     private updateFPS?: (fps: number) => void,
     fps?: number
   ) {
-    this.interval = fps ? 1000 / fps : null;
-    this.boundAnimate = this.animate.bind(this);
+    this._interval = fps ? 1000 / fps : null;
   }
 
   private animate(timestamp: number): void {
-    this.animateId = requestAnimationFrame(this.boundAnimate);
+    if (!this._running) return;
 
-    if (this.then === 0) this.then = timestamp;
+    requestAnimationFrame(this._boundAnimate);
 
-    const delta = timestamp - this.then;
+    if (this._then === 0) this._then = timestamp;
 
-    if (this.interval === null || delta > this.interval) {
-      this.then = this.interval
-        ? timestamp - (delta % this.interval)
-        : timestamp;
+    const delta = timestamp - this._then;
+
+    if (this._interval === null || delta >= this._interval) {
+      this._then = timestamp - (this._interval ? delta % this._interval : 0);
 
       try {
-        this.update(Math.floor(delta));
+        this.update(delta);
       } catch (e) {
         console.error('Error during update:', e);
         return;
       }
 
-      this.frameCount++;
+      this._frameCount++;
 
-      if (timestamp >= this.lastSecond + 1000) {
-        if (this.updateFPS) {
-          this.updateFPS(this.frameCount);
-        }
-        this.frameCount = 0;
-        this.lastSecond = timestamp;
+      if (timestamp - this._lastSecond >= 1000) {
+        this.updateFPS?.(this._frameCount);
+        this._frameCount = 0;
+        this._lastSecond = timestamp;
       }
     }
   }
 
-  private isActive(): boolean {
-    return this.animateId !== undefined;
+  public start(): void {
+    if (this._running) return;
+
+    this._running = true;
+    this._then = performance.now();
+    this._lastSecond = this._then;
+    requestAnimationFrame(this._boundAnimate);
   }
 
   public stop(): void {
-    if (this.animateId !== undefined) {
-      cancelAnimationFrame(this.animateId);
-      this.animateId = undefined;
-    }
-  }
-
-  public start(): void {
-    if (!this.isActive()) {
-      this.then = 0;
-      this.lastSecond = performance.now();
-      this.animateId = requestAnimationFrame(this.boundAnimate);
-    }
+    this._running = false;
   }
 
   public toggle(): void {
-    if (this.isActive()) {
-      this.stop();
-    } else {
-      this.start();
-    }
+    this._running ? this.stop() : this.start();
   }
 }
