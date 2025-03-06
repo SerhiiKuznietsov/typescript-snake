@@ -29,7 +29,7 @@ export class GroupIndex {
     this._entityGroupIndex.delete(entity);
   }
 
-  public clear() {
+  public clear(): void {
     this._entityGroupIndex.clear();
   }
 }

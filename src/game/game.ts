@@ -75,7 +75,7 @@ export class Game {
     this.gameStateManager.init(InitState.name);
   }
 
-  public pauseHandler = () => {
+  public pauseHandler = (): void => {
     if (this.gameStateManager.currentState === PauseState.name) {
       this.gameStateManager.changeState(PlayState.name);
       return;

@@ -32,7 +32,7 @@ export class GameStateManager {
     this._currentState.enter && this._currentState.enter();
   }
 
-  public changeState(stateName: string) {
+  public changeState(stateName: string): void {
     const newState = this._stateStorage.get(stateName);
     if (!newState) {
       throw new Error(`State "${stateName}" not found in storage.`);
@@ -50,6 +50,9 @@ export class GameStateManager {
       `);
     }
 
+    console.log(
+      `GameStateManager. Old state: ${this._currentState.constructor.name}`
+    );
     console.log(`GameStateManager. New state: ${stateName}`);
 
     this._currentState.exit && this._currentState.exit();
@@ -57,7 +60,7 @@ export class GameStateManager {
     this._currentState.enter && this._currentState.enter();
   }
 
-  public update(delta: number) {
+  public update(delta: number): void {
     this._currentState.update && this._currentState?.update(delta);
   }
 }

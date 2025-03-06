@@ -82,7 +82,7 @@ export class GroupManager {
     this._groupMasks.delete(key);
   }
 
-  private getBitMaskForComponentArr(arr: string[]) {
+  private getBitMaskForComponentArr(arr: string[]): number {
     let result = 0;
 
     for (let i = 0; i < arr.length; i++) {
@@ -136,7 +136,11 @@ export class GroupManager {
     });
   };
 
-  private addEntityToGroup(group: Group, groupKey: GroupKey, entity: EntityId) {
+  private addEntityToGroup(
+    group: Group,
+    groupKey: GroupKey,
+    entity: EntityId
+  ): void {
     group.entitiesSet.add(entity);
     group.entities.push(entity);
     this._groupIndex.add(entity, groupKey);
@@ -146,7 +150,7 @@ export class GroupManager {
     group: Group,
     groupKey: GroupKey,
     entity: EntityId
-  ) {
+  ): void {
     const index = group.entities.indexOf(entity);
 
     group.entitiesSet.delete(entity);
@@ -183,7 +187,7 @@ export class GroupManager {
     this._groupIndex.delete(entity);
   };
 
-  public destroy() {
+  public destroy(): void {
     this._groups.clear();
     this._groupIndex.clear();
     this._groupMasks.clear();

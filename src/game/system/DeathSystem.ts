@@ -15,12 +15,10 @@ export class DeathSystem implements ISystem {
 
       if (!this.w.hasComponent(entity, 'Respawn')) {
         this.w.deleteEntity(entity);
-        return;
+        continue;
       }
 
-      if (this.w.hasComponent(entity, 'Position')) {
-        this.w.removeComponent(entity, 'Position');
-      }
+      this.w.removeIfExistComponent(entity, 'Position');
     }
   }
 }

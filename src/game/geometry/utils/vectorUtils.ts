@@ -40,7 +40,6 @@ export const vectorUtils = {
     }
   },
   copy: (vector: Vector2): Vector2 => {
-    const copy = { ...vector };
-    return { x: copy.x, y: copy.y };
+    return { ...vector };
   },
 };

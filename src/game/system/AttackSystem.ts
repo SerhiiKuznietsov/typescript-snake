@@ -7,14 +7,14 @@ export class AttackSystem implements ISystem {
 
   constructor(public w: World) {}
 
-  private attackFood(entity: EntityId) {
+  private attackFood(entity: EntityId): void {
     if (!this.w.hasComponent(entity, 'Snake')) return;
 
     const snake = this.w.getComponent(entity, 'Snake');
     snake.makeSegments += 1;
   }
 
-  private attackPoison(entity: EntityId) {
+  private attackPoison(entity: EntityId): void {
     if (!this.w.hasComponent(entity, 'Snake')) return;
 
     const snake = this.w.getComponent(entity, 'Snake');

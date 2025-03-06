@@ -41,11 +41,11 @@ export class RenderSystem implements ISystem {
     }
   }
 
-  private clear(position: Vector2) {
+  private clear(position: Vector2): void {
     this._board.clear(position);
   }
 
-  private draw(entity: EntityId) {
+  private draw(entity: EntityId): void {
     const render = this.w.getComponent(entity, 'Render');
     const position = this.w.getComponent(entity, 'Position');
 

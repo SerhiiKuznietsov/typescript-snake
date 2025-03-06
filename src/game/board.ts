@@ -61,7 +61,7 @@ export class Board {
     this._context.clearRect(x * gridSize, y * gridSize, gridSize, gridSize);
   }
 
-  public clearBoard() {
+  public clearBoard(): void {
     this._context.clearRect(0, 0, this._width, this._height);
   }
 

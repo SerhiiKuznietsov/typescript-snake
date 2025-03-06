@@ -89,7 +89,6 @@ export class TaskManager {
     system?: SystemType
   ): void {
     const taskList = this._tasks.get(condition);
-
     if (!taskList || taskList.length === 0) return;
 
     const remainingTasks: Task[] = [];
