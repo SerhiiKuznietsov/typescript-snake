@@ -3,7 +3,7 @@ import { GameState } from '../GameStateManager';
 import { StartState } from './start';
 
 export class InitState implements GameState {
-  allowedTransitions = [StartState.name];
+  public readonly allowedTransitions = [StartState.name];
 
   constructor(private _g: Game) {}
 

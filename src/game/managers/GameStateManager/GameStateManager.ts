@@ -1,5 +1,5 @@
 export interface GameState {
-  allowedTransitions: string[];
+  readonly allowedTransitions: string[];
   enter?(): void;
   update?(delta: number): void;
   exit?(): void;

@@ -5,7 +5,7 @@ import { initSystems } from '../../../system/index';
 import { registerComponents } from '../../../component/components';
 
 export class StartState implements GameState {
-  allowedTransitions = [PlayState.name];
+  public readonly allowedTransitions = [PlayState.name];
 
   constructor(private _g: Game) {}
 

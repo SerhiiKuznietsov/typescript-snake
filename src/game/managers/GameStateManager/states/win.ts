@@ -3,7 +3,7 @@ import { GameState } from '../GameStateManager';
 import { ClearState } from './clear';
 
 export class WinState implements GameState {
-  allowedTransitions = [ClearState.name];
+  public readonly allowedTransitions = [ClearState.name];
 
   constructor(private _g: Game) {}
 

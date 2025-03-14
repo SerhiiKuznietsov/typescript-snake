@@ -5,7 +5,11 @@ import { PauseState } from './pause';
 import { WinState } from './win';
 
 export class PlayState implements GameState {
-  allowedTransitions = [WinState.name, LoseState.name, PauseState.name];
+  public readonly allowedTransitions = [
+    WinState.name,
+    LoseState.name,
+    PauseState.name,
+  ];
 
   constructor(private _g: Game) {}
 
