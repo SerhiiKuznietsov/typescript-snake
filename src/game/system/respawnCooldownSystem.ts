@@ -12,7 +12,7 @@ export class RespawnCooldownSystem implements ISystem {
       const respawnСooldown = this.w.getComponent(entity, 'RespawnСooldown');
 
       respawnСooldown.remainingTime -= deltaTime;
-      if (respawnСooldown.remainingTime <= 0) return;
+      if (respawnСooldown.remainingTime >= 0) continue;
 
       this.w.removeComponent(entity, 'RespawnСooldown');
       this.w.getComponent(entity, 'RespawnReady');
