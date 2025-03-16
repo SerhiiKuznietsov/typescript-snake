@@ -5,6 +5,7 @@ export const createFood = (w: World, size: number): void => {
 
   w.getComponent(entity, 'Food');
   w.getComponent(entity, 'Respawn', { cooldown: 1000 });
+  w.getComponent(entity, 'RespawnСooldown', { remainingTime: -1 });
   w.getComponent(entity, 'Render', {
     color: '#c04d4d',
     size,
