@@ -8,15 +8,6 @@ export class Direction implements IComponent {
 }
 
 export const DirectionPool = new ObjectPool(() => new Direction(), {
-  initialize(item, params) {
-    if (params?.x) {
-      item.x = params.x;
-    }
-
-    if (params?.y) {
-      item.y = params.y;
-    }
-  },
   deactivate(item) {
     item.x = 1;
     item.y = 0;

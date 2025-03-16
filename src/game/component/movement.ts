@@ -8,15 +8,6 @@ export class Movement implements IComponent {
 }
 
 export const MovementPool = new ObjectPool(() => new Movement(), {
-  initialize(item, params) {
-    if (params?.accumulatedTime) {
-      item.accumulatedTime = params.accumulatedTime;
-    }
-
-    if (params?.moveInterval) {
-      item.moveInterval = params.moveInterval;
-    }
-  },
   deactivate(item) {
     item.accumulatedTime = 0;
     item.moveInterval = 100;

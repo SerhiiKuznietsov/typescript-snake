@@ -22,14 +22,13 @@ export class ComponentPoolManager {
 
   public acquireComponent<T extends IComponent>(
     name: string,
-    params?: Partial<T>
   ): T {
     const pool = this._componentPools.get(name);
     if (!pool) {
       throw new Error(`Component pool with name: "${name}" not found`);
     }
 
-    return pool.acquire(params) as T;
+    return pool.acquire() as T;
   }
 
   public releaseComponent(name: string, component: IComponent): void {

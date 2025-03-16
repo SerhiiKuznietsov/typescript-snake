@@ -1,4 +1,4 @@
-import { EntityComponentStorage } from '../EntityComponentStorage';
+import { EntityComponentStorage } from '../entityComponentStorage';
 import { EventBus } from '../EventBus';
 import { EventMap } from '../EcsEvents';
 import { EntityId } from '../Entity';

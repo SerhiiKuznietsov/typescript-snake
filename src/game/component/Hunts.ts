@@ -7,11 +7,6 @@ export class Hunts implements IComponent {
 }
 
 export const HuntsPool = new ObjectPool(() => new Hunts(), {
-  initialize(item, params) {
-    if (params?.target) {
-      item.target = params.target;
-    }
-  },
   deactivate(item) {
     item.target = null;
   },

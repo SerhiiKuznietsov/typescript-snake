@@ -6,11 +6,6 @@ export class Respawn implements IComponent {
 }
 
 export const RespawnPool = new ObjectPool(() => new Respawn(), {
-  initialize(item, params) {
-    if (params?.cooldown) {
-      item.cooldown = params.cooldown;
-    }
-  },
   deactivate(item) {
     item.cooldown = 0;
   },

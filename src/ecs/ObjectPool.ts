@@ -1,7 +1,6 @@
 export type ObjectPoolParams<T> = {
   initialSize?: number;
   deactivate?: (item: T) => void;
-  initialize?: (item: T, params?: Partial<T>) => void;
   maxSize?: number;
 };
 
@@ -12,16 +11,14 @@ export class ObjectPool<T> {
 
   private _createFn: () => T;
   private _deactivateFn?: (item: T) => void;
-  private _initializeFn?: (item: T, params?: Partial<T>) => void;
   private _initialSize: number;
   private _maxSize?: number;
 
   constructor(create: () => T, params: ObjectPoolParams<T> = {}) {
-    const { initialSize = 1, deactivate, initialize, maxSize } = params;
+    const { initialSize = 1, deactivate, maxSize } = params;
 
     this._createFn = create;
     this._deactivateFn = deactivate;
-    this._initializeFn = initialize;
     this._initialSize = initialSize;
     this._maxSize = maxSize;
 
@@ -56,12 +53,8 @@ export class ObjectPool<T> {
     }
   }
 
-  public acquire(params?: Partial<T>): T {
+  public acquire(): T {
     const obj = this._makeObject();
-
-    if (this._initializeFn) {
-      this._initializeFn(obj, params);
-    }
 
     this._activeObjects.add(obj);
     return obj;

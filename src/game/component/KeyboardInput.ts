@@ -9,23 +9,6 @@ export class KeyboardInput implements IComponent {
 }
 
 export const KeyboardInputPool = new ObjectPool(() => new KeyboardInput(), {
-  initialize(item, params) {
-    if (params?.up) {
-      item.up = params.up;
-    }
-
-    if (params?.down) {
-      item.down = params.down;
-    }
-
-    if (params?.left) {
-      item.left = params.left;
-    }
-
-    if (params?.right) {
-      item.right = params.right;
-    }
-  },
   deactivate(item) {
     item.up = item.down = item.left = item.right = false;
   },

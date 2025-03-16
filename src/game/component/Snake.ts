@@ -10,15 +10,6 @@ export class Snake implements IComponent {
 }
 
 export const SnakePool = new ObjectPool(() => new Snake(), {
-  initialize(item, params) {
-    if (params?.makeSegments) {
-      item.makeSegments = params.makeSegments;
-    }
-
-    if (params?.tail) {
-      item.tail = params.tail;
-    }
-  },
   deactivate(item) {
     item.makeSegments = 0;
     item.segments = 0;

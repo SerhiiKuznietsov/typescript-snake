@@ -6,15 +6,6 @@ export class Render implements IComponent {
 }
 
 export const RenderPool = new ObjectPool(() => new Render(), {
-  initialize(item, params) {
-    if (params?.color) {
-      item.color = params.color;
-    }
-
-    if (params?.size) {
-      item.size = params.size;
-    }
-  },
   deactivate(item) {
     item.color = '#000';
     item.size = 20;

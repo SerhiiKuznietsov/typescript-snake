@@ -6,15 +6,6 @@ export class MoveTo implements IComponent {
 }
 
 export const MoveToPool = new ObjectPool(() => new MoveTo(), {
-  initialize(item, params) {
-    if (params?.x) {
-      item.x = params.x;
-    }
-
-    if (params?.y) {
-      item.y = params.y;
-    }
-  },
   deactivate(item) {
     item.x = 0;
     item.y = 0;

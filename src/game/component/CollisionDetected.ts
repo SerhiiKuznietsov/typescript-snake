@@ -9,11 +9,6 @@ export class CollisionDetected implements IComponent {
 export const CollisionDetectedPool = new ObjectPool(
   () => new CollisionDetected(),
   {
-    initialize(item, params) {
-      if (params?.target) {
-        item.target = params.target;
-      }
-    },
     deactivate: (item) => {
       item.target = 0;
     },

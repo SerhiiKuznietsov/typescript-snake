@@ -6,15 +6,6 @@ export class RespawnPosition implements IComponent {
 }
 
 export const RespawnPositionPool = new ObjectPool(() => new RespawnPosition(), {
-  initialize(item, params) {
-    if (params?.x) {
-      item.x = params.x;
-    }
-
-    if (params?.y) {
-      item.y = params.y;
-    }
-  },
   deactivate(item) {
     item.x = item.y = 0;
   },

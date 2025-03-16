@@ -6,11 +6,6 @@ export class Velocity implements IComponent {
 }
 
 export const VelocityPool = new ObjectPool(() => new Velocity(), {
-  initialize(item, params) {
-    if (params?.value) {
-      item.value = params.value;
-    }
-  },
   deactivate(item) {
     item.value = 1;
   },

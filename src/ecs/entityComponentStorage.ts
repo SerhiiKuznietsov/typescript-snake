@@ -18,6 +18,17 @@ export class EntityComponentStorage {
 
   constructor(private _eventBus: EventBus<EventMap>) {}
 
+  private applyComponentParams<K extends keyof ComponentMap>(
+    component: ComponentMap[K],
+    params?: Partial<ComponentMap[K]>
+  ): void {
+    if (!params) return;
+
+    for (const key in params) {
+      component[key] = params[key]!;
+    }
+  }
+
   public hasEntity(entity: EntityId): boolean {
     return this._components.has(entity);
   }
@@ -63,16 +74,20 @@ export class EntityComponentStorage {
 
   public getComponent<K extends keyof ComponentMap>(
     entity: EntityId,
-    componentName: K
+    componentName: K,
+    params?: Partial<ComponentMap[K]>
   ): ComponentMap[K] {
     const components = this._components.get(entity);
-    const component = components?.get(componentName);
+    const component = components?.get(componentName) as ComponentMap[K];
     if (!component) {
       throw new Error(
         `Component with key: "${componentName}" not found for entity: ${entity}`
       );
     }
-    return component as ComponentMap[K];
+
+    this.applyComponentParams(component, params);
+
+    return component;
   }
 
   public addComponent<K extends keyof ComponentMap>(
@@ -85,9 +100,10 @@ export class EntityComponentStorage {
     }
 
     const component = this._componentPoolManager.acquireComponent(
-      componentName,
-      params
-    );
+      componentName
+    ) as ComponentMap[K];
+
+    this.applyComponentParams(component, params);
 
     const entityComponents = this._components.get(entity);
     if (!entityComponents) {

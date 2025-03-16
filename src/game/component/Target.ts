@@ -7,11 +7,6 @@ export class Target implements IComponent {
 }
 
 export const TargetPool = new ObjectPool(() => new Target(), {
-  initialize(item, params) {
-    if (params?.targetId) {
-      item.targetId = params.targetId;
-    }
-  },
   deactivate(item) {
     item.targetId = null;
   },

@@ -3,7 +3,7 @@ import { EventBus } from './EventBus';
 import {
   ComponentMapType,
   EntityComponentStorage,
-} from './EntityComponentStorage';
+} from './entityComponentStorage';
 import { GroupManager } from './group/GroupManager';
 import { MessageBroker } from './MessageBroker';
 import { IComponentPool } from './entity/ComponentPoolManager';
@@ -85,7 +85,7 @@ export class World {
       this._storage.addComponent(entity, componentName, params);
     }
 
-    return this._storage.getComponent(entity, componentName);
+    return this._storage.getComponent(entity, componentName, params);
   }
 
   public getComponents(entity: EntityId): ComponentMapType {

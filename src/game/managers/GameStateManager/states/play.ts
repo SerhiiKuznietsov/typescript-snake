@@ -23,5 +23,7 @@ export class PlayState implements GameState {
 
   public exit(): void {
     this._g.loop.stop();
+    console.log(this._g);
+
   }
 }
