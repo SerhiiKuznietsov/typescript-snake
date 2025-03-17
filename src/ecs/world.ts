@@ -28,7 +28,7 @@ export class World {
   public task: TaskManager = new TaskManager(this.bus);
 
   public init() {
-    this.task = new TaskManager(this.bus);
+    this.task.init();
   }
 
   public hasEntity(entity: EntityId): boolean {

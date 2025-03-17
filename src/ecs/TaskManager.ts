@@ -27,8 +27,11 @@ export class TaskManager {
       TaskName.END_OF_NEXT_CYCLE,
       TaskName.BEFORE_SYSTEM,
     ].forEach((condition) => this._tasks.set(condition as TaskCondition, []));
+  }
 
-    this.initEventsListeners();
+  public init() {
+    this._eventBus.on('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
+    this._eventBus.on('SYSTEM_UPDATED', this.onSystemUpdate);
   }
 
   private onSystemBeforeUpdate = ({ system }: { system: string }): void => {
@@ -40,11 +43,6 @@ export class TaskManager {
     this.processCycleUpdate();
     this.setSystem();
   };
-
-  private initEventsListeners(): void {
-    this._eventBus.on('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
-    this._eventBus.on('SYSTEM_UPDATED', this.onSystemUpdate);
-  }
 
   public setSystem(currentSystem: SystemType | null = null): void {
     this._currentSystem = currentSystem;
