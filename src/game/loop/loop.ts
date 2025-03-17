@@ -12,11 +12,10 @@ export class Loop {
     fps?: number
   ) {
     this._interval = fps ? 1000 / fps : null;
+    requestAnimationFrame(this._boundAnimate);
   }
 
   private animate(timestamp: number): void {
-    if (!this._running) return;
-
     requestAnimationFrame(this._boundAnimate);
 
     if (this._then === 0) this._then = timestamp;
@@ -26,11 +25,13 @@ export class Loop {
     if (this._interval === null || delta >= this._interval) {
       this._then = timestamp - (this._interval ? delta % this._interval : 0);
 
-      try {
-        this.update(delta);
-      } catch (e) {
-        console.error('Error during update:', e);
-        return;
+      if (this._running) {
+        try {
+          this.update(delta);
+        } catch (e) {
+          console.error('Error during update:', e);
+          return;
+        }
       }
 
       this._frameCount++;
@@ -47,9 +48,7 @@ export class Loop {
     if (this._running) return;
 
     this._running = true;
-    this._then = performance.now();
-    this._lastSecond = this._then;
-    requestAnimationFrame(this._boundAnimate);
+    this._then = this._lastSecond = 0;
   }
 
   public stop(): void {
