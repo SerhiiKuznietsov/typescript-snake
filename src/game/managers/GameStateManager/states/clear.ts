@@ -9,7 +9,6 @@ export class ClearState implements GameState {
 
   public enter(): void {
     this._g.board.clearBoard();
-    this._g.loop.stop();
     this._g.systems.destroy();
     this._g.gridManager.clear();
     this._g.world.destroy();
