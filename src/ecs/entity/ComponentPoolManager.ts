@@ -3,6 +3,10 @@ import { IComponent } from '../Component';
 export interface IComponentPool<T> {
   acquire(params?: Partial<T>): T;
   release(component: IComponent): void;
+  reset(size?: number): void;
+  get currentSize(): number;
+  get activeCount(): number;
+  get inactiveCount(): number;
 }
 
 export class ComponentPoolManager {
@@ -20,9 +24,7 @@ export class ComponentPoolManager {
     return this._componentPools.has(componentKey);
   }
 
-  public acquireComponent<T extends IComponent>(
-    name: string,
-  ): T {
+  public acquireComponent<T extends IComponent>(name: string): T {
     const pool = this._componentPools.get(name);
     if (!pool) {
       throw new Error(`Component pool with name: "${name}" not found`);
@@ -41,6 +43,7 @@ export class ComponentPoolManager {
   }
 
   public clear(): void {
+    this._componentPools.forEach((pool) =>  pool.reset());
     this._componentPools.clear();
   }
 }
