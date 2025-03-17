@@ -2,7 +2,10 @@ import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
 
 export class RespawnTriggerSystem implements ISystem {
-  public entities = this.w.newGroup(['Respawn'], ['Position', 'RespawnСooldown']);
+  public entities = this.w.newGroup(
+    ['Respawn', 'Death'],
+    ['Position', 'RespawnСooldown']
+  );
 
   constructor(public w: World) {}
 
