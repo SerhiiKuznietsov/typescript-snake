@@ -44,7 +44,7 @@ export class Game {
       (fps: number = 0) => (this._fpsElement.textContent = `${fps}`)
     );
 
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', (event) => { // TODO - testing functional
       switch (event.key) {
         case 'Enter':
           this.gameStateManager.changeState(PlayState.name);

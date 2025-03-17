@@ -16,6 +16,8 @@ interface Task {
   cycleCount?: number;
 }
 
+// TODO - need rework TaskManager
+
 export class TaskManager {
   private _tasks: Map<TaskCondition, Task[]> = new Map([]);
   private _currentCycle: number = 0;
