@@ -22,7 +22,7 @@ export class BitMapManager {
     entity: EntityId,
     componentName: keyof ComponentMap
   ) {
-    const componentBit = this.createComponentBit(componentName);
+    const componentBit = this.getComponentBit(componentName);
     const currentBit = this._entityBitMaps.get(entity) || 0;
     const newBit = BitUtils.setBit(currentBit, componentBit);
 
@@ -50,9 +50,9 @@ export class BitMapManager {
     return bit;
   }
 
-  public createComponentBit(componentName: string): number {
+  public onRegisterComponent(componentName: string): number {
     if (this.hasComponentBit(componentName)) {
-      return this._componentToBitMap.get(componentName)!;
+      throw new Error(`component with name: "${componentName}" already exist`);
     }
 
     const newBit = 1 << this._componentToBitMap.size;

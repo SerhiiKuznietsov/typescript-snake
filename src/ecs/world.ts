@@ -15,24 +15,17 @@ import { ComponentStorage, ComponentMapType } from './ComponentStorage';
 */
 
 export class World {
-  private _entityBitMaps: BitMapManager;
-  private _groupManager: GroupManager;
-  private _entities: EntityStorage;
-  private _components: ComponentStorage;
-  public messageBroker: MessageBroker;
-  public bus: EventBus<EventMap>;
-  public task: TaskManager;
+  private _entities: EntityStorage = new EntityStorage();
+  private _components: ComponentStorage = new ComponentStorage();
+  private _entityBitMaps: BitMapManager = new BitMapManager();
+  private _groupManager: GroupManager = new GroupManager(
+    this._entities,
+    this._entityBitMaps
+  );
 
-  constructor() {
-    this.bus = new EventBus();
-    this.messageBroker = new MessageBroker();
-    this.task = new TaskManager(this.bus);
-
-    this._entities = new EntityStorage();
-    this._components = new ComponentStorage();
-    this._entityBitMaps = new BitMapManager();
-    this._groupManager = new GroupManager(this._entities, this._entityBitMaps);
-  }
+  public messageBroker: MessageBroker = new MessageBroker();
+  public bus: EventBus<EventMap> = new EventBus();
+  public task: TaskManager = new TaskManager(this.bus);
 
   public init() {
     this.task = new TaskManager(this.bus);
@@ -66,6 +59,7 @@ export class World {
     pool: IComponentPool<ComponentMap[K]>
   ): this {
     this._components.registerComponent(componentName, pool);
+    this._entityBitMaps.onRegisterComponent(componentName);
 
     return this;
   }
@@ -82,20 +76,28 @@ export class World {
     componentName: K,
     params?: Partial<ComponentMap[K]>
   ): ComponentMap[K] {
-    if (!this.hasComponent(entity, componentName)) {
-      const component = this._components.addComponent(
-        entity,
-        componentName,
-        params
-      );
-
-      this._entityBitMaps.onEntityComponentCreated(entity, componentName);
-      this._groupManager.onComponentChanged(entity);
-
-      return component;
+    if (this.hasComponent(entity, componentName)) {
+      return this._components.getComponent(entity, componentName, params);
     }
 
-    return this._components.getComponent(entity, componentName, params);
+    return this.createComponent(entity, componentName, params);
+  }
+
+  private createComponent<K extends keyof ComponentMap>(
+    entity: EntityId,
+    componentName: K,
+    params?: Partial<ComponentMap[K]>
+  ): ComponentMap[K] {
+    const component = this._components.addComponent(
+      entity,
+      componentName,
+      params
+    );
+
+    this._entityBitMaps.onEntityComponentCreated(entity, componentName);
+    this._groupManager.onComponentChanged(entity);
+
+    return component;
   }
 
   public getComponents(entity: EntityId): ComponentMapType {

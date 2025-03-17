@@ -78,7 +78,7 @@ export class GroupManager {
 
     for (let i = 0; i < arr.length; i++) {
       const component = arr[i];
-      const bit = this._bitMap.createComponentBit(component);
+      const bit = this._bitMap.getComponentBit(component);
 
       result = BitUtils.setBit(result, bit);
     }
