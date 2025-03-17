@@ -31,13 +31,13 @@ export class ComponentStorage {
     return this._components.has(entity);
   }
 
-  public createEntity(entity: EntityId): EntityId {
+  public onEntityCreated(entity: EntityId): EntityId {
     this._components.set(entity, new Map());
 
     return entity;
   }
 
-  public deleteEntity(entity: EntityId): void {
+  public onEntityDeleted(entity: EntityId): void {
     if (!this.hasEntity(entity)) {
       throw new Error(`Entity with id: "${entity}" not found`);
     }

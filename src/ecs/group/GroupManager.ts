@@ -27,9 +27,7 @@ export class GroupManager {
   ) {
     this._eventBus
       .on('COMPONENT_ADDED', this.onComponentChanged)
-      .on('COMPONENT_REMOVED', this.onComponentChanged)
-      .on('ENTITY_CREATED', this.onEntityCreated)
-      .on('ENTITY_DELETED', this.onEntityDeleted);
+      .on('COMPONENT_REMOVED', this.onComponentChanged);
   }
 
   private validGroupQuery(query: GroupQuery) {
@@ -159,7 +157,7 @@ export class GroupManager {
     this._groupIndex.remove(entity, groupKey);
   }
 
-  private onEntityCreated = ({ entity }: EventMap['ENTITY_CREATED']): void => {
+  public onEntityCreated(entity: EntityId): void {
     this._groups.forEach(({ group }, key) => {
       const entityBits = this._bitMap.getEntityBitMap(entity);
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
@@ -171,9 +169,9 @@ export class GroupManager {
         this.addEntityToGroup(group, key, entity);
       }
     });
-  };
+  }
 
-  private onEntityDeleted = ({ entity }: EventMap['ENTITY_DELETED']): void => {
+  public onEntityDeleted(entity: EntityId): void {
     const groupKeys = this._groupIndex.get(entity);
     if (!groupKeys) return;
 
@@ -185,7 +183,7 @@ export class GroupManager {
     });
 
     this._groupIndex.delete(entity);
-  };
+  }
 
   public destroy(): void {
     this._groups.clear();
@@ -194,8 +192,6 @@ export class GroupManager {
 
     this._eventBus
       .off('COMPONENT_ADDED', this.onComponentChanged)
-      .off('COMPONENT_REMOVED', this.onComponentChanged)
-      .off('ENTITY_CREATED', this.onEntityCreated)
-      .off('ENTITY_DELETED', this.onEntityDeleted);
+      .off('COMPONENT_REMOVED', this.onComponentChanged);
   }
 }

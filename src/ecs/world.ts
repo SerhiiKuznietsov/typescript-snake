@@ -28,13 +28,12 @@ export class World {
     this.messageBroker = new MessageBroker();
     this.task = new TaskManager(this.bus);
 
-    this._entities = new EntityStorage(this.bus);
+    this._entities = new EntityStorage();
     this._components = new ComponentStorage(this.bus);
     this._entityBitMaps = new BitMapManager(this.bus);
     this._groupManager = new GroupManager(
       this.bus,
       this._entities,
-      // this._storage,
       this._entityBitMaps
     );
   }
@@ -45,33 +44,31 @@ export class World {
     this._groupManager = new GroupManager(
       this.bus,
       this._entities,
-      // this._storage,
       this._entityBitMaps
     );
   }
 
   public hasEntity(entity: EntityId): boolean {
     return this._entities.hasEntity(entity);
-
-    // return this._storage.hasEntity(entity);
   }
 
   public createEntity(): EntityId {
     const entity = this._entities.createEntity();
 
-    this._components.createEntity(entity);
+    this._components.onEntityCreated(entity);
+    this._entityBitMaps.onEntityCreated(entity);
+    this._groupManager.onEntityCreated(entity);
 
     return entity;
-    // return this._storage.createEntity();
   }
 
   public deleteEntity(entity: EntityId): void {
     this.task.addOnCycleUpdate(() => {
-      this._components.deleteEntity(entity);
       this._entities.deleteEntity(entity);
+      this._entityBitMaps.onEntityDeleted(entity)
+      this._components.onEntityDeleted(entity);
+      this._groupManager.onEntityDeleted(entity);
     });
-
-    // this.task.addOnCycleUpdate(() => this._storage.deleteEntity(entity));
   }
 
   public registerPool<K extends keyof ComponentMap>(
@@ -79,7 +76,6 @@ export class World {
     pool: IComponentPool<ComponentMap[K]>
   ): this {
     this._components.registerComponent(componentName, pool);
-    // this._storage.registerComponent(componentName, pool);
 
     return this;
   }
@@ -89,8 +85,6 @@ export class World {
     componentName: K
   ): boolean {
     return this._components.hasComponent(entity, componentName);
-
-    // return this._storage.hasComponent(entity, componentName);
   }
 
   public getComponent<K extends keyof ComponentMap>(
@@ -99,7 +93,7 @@ export class World {
     params?: Partial<ComponentMap[K]>
   ): ComponentMap[K] {
     if (!this.hasComponent(entity, componentName)) {
-      this._components.addComponent(entity, componentName, params);
+      return this._components.addComponent(entity, componentName, params);
       // this._storage.addComponent(entity, componentName, params);
     }
 

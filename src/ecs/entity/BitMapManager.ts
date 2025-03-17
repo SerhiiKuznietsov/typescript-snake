@@ -10,17 +10,7 @@ export class BitMapManager {
   constructor(private _eventBus: EventBus<EventMap>) {
     this._eventBus.on('COMPONENT_ADDED', this.onEntityComponentCreated);
     this._eventBus.on('COMPONENT_REMOVED', this.onEntityComponentDeleted);
-    this._eventBus.on('ENTITY_CREATED', this.onEntityCreated);
-    this._eventBus.on('ENTITY_DELETED', this.onEntityDeleted);
   }
-
-  private onEntityCreated = ({ entity }: EventMap['ENTITY_CREATED']) => {
-    this.createEntity(entity);
-  };
-
-  private onEntityDeleted = ({ entity }: EventMap['ENTITY_DELETED']) => {
-    this.deleteEntity(entity);
-  };
 
   private onEntityComponentCreated = ({
     entity,
@@ -36,11 +26,11 @@ export class BitMapManager {
     this.removeComponentBitFromEntity(entity, componentName);
   };
 
-  private createEntity(entity: EntityId): void {
+  public onEntityCreated(entity: EntityId): void {
     this._entityBitMaps.set(entity, 0);
   }
 
-  private deleteEntity(entity: EntityId): void {
+  public onEntityDeleted(entity: EntityId): void {
     this._entityBitMaps.delete(entity);
   }
 
@@ -110,7 +100,5 @@ export class BitMapManager {
 
     this._eventBus.off('COMPONENT_ADDED', this.onEntityComponentCreated);
     this._eventBus.off('COMPONENT_REMOVED', this.onEntityComponentDeleted);
-    this._eventBus.off('ENTITY_CREATED', this.onEntityCreated);
-    this._eventBus.off('ENTITY_DELETED', this.onEntityDeleted);
   }
 }
