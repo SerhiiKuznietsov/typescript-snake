@@ -17,19 +17,19 @@ interface Task {
 }
 
 export class TaskManager {
-  private _tasks: Map<TaskCondition, Task[]> = new Map();
+  private _tasks: Map<TaskCondition, Task[]> = new Map([]);
   private _currentCycle: number = 0;
   private _currentSystem: SystemType | null = null;
 
-  constructor(private _eventBus: EventBus<EventMap>) {
+  constructor(private _eventBus: EventBus<EventMap>) {}
+
+  public init() {
     [
       TaskName.ON_CYCLE_UPDATE,
       TaskName.END_OF_NEXT_CYCLE,
       TaskName.BEFORE_SYSTEM,
     ].forEach((condition) => this._tasks.set(condition as TaskCondition, []));
-  }
 
-  public init() {
     this._eventBus.on('SYSTEM_BEFORE_UPDATED', this.onSystemBeforeUpdate);
     this._eventBus.on('SYSTEM_UPDATED', this.onSystemUpdate);
   }
@@ -79,7 +79,13 @@ export class TaskManager {
     }
 
     const taskList = this._tasks.get(condition);
-    taskList?.push(task);
+    if (!taskList) {
+      throw new Error(
+        `task list for the "${condition}" type has not been created`
+      );
+    }
+
+    taskList.push(task);
   }
 
   private processCondition(
