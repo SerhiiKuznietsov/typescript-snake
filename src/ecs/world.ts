@@ -153,12 +153,13 @@ export class World {
   }
 
   public destroy(): void {
-    this.bus.clear();
     this._entities.destroy();
     this._components.destroy();
-    this._groupManager.destroy();
     this._entityBitMaps.clear();
-    this.messageBroker.clearAll();
+    this._groupManager.destroy();
+
+    this.bus.clear();
     this.task.clear();
+    this.messageBroker.clearAll();
   }
 }
