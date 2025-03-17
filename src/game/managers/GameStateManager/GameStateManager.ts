@@ -50,9 +50,6 @@ export class GameStateManager {
       `);
     }
 
-    console.log(
-      `GameStateManager. Old state: ${this._currentState.constructor.name}`
-    );
     console.log(`GameStateManager. New state: ${stateName}`);
 
     this._currentState.exit && this._currentState.exit();
