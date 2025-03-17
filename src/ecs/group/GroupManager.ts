@@ -1,4 +1,3 @@
-import { EntityComponentStorage } from '../entityComponentStorage';
 import { EventBus } from '../EventBus';
 import { EventMap } from '../EcsEvents';
 import { EntityId } from '../Entity';
@@ -7,6 +6,7 @@ import { GroupIndex } from './GroupIndex';
 import { Group } from './Group';
 import { BitUtils } from '../utils/bit';
 import { BitMapManager } from '../entity/BitMapManager';
+import { EntityStorage } from '../EntityStorage';
 
 export type GroupQuery = [string[]?, string[]?];
 
@@ -22,7 +22,7 @@ export class GroupManager {
 
   constructor(
     private _eventBus: EventBus<EventMap>,
-    private _storage: EntityComponentStorage,
+    private _entities: EntityStorage,
     private _bitMap: BitMapManager
   ) {
     this._eventBus
@@ -105,7 +105,7 @@ export class GroupManager {
   private updateGroupEntitiesWithMasks(group: Group, key: GroupKey): void {
     const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
-    this._storage.getAllEntities().forEach((entity) => {
+    this._entities.getAllEntities().forEach((entity) => {
       const entityBits = this._bitMap.getEntityBitMap(entity);
       if (
         BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
