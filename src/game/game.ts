@@ -81,9 +81,12 @@ export class Game {
       return;
     }
 
-    if (this.gameStateManager.currentState === PlayState.name) {
-      this.gameStateManager.changeState(PauseState.name);
-      return;
-    }
+    this.world.task.addTask('ON_CYCLE_UPDATE', {
+      callback: () => {
+        if (this.gameStateManager.currentState === PlayState.name) {
+          this.gameStateManager.changeState(PauseState.name);
+        }
+      },
+    });
   };
 }

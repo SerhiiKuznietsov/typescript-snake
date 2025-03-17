@@ -59,10 +59,9 @@ export class SystemRegistry {
   }
 
   public removeSystem(system: ISystem): void {
-    if (system.destroy) system.destroy();
+    system.destroy && system.destroy();
 
     const index = this._systems.indexOf(system);
-
     if (index === -1) {
       console.warn(`System not found in registry:`, system.constructor.name);
     }
