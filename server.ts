@@ -7,6 +7,5 @@ const compiler = webpack(config);
 const server = new webpackDevServer({ ...config.devServer }, compiler);
 
 (async () => {
-  console.log('Starting server...');
   await server.start();
 })();
