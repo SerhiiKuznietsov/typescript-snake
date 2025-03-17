@@ -1,31 +1,32 @@
 import { World } from '@/ecs/World';
 import { GameConfig } from '../config/game';
 import { Board } from '../board';
-import { PlayerInputSystem } from './PlayerInputSystem';
-import { CollisionSystem } from './СollisionSystem';
-import { RenderSystem } from './RenderSystem';
-import { AttackSystem } from './AttackSystem';
-import { MovementCooldownSystem } from './MovementCooldownSystem';
-import { RespawnCooldownSystem } from './RespawnCooldownSystem';
-import { RespawnSystem } from './RespawnSystem';
-import { MovementPositionCalculationSystem } from './MovementPositionCalculationSystem';
-import { SnakeMovementSystem } from './SnakeMovementSystem';
-import { SnakeBoundarySystem } from './SnakeBoundarySystem';
-import { MovementAreaSystem } from './MovementAreaSystem';
+import { PlayerInputSystem } from './playerInputSystem';
+import { CollisionSystem } from './collisionSystem';
+import { RenderSystem } from './renderSystem';
+import { AttackSystem } from './attackSystem';
+import { MovementCooldownSystem } from './movementCooldownSystem';
+import { RespawnCooldownSystem } from './respawnCooldownSystem';
+import { RespawnSystem } from './respawnSystem';
+import { MovementPositionCalculationSystem } from './movementPositionCalculationSystem';
+import { SnakeMovementSystem } from './snakeMovementSystem';
+import { SnakeBoundarySystem } from './snakeBoundarySystem';
+import { MovementAreaSystem } from './movementAreaSystem';
 import { SystemRegistry } from '@/ecs/SystemRegistry';
 import { GridManager } from '../managers/GridManager';
-import { SnakeInitSystem } from './SnakeInitSystem';
-import { FoodInitSystem } from './FoodInitSystem';
-import { PoisonInitSystem } from './PoisonInitSystem';
-import { DeathSystem } from './DeathSystem';
-import { HunterInitSystem } from './HunterInitSystem';
-import { HunterTargetSystem } from './HunterTargetSystem';
-import { HunterDirectionSystem } from './HunterDirectionSystem';
-import { MovementSystem } from './MovementSystem';
-import { MovementDirectionSystem } from './MovementDirectionSystem';
+import { SnakeInitSystem } from './snakeInitSystem';
+import { FoodInitSystem } from './foodInitSystem';
+import { PoisonInitSystem } from './poisonInitSystem';
+import { DeathSystem } from './deathSystem';
+import { HunterInitSystem } from './hunterInitSystem';
+import { HunterTargetSystem } from './hunterTargetSystem';
+import { HunterDirectionSystem } from './hunterDirectionSystem';
+import { MovementSystem } from './movementSystem';
+import { MovementDirectionSystem } from './movementDirectionSystem';
 import { InputManager } from '../managers/InputManager';
-import { RespawnPositionSystem } from './RespawnPositionSystem';
-import { RespawnTriggerSystem } from './RespawnTriggerSystem';
+import { RespawnPositionSystem } from './respawnPositionSystem';
+import { RespawnTriggerSystem } from './respawnTriggerSystem';
+import { MovementPrevPositionSystem } from './movementPrevPositionSystem';
 
 export const initSystems = (
   system: SystemRegistry,
@@ -50,6 +51,7 @@ export const initSystems = (
     .addSystem(new HunterDirectionSystem(world, gridManager))
     .addSystem(new MovementPositionCalculationSystem(world))
     .addSystem(new MovementAreaSystem(world, x, y))
+    .addSystem(new MovementPrevPositionSystem(world))
     .addSystem(new SnakeMovementSystem(world, gridSize))
     .addSystem(new MovementSystem(world, gridManager))
     .addSystem(new SnakeBoundarySystem(world, x, y))

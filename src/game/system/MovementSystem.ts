@@ -1,6 +1,5 @@
 import { ISystem } from '@/ecs/SystemRegistry';
 import { World } from '@/ecs/World';
-import { vectorUtils } from '../geometry/utils/vectorUtils';
 import { GridManager } from '../managers/GridManager';
 
 export class MovementSystem implements ISystem {
@@ -11,14 +10,11 @@ export class MovementSystem implements ISystem {
   public update(): void {
     for (let i = 0; i < this.entities.length; i++) {
       const entity = this.entities[i];
-      const prevPosition = this.w.getComponent(entity, 'PrevPosition');
-      const position = this.w.getComponent(entity, 'Position');
       const moveTo = this.w.getComponent(entity, 'MoveTo');
 
-      this._grid.moveEntity(entity, moveTo);
+      this.w.getComponent(entity, 'Position', moveTo);
 
-      vectorUtils.setVector(prevPosition, position);
-      vectorUtils.setVector(position, moveTo);
+      this._grid.moveEntity(entity, moveTo);
 
       this.w.getComponent(entity, 'Moved');
       this.w.removeComponent(entity, 'MoveTo');
