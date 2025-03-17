@@ -1,20 +1,16 @@
 import { ComponentMap } from '@/game/component/components';
 import { IComponent } from './Component';
-import { EventMap } from './EcsEvents';
 import { EntityId } from './Entity';
 import {
   ComponentPoolManager,
   IComponentPool,
 } from './entity/ComponentPoolManager';
-import { EventBus } from './EventBus';
 
 export type ComponentMapType = Map<string, IComponent>;
 
 export class ComponentStorage {
   private _componentPoolManager = new ComponentPoolManager();
   private _components: Map<EntityId, ComponentMapType> = new Map();
-
-  constructor(private _eventBus: EventBus<EventMap>) {}
 
   private applyComponentParams<K extends keyof ComponentMap>(
     component: ComponentMap[K],
@@ -104,8 +100,6 @@ export class ComponentStorage {
     }
     entityComponents.set(componentName, component);
 
-    this._eventBus.emit('COMPONENT_ADDED', { entity, componentName });
-
     return component;
   }
 
@@ -132,11 +126,6 @@ export class ComponentStorage {
     entityComponents.delete(componentName);
 
     this._componentPoolManager.releaseComponent(componentName, component);
-
-    this._eventBus.emit('COMPONENT_REMOVED', {
-      entity,
-      componentName,
-    });
   }
 
   public getComponents(entity: EntityId): ComponentMapType {

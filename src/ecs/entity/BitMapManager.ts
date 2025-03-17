@@ -1,30 +1,14 @@
-import { EventMap } from '../EcsEvents';
+import { ComponentMap } from '@/game/component/components';
 import { EntityId } from '../Entity';
-import { EventBus } from '../EventBus';
 import { BitUtils } from '../utils/bit';
 
 export class BitMapManager {
   private _componentToBitMap: Map<string, number> = new Map();
   private _entityBitMaps: Map<EntityId, number> = new Map();
 
-  constructor(private _eventBus: EventBus<EventMap>) {
-    this._eventBus.on('COMPONENT_ADDED', this.onEntityComponentCreated);
-    this._eventBus.on('COMPONENT_REMOVED', this.onEntityComponentDeleted);
+  private hasComponentBit(componentName: string): boolean {
+    return this._componentToBitMap.has(componentName);
   }
-
-  private onEntityComponentCreated = ({
-    entity,
-    componentName,
-  }: EventMap['COMPONENT_ADDED']) => {
-    this.addComponentBitToEntity(entity, componentName);
-  };
-
-  private onEntityComponentDeleted = ({
-    entity,
-    componentName,
-  }: EventMap['COMPONENT_REMOVED']) => {
-    this.removeComponentBitFromEntity(entity, componentName);
-  };
 
   public onEntityCreated(entity: EntityId): void {
     this._entityBitMaps.set(entity, 0);
@@ -34,52 +18,56 @@ export class BitMapManager {
     this._entityBitMaps.delete(entity);
   }
 
-  private hasComponentBit(componentKey: string): boolean {
-    return this._componentToBitMap.has(componentKey);
-  }
-
-  public getComponentBit(componentKey: string): number {
-    const bit = this._componentToBitMap.get(componentKey);
-    if (bit === undefined) {
-      throw new Error(
-        `Component key '${componentKey}' does not exist in the bitmap.`
-      );
-    }
-    return bit;
-  }
-
-  public createComponentBit(componentKey: string): number {
-    if (this.hasComponentBit(componentKey)) {
-      return this._componentToBitMap.get(componentKey)!;
-    }
-
-    const newBit = 1 << this._componentToBitMap.size;
-    this._componentToBitMap.set(componentKey, newBit);
-
-    return newBit;
-  }
-
-  public addComponentBitToEntity(entity: EntityId, componentKey: string): void {
-    const componentBit = this.createComponentBit(componentKey);
+  public onEntityComponentCreated(
+    entity: EntityId,
+    componentName: keyof ComponentMap
+  ) {
+    const componentBit = this.createComponentBit(componentName);
     const currentBit = this._entityBitMaps.get(entity) || 0;
     const newBit = BitUtils.setBit(currentBit, componentBit);
 
     this._entityBitMaps.set(entity, newBit);
   }
 
-  public removeComponentBitFromEntity(
+  public onEntityComponentDeleted(
     entity: EntityId,
-    componentKey: string
-  ): void {
-    const componentBit = this.getComponentBit(componentKey);
+    componentName: keyof ComponentMap
+  ) {
+    const componentBit = this.getComponentBit(componentName);
     const currentBit = this._entityBitMaps.get(entity) || 0;
     const newBit = BitUtils.clearBit(currentBit, componentBit);
 
     this._entityBitMaps.set(entity, newBit);
   }
 
+  public getComponentBit(componentName: string): number {
+    const bit = this._componentToBitMap.get(componentName);
+    if (bit === undefined) {
+      throw new Error(
+        `Component key '${componentName}' does not exist in the bitmap.`
+      );
+    }
+    return bit;
+  }
+
+  public createComponentBit(componentName: string): number {
+    if (this.hasComponentBit(componentName)) {
+      return this._componentToBitMap.get(componentName)!;
+    }
+
+    const newBit = 1 << this._componentToBitMap.size;
+    this._componentToBitMap.set(componentName, newBit);
+
+    return newBit;
+  }
+
   public getEntityBitMap(entity: EntityId): number {
-    return this._entityBitMaps.get(entity) as number;
+    const bit = this._entityBitMaps.get(entity);
+    if (bit === undefined) {
+      throw new Error(`bit with entity: ${entity} not found`);
+    }
+
+    return bit;
   }
 
   public getEntitiesMatchingBitMap(bitMap: number): EntityId[] {
@@ -97,8 +85,5 @@ export class BitMapManager {
   public clear(): void {
     this._componentToBitMap.clear();
     this._entityBitMaps.clear();
-
-    this._eventBus.off('COMPONENT_ADDED', this.onEntityComponentCreated);
-    this._eventBus.off('COMPONENT_REMOVED', this.onEntityComponentDeleted);
   }
 }

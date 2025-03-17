@@ -29,23 +29,13 @@ export class World {
     this.task = new TaskManager(this.bus);
 
     this._entities = new EntityStorage();
-    this._components = new ComponentStorage(this.bus);
-    this._entityBitMaps = new BitMapManager(this.bus);
-    this._groupManager = new GroupManager(
-      this.bus,
-      this._entities,
-      this._entityBitMaps
-    );
+    this._components = new ComponentStorage();
+    this._entityBitMaps = new BitMapManager();
+    this._groupManager = new GroupManager(this._entities, this._entityBitMaps);
   }
 
   public init() {
     this.task = new TaskManager(this.bus);
-    this._entityBitMaps = new BitMapManager(this.bus);
-    this._groupManager = new GroupManager(
-      this.bus,
-      this._entities,
-      this._entityBitMaps
-    );
   }
 
   public hasEntity(entity: EntityId): boolean {
@@ -65,7 +55,7 @@ export class World {
   public deleteEntity(entity: EntityId): void {
     this.task.addOnCycleUpdate(() => {
       this._entities.deleteEntity(entity);
-      this._entityBitMaps.onEntityDeleted(entity)
+      this._entityBitMaps.onEntityDeleted(entity);
       this._components.onEntityDeleted(entity);
       this._groupManager.onEntityDeleted(entity);
     });
@@ -93,19 +83,23 @@ export class World {
     params?: Partial<ComponentMap[K]>
   ): ComponentMap[K] {
     if (!this.hasComponent(entity, componentName)) {
-      return this._components.addComponent(entity, componentName, params);
-      // this._storage.addComponent(entity, componentName, params);
+      const component = this._components.addComponent(
+        entity,
+        componentName,
+        params
+      );
+
+      this._entityBitMaps.onEntityComponentCreated(entity, componentName);
+      this._groupManager.onComponentChanged(entity);
+
+      return component;
     }
 
     return this._components.getComponent(entity, componentName, params);
-
-    // return this._storage.getComponent(entity, componentName, params);
   }
 
   public getComponents(entity: EntityId): ComponentMapType {
     return this._components.getComponents(entity);
-
-    // return this._storage.getComponents(entity);
   }
 
   public removeComponent<K extends keyof ComponentMap>(
@@ -113,16 +107,18 @@ export class World {
     componentName: K,
     task?: TaskCondition
   ): this {
+    const callback = () => {
+      this._components.removeComponent(entity, componentName);
+      this._entityBitMaps.onEntityComponentDeleted(entity, componentName);
+      this._groupManager.onComponentChanged(entity);
+    };
+
     if (task) {
       this.task.addTask(task, {
-        callback: () => {
-          this._components.removeComponent(entity, componentName);
-          // this._storage.removeComponent(entity, componentName);
-        },
+        callback,
       });
     } else {
-      this._components.removeComponent(entity, componentName);
-      // this._storage.removeComponent(entity, componentName);
+      callback();
     }
 
     return this;
@@ -130,15 +126,12 @@ export class World {
 
   public removeIfExistComponent<K extends keyof ComponentMap>(
     entity: EntityId,
-    componentName: K
+    componentName: K,
+    task?: TaskCondition
   ): this {
     if (this._components.hasComponent(entity, componentName)) {
-      this.removeComponent(entity, componentName);
+      this.removeComponent(entity, componentName, task);
     }
-
-    // if (this._storage.hasComponent(entity, componentName)) {
-    //   this._storage.removeComponent(entity, componentName);
-    // }
 
     return this;
   }
@@ -161,7 +154,6 @@ export class World {
     this.bus.clear();
     this._entities.destroy();
     this._components.destroy();
-    // this._storage.destroy();
     this._groupManager.destroy();
     this._entityBitMaps.clear();
     this.messageBroker.clearAll();

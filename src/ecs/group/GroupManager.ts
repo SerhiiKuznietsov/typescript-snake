@@ -1,5 +1,3 @@
-import { EventBus } from '../EventBus';
-import { EventMap } from '../EcsEvents';
 import { EntityId } from '../Entity';
 import { generateKey, GroupKey } from './GroupUtils';
 import { GroupIndex } from './GroupIndex';
@@ -21,14 +19,9 @@ export class GroupManager {
   private _groupMasks: Map<GroupKey, BitMaskData> = new Map();
 
   constructor(
-    private _eventBus: EventBus<EventMap>,
     private _entities: EntityStorage,
     private _bitMap: BitMapManager
-  ) {
-    this._eventBus
-      .on('COMPONENT_ADDED', this.onComponentChanged)
-      .on('COMPONENT_REMOVED', this.onComponentChanged);
-  }
+  ) {}
 
   private validGroupQuery(query: GroupQuery) {
     const [has, not] = query;
@@ -114,9 +107,7 @@ export class GroupManager {
     });
   }
 
-  private onComponentChanged = ({
-    entity,
-  }: EventMap['COMPONENT_ADDED'] | EventMap['COMPONENT_REMOVED']): void => {
+  public onComponentChanged(entity: EntityId): void {
     this._groups.forEach(({ group }, key) => {
       const isInGroup = group.entitiesSet.has(entity);
       const entityBits = this._bitMap.getEntityBitMap(entity);
@@ -132,7 +123,7 @@ export class GroupManager {
         this.removeEntityFromGroup(group, key, entity);
       }
     });
-  };
+  }
 
   private addEntityToGroup(
     group: Group,
@@ -189,9 +180,5 @@ export class GroupManager {
     this._groups.clear();
     this._groupIndex.clear();
     this._groupMasks.clear();
-
-    this._eventBus
-      .off('COMPONENT_ADDED', this.onComponentChanged)
-      .off('COMPONENT_REMOVED', this.onComponentChanged);
   }
 }
