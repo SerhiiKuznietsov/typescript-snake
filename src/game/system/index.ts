@@ -36,10 +36,7 @@ export const initSystems = (
   gridManager: GridManager,
   inputManager: InputManager
 ) => {
-  const {
-    gridSize,
-    lastVector: { x, y },
-  } = config;
+  const { lastVector } = config;
 
   // TODO - add destroy method for system because need clean groups
 
@@ -50,11 +47,11 @@ export const initSystems = (
     .addSystem(new MovementDirectionSystem(world))
     .addSystem(new HunterDirectionSystem(world, gridManager))
     .addSystem(new MovementPositionCalculationSystem(world))
-    .addSystem(new MovementAreaSystem(world, x, y))
+    .addSystem(new MovementAreaSystem(world, lastVector.x, lastVector.y))
     .addSystem(new MovementPrevPositionSystem(world))
     .addSystem(new SnakeMovementSystem(world))
     .addSystem(new MovementSystem(world, gridManager))
-    .addSystem(new SnakeBoundarySystem(world, x, y))
+    .addSystem(new SnakeBoundarySystem(world, lastVector.x, lastVector.y))
     .addSystem(new CollisionSystem(world, gridManager))
     .addSystem(new AttackSystem(world))
     .addSystem(new DeathSystem(world, gridManager))
