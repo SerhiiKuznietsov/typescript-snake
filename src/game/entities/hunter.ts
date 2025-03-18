@@ -1,6 +1,6 @@
 import { World } from '@/ecs/World';
 
-export const createHunter = (w: World, size: number): void => {
+export const createHunter = (w: World): void => {
   const entity = w.createEntity();
 
   w.getComponent(entity, 'Hunter');
@@ -11,6 +11,5 @@ export const createHunter = (w: World, size: number): void => {
   w.getComponent(entity, 'CollisionHandler');
   w.getComponent(entity, 'Render', {
     color: '#380070',
-    size,
   });
 };

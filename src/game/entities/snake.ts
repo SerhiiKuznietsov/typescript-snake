@@ -1,6 +1,6 @@
 import { World } from '@/ecs/World';
 
-export const createSnake = (w: World, size: number): void => {
+export const createSnake = (w: World): void => {
   const entity = w.createEntity();
 
   w.getComponent(entity, 'KeyboardInput');
@@ -15,6 +15,5 @@ export const createSnake = (w: World, size: number): void => {
   w.getComponent(entity, 'CollisionHandler');
   w.getComponent(entity, 'Render', {
     color: '#1fa224',
-    size,
   });
 };

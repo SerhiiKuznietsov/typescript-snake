@@ -1,6 +1,6 @@
 import { World } from '@/ecs/World';
 
-export const createFood = (w: World, size: number): void => {
+export const createFood = (w: World): void => {
   const entity = w.createEntity();
 
   w.getComponent(entity, 'Food');
@@ -8,6 +8,5 @@ export const createFood = (w: World, size: number): void => {
   w.getComponent(entity, 'RespawnСooldown', { remainingTime: -1 });
   w.getComponent(entity, 'Render', {
     color: '#c04d4d',
-    size,
   });
 };

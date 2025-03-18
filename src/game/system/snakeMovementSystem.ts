@@ -10,7 +10,7 @@ import { SnakeBody } from '../component/SnakeBody';
 export class SnakeMovementSystem implements ISystem {
   public entities = this.w.newGroup(['Snake', 'Position', 'MoveTo']);
 
-  constructor(public w: World, private _gridSize: number) {}
+  constructor(public w: World) {}
 
   private moveSegmentToHead(
     snake: Snake,
@@ -47,7 +47,6 @@ export class SnakeMovementSystem implements ISystem {
   ) {
     const newSegment = createSnakeBody(
       this.w,
-      this._gridSize,
       prevPosition,
       entity,
       entity

@@ -7,13 +7,12 @@ export class PoisonInitSystem implements ISystem {
 
   constructor(
     public w: World,
-    private _gridSize: number,
     private _spawnCount: number
   ) {}
 
   public update(): void {
     for (let i = 0; i < this._spawnCount; i++) {
-      createPoison(this.w, this._gridSize);
+      createPoison(this.w);
     }
   }
 }

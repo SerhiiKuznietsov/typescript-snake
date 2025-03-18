@@ -49,6 +49,6 @@ export class RenderSystem implements ISystem {
     const render = this.w.getComponent(entity, 'Render');
     const position = this.w.getComponent(entity, 'Position');
 
-    this._board.draw(position, render.size, render.color);
+    this._board.draw(position, render.color);
   }
 }

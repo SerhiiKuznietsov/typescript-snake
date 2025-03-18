@@ -4,7 +4,6 @@ import { Vector2 } from '../geometry/vector2';
 
 export const createSnakeBody = (
   w: World,
-  size: number,
   { x, y }: Vector2,
   head: EntityId,
   next: EntityId
@@ -16,7 +15,6 @@ export const createSnakeBody = (
   w.getComponent(entity, 'RespawnPosition', { x, y });
   w.getComponent(entity, 'Render', {
     color: '#176639',
-    size,
   });
 
   return entity;

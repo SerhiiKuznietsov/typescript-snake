@@ -3,13 +3,17 @@ import { Vector2 } from './geometry/vector2';
 export class Board {
   private _parentElement: Element;
   private _element: HTMLCanvasElement;
+  private _gridWidth: number;
+  private _gridHeight: number;
   public readonly _context: CanvasRenderingContext2D;
 
   constructor(
     parentElementSelector: string,
     private _width: number,
     private _height: number,
-    selector: string = 'gameBoard',
+    xGridsCount: number,
+    yGridsCount: number,
+    selector: string = 'gameBoard'
   ) {
     this._parentElement = document.querySelector(
       parentElementSelector
@@ -23,6 +27,9 @@ export class Board {
     this._element = <HTMLCanvasElement>document.createElement('canvas');
     this._element.id = selector;
     this._context = this._element.getContext('2d') as CanvasRenderingContext2D;
+
+    this._gridWidth = this._width / xGridsCount;
+    this._gridHeight = this._height / yGridsCount;
   }
 
   public init(): Board {
@@ -34,9 +41,14 @@ export class Board {
     return this;
   }
 
-  public draw({ x, y }: Vector2, size: number, color: string): void {
+  public draw({ x, y }: Vector2, color: string): void {
     this._context.fillStyle = color;
-    this._context.fillRect(x * size, y * size, size, size);
+    this._context.fillRect(
+      x * this._gridWidth,
+      y * this._gridHeight,
+      this._gridWidth,
+      this._gridHeight
+    );
   }
 
   public drawText(
@@ -57,8 +69,13 @@ export class Board {
     ctx.fillText(text, x, y);
   }
 
-  public clear({ x, y }: Vector2, gridSize: number = 20) {
-    this._context.clearRect(x * gridSize, y * gridSize, gridSize, gridSize);
+  public clear({ x, y }: Vector2) {
+    this._context.clearRect(
+      x * this._gridWidth,
+      y * this._gridHeight,
+      this._gridWidth,
+      this._gridHeight
+    );
   }
 
   public clearBoard(): void {

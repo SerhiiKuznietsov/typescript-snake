@@ -18,7 +18,9 @@ export class Game {
   public board = new Board(
     '.game__body',
     this.config.boardWidth,
-    this.config.boardHeight
+    this.config.boardHeight,
+    this.config.xGridsCount,
+    this.config.yGridsCount
   );
   public gridManager = new GridManager();
   public inputManager = new InputManager();
@@ -44,7 +46,8 @@ export class Game {
       (fps: number = 0) => (this._fpsElement.textContent = `${fps}`)
     );
 
-    document.addEventListener('keydown', (event) => { // TODO - testing functional
+    document.addEventListener('keydown', (event) => {
+      // TODO - testing functional
       switch (event.key) {
         case 'Enter':
           this.gameStateManager.changeState(PlayState.name);

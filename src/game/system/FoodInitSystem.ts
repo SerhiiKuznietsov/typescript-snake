@@ -7,13 +7,12 @@ export class FoodInitSystem implements ISystem {
 
   constructor(
     public w: World,
-    private _gridSize: number,
     private _spawnCount: number
   ) {}
 
   public update(): void {
     for (let i = 0; i < this._spawnCount; i++) {
-      createFood(this.w, this._gridSize);
+      createFood(this.w);
     }
   }
 }
