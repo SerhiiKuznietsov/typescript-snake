@@ -30,16 +30,19 @@ export class PlayerInputSystem implements ISystem {
   private _code: KeyboardEvent['code'] | null = null;
 
   constructor(public w: World, private _inputManager: InputManager) {
-    this._inputManager
-      .addHandler('KeyW', this.setControl)
-      .addHandler('ArrowUp', this.setControl)
-      .addHandler('KeyD', this.setControl)
-      .addHandler('ArrowRight', this.setControl)
-      .addHandler('KeyS', this.setControl)
-      .addHandler('ArrowDown', this.setControl)
-      .addHandler('KeyA', this.setControl)
-      .addHandler('ArrowLeft', this.setControl);
-    // TODO - remove chanes and add the ability to pass an array
+    this._inputManager.addHandler(
+      [
+        'KeyW',
+        'ArrowUp',
+        'KeyD',
+        'ArrowRight',
+        'KeyS',
+        'ArrowDown',
+        'KeyA',
+        'ArrowLeft',
+      ],
+      this.setControl
+    );
   }
 
   private setControl = ({ code }: KeyboardEvent): void => {
@@ -63,14 +66,18 @@ export class PlayerInputSystem implements ISystem {
   }
 
   public destroy(): void {
-    this._inputManager
-      .removeHandler('KeyW', this.setControl)
-      .removeHandler('ArrowUp', this.setControl)
-      .removeHandler('KeyD', this.setControl)
-      .removeHandler('ArrowRight', this.setControl)
-      .removeHandler('KeyS', this.setControl)
-      .removeHandler('ArrowDown', this.setControl)
-      .removeHandler('KeyA', this.setControl)
-      .removeHandler('ArrowLeft', this.setControl);
+    this._inputManager.removeHandler(
+      [
+        'KeyW',
+        'ArrowUp',
+        'KeyD',
+        'ArrowRight',
+        'KeyS',
+        'ArrowDown',
+        'KeyA',
+        'ArrowLeft',
+      ],
+      this.setControl
+    );
   }
 }

@@ -3,6 +3,8 @@ controller.signal;
 
 type KeyCodeType = KeyboardEvent['code'];
 
+type ParamType = KeyCodeType | KeyCodeType[];
+
 export class InputManager {
   private _mapCodeHandler = new Map<KeyCodeType, Function[]>();
   private _controller = new AbortController();
@@ -19,6 +21,18 @@ export class InputManager {
 
     handlerArr.forEach((handlerItem) => handlerItem(e));
   };
+
+  private paramToArr(param: KeyCodeType | KeyCodeType[]) {
+    const arr = [];
+
+    if (!Array.isArray(param)) {
+      arr.push(param);
+    } else {
+      arr.push(...param);
+    }
+
+    return arr;
+  }
 
   public isActive(): boolean {
     return this._active;
@@ -49,28 +63,40 @@ export class InputManager {
     return this;
   }
 
-  public addHandler(keyCode: KeyCodeType, handler: Function): this {
-    if (!this._mapCodeHandler.has(keyCode)) {
-      this._mapCodeHandler.set(keyCode, []);
-    }
+  public addHandler(param: ParamType, handler: Function): this {
+    const arr = this.paramToArr(param);
 
-    this._mapCodeHandler.get(keyCode)!.push(handler);
+    for (let i = 0; i < arr.length; i++) {
+      const keyCode = arr[i];
+
+      if (!this._mapCodeHandler.has(keyCode)) {
+        this._mapCodeHandler.set(keyCode, []);
+      }
+
+      this._mapCodeHandler.get(keyCode)!.push(handler);
+    }
 
     return this;
   }
 
-  public removeHandler(keyCode: KeyCodeType, handler: Function): this {
-    if (!this._mapCodeHandler.has(keyCode)) return this;
+  public removeHandler(param: ParamType, handler: Function): this {
+    const arr = this.paramToArr(param);
 
-    const handlerArr = this._mapCodeHandler.get(keyCode) as Function[];
+    for (let i = 0; i < arr.length; i++) {
+      const keyCode = arr[i];
 
-    const index = handlerArr.indexOf(handler);
+      if (!this._mapCodeHandler.has(keyCode)) continue;
 
-    if (index < 0) return this;
+      const handlerArr = this._mapCodeHandler.get(keyCode) as Function[];
 
-    handlerArr.splice(index, 1);
+      const index = handlerArr.indexOf(handler);
 
-    if (!handlerArr.length) this._mapCodeHandler.delete(keyCode);
+      if (index < 0) continue;
+
+      handlerArr.splice(index, 1);
+
+      if (!handlerArr.length) this._mapCodeHandler.delete(keyCode);
+    }
 
     return this;
   }
