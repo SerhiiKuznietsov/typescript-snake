@@ -18,7 +18,7 @@ export class SystemRegistry {
 
   constructor(private _w: World) {}
 
-  public addSystem(system: ISystem): this {
+  public add(system: ISystem): this {
     if (system.init) system.init();
 
     this._systems.push(system);
@@ -27,7 +27,7 @@ export class SystemRegistry {
     return this;
   }
 
-  public awakeSystems(): void {
+  public awake(): void {
     for (let i = 0; i < this._systems.length; i++) {
       const system = this._systems[i];
 
@@ -35,7 +35,7 @@ export class SystemRegistry {
     }
   }
 
-  public updateSystems(deltaTime: number): void {
+  public update(deltaTime: number): void {
     for (let i = 0; i < this._systems.length; i++) {
       const system = this._systems[i];
 
@@ -50,7 +50,7 @@ export class SystemRegistry {
       });
 
       if (system.oneShot) {
-        this.removeSystem(system);
+        this.remove(system);
         i--;
       }
     }
@@ -58,7 +58,7 @@ export class SystemRegistry {
     this._w.task.processCycleUpdate();
   }
 
-  public removeSystem(system: ISystem): void {
+  public remove(system: ISystem): void {
     system.destroy && system.destroy();
 
     const index = this._systems.indexOf(system);
@@ -73,7 +73,7 @@ export class SystemRegistry {
 
   public destroy(): void {
     for (let i = 0; i < this._systems.length; i++) {
-      this.removeSystem(this._systems[i]);
+      this.remove(this._systems[i]);
     }
 
     this._systems = [];

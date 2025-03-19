@@ -29,6 +29,6 @@ export class StartState implements GameState {
   }
 
   public exit(): void {
-    this._g.systems.awakeSystems();
+    this._g.systems.awake();
   }
 }

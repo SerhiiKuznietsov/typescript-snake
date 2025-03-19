@@ -15,7 +15,7 @@ export class GameStateManager {
     );
   }
 
-  get currentState(): string {
+  public get currentState(): string {
     return this._currentState.constructor.name;
   }
 

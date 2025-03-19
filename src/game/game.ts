@@ -13,6 +13,7 @@ import { LoseState } from './managers/GameStateManager/states/lose';
 import { WinState } from './managers/GameStateManager/states/win';
 import { ClearState } from './managers/GameStateManager/states/clear';
 import { InitState } from './managers/GameStateManager/states/init';
+
 export class Game {
   public config = new GameConfig();
   public board = new Board(
@@ -26,21 +27,20 @@ export class Game {
   public inputManager = new InputManager();
   public world = new World();
   public systems = new SystemRegistry(this.world);
-  public gameStateManager: GameStateManager;
   public loop: Loop;
+  public gameStateManager = new GameStateManager([
+    new InitState(this),
+    new StartState(this),
+    new PlayState(this),
+    new PauseState(),
+    new WinState(this),
+    new LoseState(this),
+    new ClearState(this),
+  ]);
+
   private _fpsElement = document.querySelector('.game__fps') as Element;
 
   constructor() {
-    this.gameStateManager = new GameStateManager([
-      new InitState(this),
-      new StartState(this),
-      new PlayState(this),
-      new PauseState(),
-      new WinState(this),
-      new LoseState(this),
-      new ClearState(this),
-    ]);
-
     this.loop = new Loop(
       this.gameStateManager.update.bind(this.gameStateManager),
       (fps: number = 0) => (this._fpsElement.textContent = `${fps}`)

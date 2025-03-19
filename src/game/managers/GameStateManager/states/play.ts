@@ -18,7 +18,7 @@ export class PlayState implements GameState {
   }
 
   public update(delta: number): void {
-    this._g.systems.updateSystems(delta);
+    this._g.systems.update(delta);
   }
 
   public exit(): void {
