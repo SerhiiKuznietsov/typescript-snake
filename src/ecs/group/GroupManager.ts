@@ -2,7 +2,7 @@ import { EntityId } from '../Entity';
 import { generateKey, GroupKey } from './GroupUtils';
 import { GroupIndex } from './GroupIndex';
 import { Group } from './Group';
-import { BitUtils } from '../utils/bit';
+import { bitUtils } from '../utils/bit';
 import { BitMapManager } from '../entity/BitMapManager';
 import { EntityStorage } from '../EntityStorage';
 
@@ -80,7 +80,7 @@ export class GroupManager {
       const component = arr[i];
       const bit = this._bitMap.getComponentBit(component);
 
-      result = BitUtils.setBit(result, bit);
+      result = bitUtils.setBit(result, bit);
     }
 
     return result;
@@ -99,8 +99,8 @@ export class GroupManager {
     this._entities.getAllEntities().forEach((entity) => {
       const entityBits = this._bitMap.getEntityBitMap(entity);
       if (
-        BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
-        BitUtils.areAnyBitsSet(entityBits, notBitMask) === false
+        bitUtils.areAllBitsSet(entityBits, hasBitMask) &&
+        bitUtils.areAnyBitsSet(entityBits, notBitMask) === false
       ) {
         this.addEntityToGroup(group, key, entity);
       }
@@ -114,8 +114,8 @@ export class GroupManager {
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
       const matches =
-        BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
-        BitUtils.areAnyBitsSet(entityBits, notBitMask) === false;
+        bitUtils.areAllBitsSet(entityBits, hasBitMask) &&
+        bitUtils.areAnyBitsSet(entityBits, notBitMask) === false;
 
       if (matches && !isInGroup) {
         this.addEntityToGroup(group, key, entity);
@@ -154,8 +154,8 @@ export class GroupManager {
       const { hasBitMask, notBitMask } = this._groupMasks.get(key)!;
 
       if (
-        BitUtils.areAllBitsSet(entityBits, hasBitMask) &&
-        BitUtils.areAnyBitsSet(entityBits, notBitMask) === false
+        bitUtils.areAllBitsSet(entityBits, hasBitMask) &&
+        bitUtils.areAnyBitsSet(entityBits, notBitMask) === false
       ) {
         this.addEntityToGroup(group, key, entity);
       }

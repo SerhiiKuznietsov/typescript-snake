@@ -1,20 +1,20 @@
-export class BitUtils {
-  static isBitSet(value: number, bit: number): boolean {
+export const bitUtils = {
+  isBitSet: (value: number, bit: number): boolean => {
     return (value & bit) !== 0;
-  }
-  static setBit(value: number, bit: number): number {
+  },
+  setBit: (value: number, bit: number): number => {
     return value | bit;
-  }
-  static clearBit(value: number, bit: number): number {
+  },
+  clearBit: (value: number, bit: number): number => {
     return value & ~bit;
-  }
-  static toggleBit(value: number, bit: number): number {
+  },
+  toggleBit: (value: number, bit: number): number => {
     return value ^ bit;
-  }
-  static areAllBitsSet(value: number, mask: number): boolean {
+  },
+  areAllBitsSet: (value: number, mask: number): boolean => {
     return (value & mask) === mask;
-  }
-  static areAnyBitsSet(value: number, mask: number): boolean {
+  },
+  areAnyBitsSet: (value: number, mask: number): boolean => {
     return (value & mask) !== 0;
-  }
-}
+  },
+};

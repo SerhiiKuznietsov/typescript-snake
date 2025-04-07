@@ -1,6 +1,6 @@
 import { ComponentMap } from '@/game/component/components';
 import { EntityId } from '../Entity';
-import { BitUtils } from '../utils/bit';
+import { bitUtils } from '../utils/bit';
 
 export class BitMapManager {
   private _componentToBitMap: Map<string, number> = new Map();
@@ -24,7 +24,7 @@ export class BitMapManager {
   ) {
     const componentBit = this.getComponentBit(componentName);
     const currentBit = this._entityBitMaps.get(entity) || 0;
-    const newBit = BitUtils.setBit(currentBit, componentBit);
+    const newBit = bitUtils.setBit(currentBit, componentBit);
 
     this._entityBitMaps.set(entity, newBit);
   }
@@ -35,7 +35,7 @@ export class BitMapManager {
   ) {
     const componentBit = this.getComponentBit(componentName);
     const currentBit = this._entityBitMaps.get(entity) || 0;
-    const newBit = BitUtils.clearBit(currentBit, componentBit);
+    const newBit = bitUtils.clearBit(currentBit, componentBit);
 
     this._entityBitMaps.set(entity, newBit);
   }
@@ -74,7 +74,7 @@ export class BitMapManager {
     const matchingEntities: EntityId[] = [];
 
     this._entityBitMaps.forEach((entityBitMap, entity) => {
-      if (BitUtils.areAllBitsSet(entityBitMap, bitMap)) {
+      if (bitUtils.areAllBitsSet(entityBitMap, bitMap)) {
         matchingEntities.push(entity);
       }
     });
