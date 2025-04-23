@@ -9,6 +9,7 @@ export class InitState implements GameState {
 
   public enter(): void {
     this._g.board.init();
+    this._g.loop.start();
 
     this._g.gameStateManager.changeState(StartState.name);
   }

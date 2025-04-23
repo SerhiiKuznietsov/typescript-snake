@@ -13,16 +13,11 @@ export class PlayState implements GameState {
 
   constructor(private _g: Game) {}
 
-  public enter(): void {
-    this._g.loop.start();
-  }
-
   public update(delta: number): void {
     this._g.systems.update(delta);
   }
 
   public exit(): void {
-    this._g.loop.stop();
     console.log(this._g);
   }
 }
